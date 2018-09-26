@@ -1,5 +1,3 @@
-In this project, you are going to implement a neural machine translation model, trained and tested on the IWSLT 2014 data set. To help you start, we have prepared some template (pseudo-) code in this repo. Note that you are not required to use this template code, and it may not be the best implementation, however you may find this a good reference.
-
 ## File Structure
 
 * `nmt.py`: contains the neural machine translation model and training/testing code.
