@@ -5,6 +5,10 @@ In this project, you are going to implement a neural machine translation model, 
 * `nmt.py`: contains the neural machine translation model and training/testing code.
 * `vocab.py`: a script that extracts vocabulary from training data
 * `util.py`: contains utility/helper functions
+* `attention.py`: attention model
+* `encoder.py`: encoder model
+* `decoder.py`: decoder model
+* `generalRNN.py`: baseCoder model
 
 ## Dataset
 
