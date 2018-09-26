@@ -68,11 +68,10 @@ class NMT(object):
         super(NMT, self).__init__()
 
         nvocab = len(vocab)
-        self.encoder = Encoder(nvocab, hidden_size, embed_size, n_layers=1, dropout=dropout_rate)
-        self.encode_optimizer = optim.Adam(self.encoder.parameters(), lr=0.01)
+        self.encoder = Encoder(nvocab, hidden_size, embed_size, dropout=dropout_rate, n_layers=1)
+        self.optimizer = optim.Adam(self.encoder.parameters(), lr=0.01)
 
         self.decoder = Decoder(nvocab, hidden_size, embed_size, n_layers=1)
-        self.decode_optimizer = optim.Adam(self.decoder.parameters(), lr=0.01)
 
         self.loss = nn.CrossEntropyLoss()
 
@@ -122,17 +121,8 @@ class NMT(object):
         for i in range(max_sent_len):
             srcs.append(sent[i] for sent in src_sents)
 
-        encoder_outputs = Variable(torch.zeros(max_sent_len, batch_size, self.encoder.hidden_size))
-        encoder_hidden = self.encoder.initHidden(batch_size)
-        input_seq = Variable(srcs)
-        self.encode_optimizer.zero_grad()
-
-        for ei in range(max_sent_len):
-            encoder_output, encoder_hidden = self.encoder(
-                input_seq[ei], batch_size, encoder_hidden)
-            encoder_outputs[ei] = encoder_output[0]
-
-        self.encode_optimizer.step()
+        input_seq = torch.LongTensor(srcs)
+        encoder_outputs, encoder_hidden = self.encoder(input_seq)
 
         return encoder_outputs, encoder_hidden
 
@@ -163,19 +153,13 @@ class NMT(object):
             num_words += sum(mask)
             batch_size += 1
 
-        self.decode_optimizer.zero_grad()
-        decoder_input = Variable(torch.LongTensor([2] * batch_size))
-        decoder_hidden = decoder_init_state
-        outputs = []
-        loss = 0
-        for _ in range(max_tgt_len):
-            softmax, decoder_hidden= self.decoder(decoder_input, batch_size, decoder_hidden)
-            outputs.append(np.argmax(softmax.data.numpy(), 1)[:, np.newaxis])
-            loss += self.loss(softmax, Variable(tgt_sents[i+1][0]))
+        tgt = torch.LongTensor(tgt)
+        outputs,decoder_hidden = self.decoder(tgt, decoder_init_state, src_encodings)
+        self.loss.reset()
+        for i, output in enumerate(outputs):
+            size = output.size(0)
+            
 
-        loss /= len(outputs)
-        loss.backward()
-        self.decode_optimizer.step()
         return scores
 
     def beam_search(self, src_sent: List[str], beam_size: int=5, max_decoding_time_step: int=70) -> List[Hypothesis]:
@@ -304,6 +288,10 @@ def train(args: Dict[str, str]):
 
             # (batch_size)
             loss = -model(src_sents, tgt_sents)
+
+
+
+            
 
             report_loss += loss
             cum_loss += loss

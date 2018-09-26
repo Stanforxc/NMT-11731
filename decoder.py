@@ -6,17 +6,17 @@ from generalRnn import BaseCoder
 import numpy as np
 
 class Decoder(BaseCoder):
-    def __init__(self, vocab_size, max_length, hidden_size, embedding_size, dropout=0.0, n_layers=1, bidirectional=False,attention=False,rnn="lstm"):
-        super(Decoder,self).__init__(vocab_size, max_length, hidden_size,embedding_size,
+    def __init__(self, vocab_size, hidden_size, embedding_size, dropout=0.0, n_layers=1, bidirectional=False,attention=False,rnn="lstm"):
+        super(Decoder,self).__init__(vocab_size, hidden_size,embedding_size,
                 dropout, n_layers, rnn)
         self.bidirectional = bidirectional
         self.rnn = self.baseModel(input_size=embedding_size, hidden_size=hidden_size, num_layers=n_layers, 
                     batch_first=True,dropout=(0 if n_layers == 1 else dropout))
         self.output_size = vocab_size
-        self.max_length = max_length
+        # self.max_length = max_length
         self.attention_usage = attention
-        self.start_of_sent = 1
-        self.end_of_sent = 2
+        # self.start_of_sent = 1
+        # self.end_of_sent = 2
         self.embedding = nn.Embedding(vocab_size, embedding_size)
 
         self.wsm = nn.Linear(self.hidden_size, self.output_size)

@@ -18,8 +18,7 @@ class BaseCoder(nn.Module):
             self.baseModel = nn.GRU
         else:
             ## raise error
-            pass
+            raise ValueError("No such cell!")
     
     def forward(self, *args, **kwargs):
-        pass
-        # maybe raise error
+        raise NotImplementedError
