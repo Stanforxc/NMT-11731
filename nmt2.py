@@ -34,9 +34,6 @@ def my_collate(batch):
     for i in range(batch_size):
         src_sent, Yinput, Ytarget = tuples[i][1:]
 
-        # print(frames.shape)
-        # print(Yinput.shape)
-
         src_len = src_sent.shape[0]
         tgt_len = Yinput.shape[0]
 
@@ -114,16 +111,17 @@ class Encoder(nn.Module):
     def __init__(self, vocab_size, hidden_dim, attention_dim, value_dim):
         super(Encoder, self).__init__()
         self.embedding = nn.Embedding(num_embeddings=vocab_size, embedding_dim=hidden_dim)
+        # TODO: stack two layers?
         self.BLSTM = nn.LSTM(input_size=hidden_dim, hidden_size=hidden_dim, bidirectional=True, batch_first=True)
 
         self.key_linear = nn.Linear(hidden_dim * 2, attention_dim)  # output from bLSTM
         self.value_linear = nn.Linear(hidden_dim * 2, value_dim)  # output from bLSTM
 
     def forward(self, input, frame_lens):
-        print(input.size())
-        print(frame_lens)
+        # print(input.size())
+        # print(frame_lens)
         embeddings = self.embedding(input)
-        print(embeddings.size())
+        # print(embeddings.size())
         packed = pack_padded_sequence(embeddings, frame_lens, batch_first=True)
         output, h = self.BLSTM(packed)
         output, _ = pad_packed_sequence(output, batch_first=True)
@@ -221,7 +219,7 @@ class Decoder(nn.Module):
 
             # label index for the next loop
             pred_idx = torch.max(pred, dim=2)[1]  # argmax size [1, 1]
-            if not training and pred_idx.cpu().data.numpy() == 0:
+            if not training and pred_idx.cpu().data.numpy() == 2:  # TODO: double-check end of sentence char
                 break  # end of sentence
 
             # add to the prediction if not eos
@@ -387,11 +385,11 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
         count = -1
 
         total = len(train_dataset) / batch_size
-        interval = total // 10
+        interval = total // 1000
 
         for (utterance, frame_lens, Yinput, Ytarget, transcript_lens) in train_dataloader:
 
-            print(utterance)
+            # print(utterance)
 
             actual_batch_size = len(frame_lens)
             count += 1
@@ -422,11 +420,9 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
             loss_np = loss.data.cpu().numpy()
             losses.append(loss_np)
 
-            print(loss_np)
-
             # clip gradients
-            torch.nn.utils.clip_grad_norm_(encoder.parameters(), 0.25)  # todo: tune???
-            torch.nn.utils.clip_grad_norm_(decoder.parameters(), 0.25)
+            torch.nn.utils.clip_grad_norm_(encoder.parameters(), 0.5)  # todo: tune???
+            torch.nn.utils.clip_grad_norm_(decoder.parameters(), 0.5)
 
             # UPDATE THE NETWORK!!!
             optim.step()
@@ -486,5 +482,5 @@ if len(sys.argv) == 3:
     encoder_state = sys.argv[1]
     decoder_state = sys.argv[2]
 
-train_model(batch_size=32, epochs=5, learn_rate=1e-4, name='try13f', tf_rate=1,
+train_model(batch_size=32, epochs=5, learn_rate=1e-4, name='beta0', tf_rate=1,
             encoder_state=encoder_state, decoder_state=decoder_state)
