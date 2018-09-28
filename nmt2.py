@@ -19,6 +19,7 @@ Dataset and Dataloader
 def my_collate(batch):
     batch_size = len(batch)
 
+    # sort by src sentence length
     tuples = [(tup[0].shape[0], tup[0], tup[1], tup[2]) for tup in batch]
     tuples.sort(key=lambda x: x[0], reverse=True)  # sort in descending order
 
@@ -74,6 +75,8 @@ class MyDataset(torch.utils.data.Dataset):
         self.Yinput = []
         self.Ytarget = []
         for i in range(len(self.Y)):
+            # tgt seq input: <e> a b c
+            # tgt seq target:    a b c  </e>
             input, target = self.Y[i][:-1], self.Y[i][1:]
             self.Yinput.append(input)
             self.Ytarget.append(target)
