@@ -9,6 +9,7 @@ import sys
 import pickle
 from utils import read_corpus
 from vocab import Vocab, VocabEntry
+from nltk.translate.bleu_score import corpus_bleu
 
 
 '''
@@ -112,17 +113,18 @@ class Encoder(nn.Module):
         super(Encoder, self).__init__()
         self.embedding = nn.Embedding(num_embeddings=vocab_size, embedding_dim=hidden_dim)
         # TODO: stack two layers?
-        self.BLSTM = nn.LSTM(input_size=hidden_dim, hidden_size=hidden_dim, bidirectional=True, batch_first=True)
+        self.BLSTM = nn.LSTM(input_size=hidden_dim, hidden_size=hidden_dim, bidirectional=True, batch_first=True,
+                             num_layers=2)
 
-        self.key_linear = nn.Linear(hidden_dim * 2, attention_dim)  # output from bLSTM
-        self.value_linear = nn.Linear(hidden_dim * 2, value_dim)  # output from bLSTM
+        self.key_linear = nn.Linear(hidden_dim * 4, attention_dim)  # output from bLSTM
+        self.value_linear = nn.Linear(hidden_dim * 4, value_dim)  # output from bLSTM
 
-    def forward(self, input, frame_lens):
+    def forward(self, input, src_lens):
         # print(input.size())
-        # print(frame_lens)
+        # print(src_lens)
         embeddings = self.embedding(input)
         # print(embeddings.size())
-        packed = pack_padded_sequence(embeddings, frame_lens, batch_first=True)
+        packed = pack_padded_sequence(embeddings, src_lens, batch_first=True)
         output, h = self.BLSTM(packed)
         output, _ = pad_packed_sequence(output, batch_first=True)
 
@@ -174,13 +176,13 @@ class Decoder(nn.Module):
 
     # listener_feature (N, T, 256)
     # Yinput (N, L )
-    def forward(self, key, value, Yinput, max_len, training, frame_lens):
+    def forward(self, key, value, Yinput, max_len, training, src_lens):
 
         # Create a binary mask for attention (N, L)
-        frame_lens = np.array(frame_lens)
-        attention_mask = np.zeros((len(frame_lens), 1, np.max(frame_lens)))  # N, 1, L
-        for i in range(len(frame_lens)):
-            attention_mask[i, 0, :frame_lens[i]] = np.ones(frame_lens[i])
+        src_lens = np.array(src_lens)
+        attention_mask = np.zeros((len(src_lens), 1, np.max(src_lens)))  # N, 1, L
+        for i in range(len(src_lens)):
+            attention_mask[i, 0, :src_lens[i]] = np.ones(src_lens[i])
         attention_mask = to_variable(to_tensor(attention_mask))
 
         # INITIALIZATION
@@ -211,6 +213,8 @@ class Decoder(nn.Module):
                 label_embedding = self.embedding(Yinput[:, step])
             else:
                 label_embedding = self.embedding(pred_idx.squeeze()) # make sure size [N]
+
+            print(label_embedding.size(), context.size())
 
             rnn_input = torch.cat([label_embedding, context], dim=-1)
             pred, context, attention, prev_h, prev_c = \
@@ -336,6 +340,25 @@ def weights_init(layer):
         torch.nn.init.uniform(layer.weight_hh, -range, range)
 
 
+def compute_corpus_level_bleu_score(references, hypotheses):
+    """
+    Given decoding results and reference sentences, compute corpus-level BLEU score
+
+    Args:
+        references: a list of gold-standard reference target sentences
+        hypotheses: a list of hypotheses, one for each reference
+
+    Returns:
+        bleu_score: corpus-level BLEU score
+    """
+    if references[0][0] == '<s>':
+        references = [ref[1:-1] for ref in references]
+
+    bleu_score = corpus_bleu([[ref] for ref in references],
+                             hypotheses)
+
+    return bleu_score
+
 def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, decoder_state):
 
     vocab = pickle.load(open(data_path + 'vocab.bin', 'rb'))
@@ -347,10 +370,10 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
 
     print(len(train_dataset))
 
-    # dev_dataset = MyDataset('dev', vocab)
-    # dev_dataloader = torch.utils.data.DataLoader(dev_dataset, batch_size=1,
-    #                                                shuffle=False, collate_fn=my_collate)
-    #
+    dev_dataset = MyDataset('dev', vocab)
+    dev_dataloader = torch.utils.data.DataLoader(dev_dataset, batch_size=1,
+                                                   shuffle=False, collate_fn=my_collate)
+
     # test_dataset = TestDataset()
     # test_dataloader = torch.utils.data.DataLoader(test_dataset, batch_size=1, shuffle=False)
 
@@ -387,17 +410,17 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
         total = len(train_dataset) / batch_size
         interval = total // 1000
 
-        for (utterance, frame_lens, Yinput, Ytarget, transcript_lens) in train_dataloader:
+        for (src_sents, src_lens, Yinput, Ytarget, transcript_lens) in train_dataloader:
 
-            # print(utterance)
+            # print(src_sents)
 
-            actual_batch_size = len(frame_lens)
+            actual_batch_size = len(src_lens)
             count += 1
             optim.zero_grad()  # Reset the gradients
 
             # forward
-            key, value = encoder(to_variable(utterance), frame_lens)
-            pred_seq = decoder(key, value, to_variable(Yinput), Yinput.size(-1), True, frame_lens)
+            key, value = encoder(to_variable(src_sents), src_lens)
+            pred_seq = decoder(key, value, to_variable(Yinput), Yinput.size(-1), True, src_lens)
             # print('pred_seq', pred_seq.size())  # B, L, 33
             # print('Ytarget', Ytarget.size())  # B, L
 
@@ -429,41 +452,42 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
             scheduler.step()  # after train
 
             if count % interval == 0:
-                print('Train Loss: %.2f  Progress: %d%%' % (loss_np, count * 100 / total))
+                print('Train Loss: %.2f  Progress: %d%%' % (np.asscalar(np.mean(losses)), count * 100 / total))
 
         print("### Epoch {} Loss: {:.4f} ###".format(epoch, np.asscalar(np.mean(losses))))
 
         torch.save(encoder.state_dict(), '%s-encoder-e%d' % (name, epoch))
         torch.save(decoder.state_dict(), '%s-decoder-e%d' % (name, epoch))
 
-        # # # validation
-        # edit_distances = []
-        # for (utterance, frame_lens, Yinput, Ytarget, transcript_lens) in dev_dataloader:
-        #
-        #     actual_batch_size = len(frame_lens)
-        #     count += 1
-        #     assert actual_batch_size == 1
-        #
-        #     # forward
-        #     key, value = encoder(to_variable(utterance), frame_lens)
-        #     pred_seq = decoder(key, value, to_variable(Yinput), Yinput.size(-1), False, frame_lens)  # input prev pred
-        #     prediction = torch.max(pred_seq, dim=2)[1]
-        #
-        #     # TODO: evaluation
-        #
-        # print("Epoch {} validation edit distance: {:.4f}".format(epoch, np.asscalar(np.mean(edit_distances))))
+        # # validation
+        for (src_sents, src_lens, Yinput, Ytarget, transcript_lens) in dev_dataloader:
+
+            actual_batch_size = len(src_lens)
+            assert actual_batch_size == 1
+
+            # forward
+            key, value = encoder(to_variable(src_sents), src_lens)
+            pred_seq = decoder(key, value, to_variable(Yinput), Yinput.size(-1), False, src_lens)  # input prev pred
+            prediction = torch.max(pred_seq, dim=2)[1].cpu().data.numpy()
+
+            # print(prediction.shape)
+
+        # TODO: convert prediction indices to word list and compute corpus BLUE score.
+        bleu_score = 0
+
+        print("Epoch {} validation BLUE score: {:.4f}".format(epoch, bleu_score))
 
     # # test
     # index = 0
     # fout = open(name+'.csv', 'w')
     # fout.write('Id,Predicted\n')
-    # for utterance, frame_lens in test_dataloader:
+    # for src_sents, src_lens in test_dataloader:
     #     # input: np array
     #     # print('Yinput', Yinput.size())
     #
     #     # forward
-    #     key, value = encoder(to_variable(utterance), frame_lens.numpy().tolist())
-    #     pred_seq = decoder(key, value, None, None, False, frame_lens.numpy().tolist())
+    #     key, value = encoder(to_variable(src_sents), src_lens.numpy().tolist())
+    #     pred_seq = decoder(key, value, None, None, False, src_lens.numpy().tolist())
     #     pred_seq = pred_seq.cpu().data.numpy()  # B, L, 33
     #
     #     for b in range(pred_seq.shape[0]):
