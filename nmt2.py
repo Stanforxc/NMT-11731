@@ -128,7 +128,7 @@ class Encoder(nn.Module):
         output, h = self.BLSTM(packed)
         output, _ = pad_packed_sequence(output, batch_first=True)
 
-        print(output.size())
+        # print(output.size())
 
         key = ApplyPerTime(self.key_linear, output).transpose(1, 2)
         value = ApplyPerTime(self.value_linear, output)  # (N, L, 128)
@@ -410,7 +410,7 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
         count = -1
 
         total = len(train_dataset) / batch_size
-        interval = total // 1000
+        interval = total // 100
 
         for (src_sents, src_lens, Yinput, Ytarget, transcript_lens) in train_dataloader:
 
@@ -424,6 +424,7 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
             key, value = encoder(to_variable(src_sents), src_lens)
             pred_seq = decoder(key, value, to_variable(Yinput), Yinput.size(-1), True, src_lens)
             # print('pred_seq', pred_seq.size())  # B, L, 33
+            # print(pred_seq[0,0,:])
             # print('Ytarget', Ytarget.size())  # B, L
 
             pred_seq = pred_seq.resize(pred_seq.size(0) * pred_seq.size(1), tgt_vocab_size)
