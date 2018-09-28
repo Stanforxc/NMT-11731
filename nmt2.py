@@ -9,6 +9,7 @@ import sys
 import pickle
 from utils import read_corpus
 from vocab import Vocab, VocabEntry
+from nltk.translate.bleu_score import corpus_bleu
 
 
 '''
@@ -18,6 +19,7 @@ Dataset and Dataloader
 def my_collate(batch):
     batch_size = len(batch)
 
+    # sort by src sentence length
     tuples = [(tup[0].shape[0], tup[0], tup[1], tup[2]) for tup in batch]
     tuples.sort(key=lambda x: x[0], reverse=True)  # sort in descending order
 
@@ -33,9 +35,6 @@ def my_collate(batch):
 
     for i in range(batch_size):
         src_sent, Yinput, Ytarget = tuples[i][1:]
-
-        # print(frames.shape)
-        # print(Yinput.shape)
 
         src_len = src_sent.shape[0]
         tgt_len = Yinput.shape[0]
@@ -76,6 +75,8 @@ class MyDataset(torch.utils.data.Dataset):
         self.Yinput = []
         self.Ytarget = []
         for i in range(len(self.Y)):
+            # tgt seq input: <e> a b c
+            # tgt seq target:    a b c  </e>
             input, target = self.Y[i][:-1], self.Y[i][1:]
             self.Yinput.append(input)
             self.Ytarget.append(target)
@@ -114,19 +115,22 @@ class Encoder(nn.Module):
     def __init__(self, vocab_size, hidden_dim, attention_dim, value_dim):
         super(Encoder, self).__init__()
         self.embedding = nn.Embedding(num_embeddings=vocab_size, embedding_dim=hidden_dim)
-        self.BLSTM = nn.LSTM(input_size=hidden_dim, hidden_size=hidden_dim, bidirectional=True, batch_first=True)
+        self.BLSTM = nn.LSTM(input_size=hidden_dim, hidden_size=hidden_dim, bidirectional=True, batch_first=True,
+                             num_layers=1)
 
         self.key_linear = nn.Linear(hidden_dim * 2, attention_dim)  # output from bLSTM
         self.value_linear = nn.Linear(hidden_dim * 2, value_dim)  # output from bLSTM
 
-    def forward(self, input, frame_lens):
-        print(input.size())
-        print(frame_lens)
+    def forward(self, input, src_lens):
+        # print(input.size())
+        # print(src_lens)
         embeddings = self.embedding(input)
-        print(embeddings.size())
-        packed = pack_padded_sequence(embeddings, frame_lens, batch_first=True)
+        # print(embeddings.size())
+        packed = pack_padded_sequence(embeddings, src_lens, batch_first=True)
         output, h = self.BLSTM(packed)
         output, _ = pad_packed_sequence(output, batch_first=True)
+
+        # print(output.size())
 
         key = ApplyPerTime(self.key_linear, output).transpose(1, 2)
         value = ApplyPerTime(self.value_linear, output)  # (N, L, 128)
@@ -148,8 +152,8 @@ class Decoder(nn.Module):
 
         self.embedding = nn.Embedding(num_embeddings=vocab_size, embedding_dim=hidden_dim)
         self.cell1 = nn.LSTMCell(input_size=concat_dim, hidden_size=hidden_dim)
-        self.cell2 = nn.LSTMCell(input_size=hidden_dim, hidden_size=hidden_dim)
-        self.cell3 = nn.LSTMCell(input_size=hidden_dim, hidden_size=hidden_dim)
+        # self.cell2 = nn.LSTMCell(input_size=hidden_dim, hidden_size=hidden_dim)
+        # self.cell3 = nn.LSTMCell(input_size=hidden_dim, hidden_size=hidden_dim)
         self.attention = Attention(attention_dim, hidden_dim) # 128, 256
 
         # character projection
@@ -166,36 +170,27 @@ class Decoder(nn.Module):
 
         # initial states
         self.h00 = nn.Parameter(nn.init.xavier_uniform(torch.Tensor(1, self.hidden_dim).type(torch.FloatTensor)), requires_grad=True)
-        self.h01 = nn.Parameter(nn.init.xavier_uniform(torch.Tensor(1, self.hidden_dim).type(torch.FloatTensor)), requires_grad=True)
-        self.h02 = nn.Parameter(nn.init.xavier_uniform(torch.Tensor(1, self.hidden_dim).type(torch.FloatTensor)), requires_grad=True)
         self.c00 = nn.Parameter(nn.init.xavier_uniform(torch.Tensor(1, self.hidden_dim).type(torch.FloatTensor)), requires_grad=True)
-        self.c01 = nn.Parameter(nn.init.xavier_uniform(torch.Tensor(1, self.hidden_dim).type(torch.FloatTensor)), requires_grad=True)
-        self.c02 = nn.Parameter(nn.init.xavier_uniform(torch.Tensor(1, self.hidden_dim).type(torch.FloatTensor)), requires_grad=True)
-
         self.tf_rate = tf_rate
 
     # listener_feature (N, T, 256)
     # Yinput (N, L )
-    def forward(self, key, value, Yinput, max_len, training, frame_lens):
+    def forward(self, key, value, Yinput, max_len, training, src_lens):
 
         # Create a binary mask for attention (N, L)
-        frame_lens = np.array(frame_lens)
-        attention_mask = np.zeros((len(frame_lens), 1, np.max(frame_lens)))  # N, 1, L
-        for i in range(len(frame_lens)):
-            attention_mask[i, 0, :frame_lens[i]] = np.ones(frame_lens[i])
+        src_lens = np.array(src_lens)
+        attention_mask = np.zeros((len(src_lens), 1, np.max(src_lens)))  # N, 1, L
+        for i in range(len(src_lens)):
+            attention_mask[i, 0, :src_lens[i]] = np.ones(src_lens[i])
         attention_mask = to_variable(to_tensor(attention_mask))
 
         # INITIALIZATION
         batch_size = key.size()[0]  # train: N; test: 1
 
-        _, context = self.attention(key, value, self.h02.expand(batch_size, self.hidden_dim).contiguous(), attention_mask)
+        _, context = self.attention(key, value, self.h00.expand(batch_size, self.hidden_dim).contiguous(), attention_mask)
         # common initial hidden and cell states for LSTM cells
-        prev_h = (self.h00.expand(batch_size, self.hidden_dim).contiguous(),
-                  self.h01.expand(batch_size, self.hidden_dim).contiguous(),
-                  self.h02.expand(batch_size, self.hidden_dim).contiguous())
-        prev_c = (self.c00.expand(batch_size, self.hidden_dim).contiguous(),
-                  self.c01.expand(batch_size, self.hidden_dim).contiguous(),
-                  self.c02.expand(batch_size, self.hidden_dim).contiguous())
+        prev_h = self.h00.expand(batch_size, self.hidden_dim).contiguous()
+        prev_c = self.c00.expand(batch_size, self.hidden_dim).contiguous()
 
         pred_seq = None
         pred_idx = to_variable(torch.zeros(batch_size).long())  # size [N] batch size = 1 for test
@@ -214,6 +209,8 @@ class Decoder(nn.Module):
             else:
                 label_embedding = self.embedding(pred_idx.squeeze()) # make sure size [N]
 
+            # print(label_embedding.size(), context.size())
+
             rnn_input = torch.cat([label_embedding, context], dim=-1)
             pred, context, attention, prev_h, prev_c = \
                 self.forward_step(rnn_input, key, value, prev_h, prev_c, attention_mask)
@@ -221,7 +218,7 @@ class Decoder(nn.Module):
 
             # label index for the next loop
             pred_idx = torch.max(pred, dim=2)[1]  # argmax size [1, 1]
-            if not training and pred_idx.cpu().data.numpy() == 0:
+            if not training and pred_idx.cpu().data.numpy() == 2:  # TODO: 2 is the index for eos char
                 break  # end of sentence
 
             # add to the prediction if not eos
@@ -234,17 +231,15 @@ class Decoder(nn.Module):
 
     def forward_step(self, concat, key, value, prev_h, prev_c, attention_mask):
 
-        h1, c1 = self.cell1(concat, (prev_h[0], prev_c[0]))
-        h2, c2 = self.cell2(h1, (prev_h[1], prev_c[1]))
-        h3, c3 = self.cell3(h2, (prev_h[2], prev_c[2]))
+        h1, c1 = self.cell1(concat, (prev_h, prev_c))
 
-        attention, context = self.attention(key, value, h3, attention_mask)
-        concat = torch.cat([h3, context], dim=1)  # (N, decoder_dim + values_dim)
+        attention, context = self.attention(key, value, h1, attention_mask)
+        concat = torch.cat([c1, context], dim=1)  # (N, decoder_dim + values_dim)
 
         projection = self.character_projection(self.relu(self.mlp(concat)))
         pred = self.softmax(projection)
 
-        return pred, context, attention, (h1, h2, h3), (c1, c2, c3)
+        return pred, context, attention, h1, c1
 
 
 # helper function to apply layers for each timestep
@@ -338,6 +333,25 @@ def weights_init(layer):
         torch.nn.init.uniform(layer.weight_hh, -range, range)
 
 
+def compute_corpus_level_bleu_score(references, hypotheses):
+    """
+    Given decoding results and reference sentences, compute corpus-level BLEU score
+
+    Args:
+        references: a list of gold-standard reference target sentences
+        hypotheses: a list of hypotheses, one for each reference
+
+    Returns:
+        bleu_score: corpus-level BLEU score
+    """
+    if references[0][0] == '<s>':
+        references = [ref[1:-1] for ref in references]
+
+    bleu_score = corpus_bleu([[ref] for ref in references],
+                             hypotheses)
+
+    return bleu_score
+
 def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, decoder_state):
 
     vocab = pickle.load(open(data_path + 'vocab.bin', 'rb'))
@@ -349,10 +363,10 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
 
     print(len(train_dataset))
 
-    # dev_dataset = MyDataset('dev', vocab)
-    # dev_dataloader = torch.utils.data.DataLoader(dev_dataset, batch_size=1,
-    #                                                shuffle=False, collate_fn=my_collate)
-    #
+    dev_dataset = MyDataset('dev', vocab)
+    dev_dataloader = torch.utils.data.DataLoader(dev_dataset, batch_size=1,
+                                                   shuffle=False, collate_fn=my_collate)
+
     # test_dataset = TestDataset()
     # test_dataloader = torch.utils.data.DataLoader(test_dataset, batch_size=1, shuffle=False)
 
@@ -387,20 +401,21 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
         count = -1
 
         total = len(train_dataset) / batch_size
-        interval = total // 10
+        interval = total // 100
 
-        for (utterance, frame_lens, Yinput, Ytarget, transcript_lens) in train_dataloader:
+        for (src_sents, src_lens, Yinput, Ytarget, transcript_lens) in train_dataloader:
 
-            print(utterance)
+            # print(src_sents)
 
-            actual_batch_size = len(frame_lens)
+            actual_batch_size = len(src_lens)
             count += 1
             optim.zero_grad()  # Reset the gradients
 
             # forward
-            key, value = encoder(to_variable(utterance), frame_lens)
-            pred_seq = decoder(key, value, to_variable(Yinput), Yinput.size(-1), True, frame_lens)
+            key, value = encoder(to_variable(src_sents), src_lens)
+            pred_seq = decoder(key, value, to_variable(Yinput), Yinput.size(-1), True, src_lens)
             # print('pred_seq', pred_seq.size())  # B, L, 33
+            # print(pred_seq[0,0,:])
             # print('Ytarget', Ytarget.size())  # B, L
 
             pred_seq = pred_seq.resize(pred_seq.size(0) * pred_seq.size(1), tgt_vocab_size)
@@ -422,52 +437,51 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
             loss_np = loss.data.cpu().numpy()
             losses.append(loss_np)
 
-            print(loss_np)
-
             # clip gradients
-            torch.nn.utils.clip_grad_norm_(encoder.parameters(), 0.25)  # todo: tune???
-            torch.nn.utils.clip_grad_norm_(decoder.parameters(), 0.25)
+            torch.nn.utils.clip_grad_norm_(encoder.parameters(), 0.5)  # todo: tune???
+            torch.nn.utils.clip_grad_norm_(decoder.parameters(), 0.5)
 
             # UPDATE THE NETWORK!!!
             optim.step()
             scheduler.step()  # after train
 
             if count % interval == 0:
-                print('Train Loss: %.2f  Progress: %d%%' % (loss_np, count * 100 / total))
+                print('Train Loss: %.2f  Progress: %d%%' % (np.asscalar(np.mean(losses)), count * 100 / total))
 
         print("### Epoch {} Loss: {:.4f} ###".format(epoch, np.asscalar(np.mean(losses))))
 
         torch.save(encoder.state_dict(), '%s-encoder-e%d' % (name, epoch))
         torch.save(decoder.state_dict(), '%s-decoder-e%d' % (name, epoch))
 
-        # # # validation
-        # edit_distances = []
-        # for (utterance, frame_lens, Yinput, Ytarget, transcript_lens) in dev_dataloader:
-        #
-        #     actual_batch_size = len(frame_lens)
-        #     count += 1
-        #     assert actual_batch_size == 1
-        #
-        #     # forward
-        #     key, value = encoder(to_variable(utterance), frame_lens)
-        #     pred_seq = decoder(key, value, to_variable(Yinput), Yinput.size(-1), False, frame_lens)  # input prev pred
-        #     prediction = torch.max(pred_seq, dim=2)[1]
-        #
-        #     # TODO: evaluation
-        #
-        # print("Epoch {} validation edit distance: {:.4f}".format(epoch, np.asscalar(np.mean(edit_distances))))
+        # # validation
+        for (src_sents, src_lens, Yinput, Ytarget, transcript_lens) in dev_dataloader:
+
+            actual_batch_size = len(src_lens)
+            assert actual_batch_size == 1
+
+            # forward
+            key, value = encoder(to_variable(src_sents), src_lens)
+            pred_seq = decoder(key, value, to_variable(Yinput), Yinput.size(-1), False, src_lens)  # input prev pred
+            prediction = torch.max(pred_seq, dim=2)[1].cpu().data.numpy()
+
+            # print(prediction.shape)
+
+        # TODO: convert prediction indices to word list and compute corpus BLUE score.
+        bleu_score = 0
+
+        print("Epoch {} validation BLUE score: {:.4f}".format(epoch, bleu_score))
 
     # # test
     # index = 0
     # fout = open(name+'.csv', 'w')
     # fout.write('Id,Predicted\n')
-    # for utterance, frame_lens in test_dataloader:
+    # for src_sents, src_lens in test_dataloader:
     #     # input: np array
     #     # print('Yinput', Yinput.size())
     #
     #     # forward
-    #     key, value = encoder(to_variable(utterance), frame_lens.numpy().tolist())
-    #     pred_seq = decoder(key, value, None, None, False, frame_lens.numpy().tolist())
+    #     key, value = encoder(to_variable(src_sents), src_lens.numpy().tolist())
+    #     pred_seq = decoder(key, value, None, None, False, src_lens.numpy().tolist())
     #     pred_seq = pred_seq.cpu().data.numpy()  # B, L, 33
     #
     #     for b in range(pred_seq.shape[0]):
@@ -486,5 +500,5 @@ if len(sys.argv) == 3:
     encoder_state = sys.argv[1]
     decoder_state = sys.argv[2]
 
-train_model(batch_size=32, epochs=5, learn_rate=1e-4, name='try13f', tf_rate=1,
+train_model(batch_size=32, epochs=5, learn_rate=1e-4, name='beta0', tf_rate=1,
             encoder_state=encoder_state, decoder_state=decoder_state)
