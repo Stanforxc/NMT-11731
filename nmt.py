@@ -142,6 +142,7 @@ class NMT(object):
         for step, step_output in enumerate(decoder_outputs):
             batch_size = tgt_input.size(0)
             loss.eval_batch(step_output.contiguous().view(batch_size, -1), tgt_target[:, step])
+        self.optimizer.zero_grad()
         loss.backward()
         self.optimizer.step()
 
