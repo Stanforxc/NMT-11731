@@ -112,9 +112,8 @@ class Encoder(nn.Module):
     def __init__(self, vocab_size, hidden_dim, attention_dim, value_dim):
         super(Encoder, self).__init__()
         self.embedding = nn.Embedding(num_embeddings=vocab_size, embedding_dim=hidden_dim)
-        # TODO: stack two layers?
         self.BLSTM = nn.LSTM(input_size=hidden_dim, hidden_size=hidden_dim, bidirectional=True, batch_first=True,
-                             num_layers=2)
+                             num_layers=1)
 
         self.key_linear = nn.Linear(hidden_dim * 2, attention_dim)  # output from bLSTM
         self.value_linear = nn.Linear(hidden_dim * 2, value_dim)  # output from bLSTM
@@ -150,8 +149,8 @@ class Decoder(nn.Module):
 
         self.embedding = nn.Embedding(num_embeddings=vocab_size, embedding_dim=hidden_dim)
         self.cell1 = nn.LSTMCell(input_size=concat_dim, hidden_size=hidden_dim)
-        self.cell2 = nn.LSTMCell(input_size=hidden_dim, hidden_size=hidden_dim)
-        self.cell3 = nn.LSTMCell(input_size=hidden_dim, hidden_size=hidden_dim)
+        # self.cell2 = nn.LSTMCell(input_size=hidden_dim, hidden_size=hidden_dim)
+        # self.cell3 = nn.LSTMCell(input_size=hidden_dim, hidden_size=hidden_dim)
         self.attention = Attention(attention_dim, hidden_dim) # 128, 256
 
         # character projection
@@ -168,12 +167,7 @@ class Decoder(nn.Module):
 
         # initial states
         self.h00 = nn.Parameter(nn.init.xavier_uniform(torch.Tensor(1, self.hidden_dim).type(torch.FloatTensor)), requires_grad=True)
-        self.h01 = nn.Parameter(nn.init.xavier_uniform(torch.Tensor(1, self.hidden_dim).type(torch.FloatTensor)), requires_grad=True)
-        self.h02 = nn.Parameter(nn.init.xavier_uniform(torch.Tensor(1, self.hidden_dim).type(torch.FloatTensor)), requires_grad=True)
         self.c00 = nn.Parameter(nn.init.xavier_uniform(torch.Tensor(1, self.hidden_dim).type(torch.FloatTensor)), requires_grad=True)
-        self.c01 = nn.Parameter(nn.init.xavier_uniform(torch.Tensor(1, self.hidden_dim).type(torch.FloatTensor)), requires_grad=True)
-        self.c02 = nn.Parameter(nn.init.xavier_uniform(torch.Tensor(1, self.hidden_dim).type(torch.FloatTensor)), requires_grad=True)
-
         self.tf_rate = tf_rate
 
     # listener_feature (N, T, 256)
@@ -190,14 +184,10 @@ class Decoder(nn.Module):
         # INITIALIZATION
         batch_size = key.size()[0]  # train: N; test: 1
 
-        _, context = self.attention(key, value, self.h02.expand(batch_size, self.hidden_dim).contiguous(), attention_mask)
+        _, context = self.attention(key, value, self.h00.expand(batch_size, self.hidden_dim).contiguous(), attention_mask)
         # common initial hidden and cell states for LSTM cells
-        prev_h = (self.h00.expand(batch_size, self.hidden_dim).contiguous(),
-                  self.h01.expand(batch_size, self.hidden_dim).contiguous(),
-                  self.h02.expand(batch_size, self.hidden_dim).contiguous())
-        prev_c = (self.c00.expand(batch_size, self.hidden_dim).contiguous(),
-                  self.c01.expand(batch_size, self.hidden_dim).contiguous(),
-                  self.c02.expand(batch_size, self.hidden_dim).contiguous())
+        prev_h = self.h00.expand(batch_size, self.hidden_dim).contiguous()
+        prev_c = self.c00.expand(batch_size, self.hidden_dim).contiguous()
 
         pred_seq = None
         pred_idx = to_variable(torch.zeros(batch_size).long())  # size [N] batch size = 1 for test
@@ -225,7 +215,7 @@ class Decoder(nn.Module):
 
             # label index for the next loop
             pred_idx = torch.max(pred, dim=2)[1]  # argmax size [1, 1]
-            if not training and pred_idx.cpu().data.numpy() == 2:  # TODO: double-check end of sentence char
+            if not training and pred_idx.cpu().data.numpy() == 2:  # TODO: 2 is the index for eos char
                 break  # end of sentence
 
             # add to the prediction if not eos
@@ -238,17 +228,15 @@ class Decoder(nn.Module):
 
     def forward_step(self, concat, key, value, prev_h, prev_c, attention_mask):
 
-        h1, c1 = self.cell1(concat, (prev_h[0], prev_c[0]))
-        h2, c2 = self.cell2(h1, (prev_h[1], prev_c[1]))
-        h3, c3 = self.cell3(h2, (prev_h[2], prev_c[2]))
+        h1, c1 = self.cell1(concat, (prev_h, prev_c))
 
-        attention, context = self.attention(key, value, h3, attention_mask)
-        concat = torch.cat([h3, context], dim=1)  # (N, decoder_dim + values_dim)
+        attention, context = self.attention(key, value, h1, attention_mask)
+        concat = torch.cat([c1, context], dim=1)  # (N, decoder_dim + values_dim)
 
         projection = self.character_projection(self.relu(self.mlp(concat)))
         pred = self.softmax(projection)
 
-        return pred, context, attention, (h1, h2, h3), (c1, c2, c3)
+        return pred, context, attention, h1, c1
 
 
 # helper function to apply layers for each timestep
