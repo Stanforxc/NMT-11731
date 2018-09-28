@@ -309,7 +309,7 @@ def train(args):
             batch_size = len(src_sents)
 
             # (batch_size)
-            loss = -model(src_sents, tgt_sents)
+            loss = model(src_sents, tgt_sents)
 
 
 
