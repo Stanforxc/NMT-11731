@@ -31,3 +31,8 @@ python vocab.py --train-src=data/train.de-en.de.wmixerprep --train-tgt=data/trai
 This generates a vocabulary file `data/vocab.bin`. The script also has options to control the cutoff frequency and the size of generated vocabulary, which you may play with.
 
 For training and decoding/testing, you may refer to `data/train.sh`. Note that in the training script we set the values of some hyper parameters. They are not guaranteed to be the best hyper-parameters, and you are free to play with them. After training and decoding, we call the official evaluation script `multi-bleu.perl` to compute the corpus-level BLEU score of the decoding results against the gold-standard.
+
+
+### test run command
+
+python nmt.py train --train-src=data/train.de-en.en.wmixerprep --train-tgt=data/train.de-en.de.wmixerprep --dev-src=data/valid.de-en.en.wmixerprep --dev-tgt=data/train.de-en.de.wmixerprep --vocab=data/vocab.bin --batch-size=64
