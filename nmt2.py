@@ -116,8 +116,8 @@ class Encoder(nn.Module):
         self.BLSTM = nn.LSTM(input_size=hidden_dim, hidden_size=hidden_dim, bidirectional=True, batch_first=True,
                              num_layers=2)
 
-        self.key_linear = nn.Linear(hidden_dim * 4, attention_dim)  # output from bLSTM
-        self.value_linear = nn.Linear(hidden_dim * 4, value_dim)  # output from bLSTM
+        self.key_linear = nn.Linear(hidden_dim * 2, attention_dim)  # output from bLSTM
+        self.value_linear = nn.Linear(hidden_dim * 2, value_dim)  # output from bLSTM
 
     def forward(self, input, src_lens):
         # print(input.size())
@@ -127,6 +127,8 @@ class Encoder(nn.Module):
         packed = pack_padded_sequence(embeddings, src_lens, batch_first=True)
         output, h = self.BLSTM(packed)
         output, _ = pad_packed_sequence(output, batch_first=True)
+
+        print(output.size())
 
         key = ApplyPerTime(self.key_linear, output).transpose(1, 2)
         value = ApplyPerTime(self.value_linear, output)  # (N, L, 128)
@@ -214,7 +216,7 @@ class Decoder(nn.Module):
             else:
                 label_embedding = self.embedding(pred_idx.squeeze()) # make sure size [N]
 
-            print(label_embedding.size(), context.size())
+            # print(label_embedding.size(), context.size())
 
             rnn_input = torch.cat([label_embedding, context], dim=-1)
             pred, context, attention, prev_h, prev_c = \
