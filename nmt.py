@@ -77,6 +77,7 @@ class NMT(object):
         self.decoder = Decoder(nvocab_tgt, 2*hidden_size, embed_size, n_layers=1)
         LAS_params = list(self.encoder.parameters()) + list(self.decoder.parameters())
         self.optimizer = optim.Adam(LAS_params, lr=0.01)
+        self.scheduler = torch.optim.lr_scheduler.StepLR(self.optimizer, step_size=1, gamma=0.5)
         weight = torch.ones(nvocab_tgt)
         self.loss = Perplexity(weight, 0)
 
@@ -184,7 +185,7 @@ class NMT(object):
 
         return decoder_outputs, scores
 
-
+    # TODO: sent_padding for only src
     # def beam_search(self, src_sent: List[str], beam_size: int=5, max_decoding_time_step: int=70) -> List[Hypothesis]:
     def beam_search(self, src_sent, beam_size, max_decoding_time_step):
         """
@@ -200,6 +201,7 @@ class NMT(object):
                 value: List[str]: the decoded target sentence, represented as a list of words
                 score: float: the log-likelihood of the target sentence
         """
+
         hypotheses = 0
         return hypotheses
     
@@ -223,7 +225,10 @@ class NMT(object):
         # by the NN library to signal the backend to not to keep gradient information
         # e.g., `torch.no_grad()`
 
+        ref_corpus = []
+        hyp_corpus = []
         for src_sents, tgt_sents in batch_iter(dev_data, batch_size):
+            ref_corpus.extend(tgt_sents)
             src_sents = self.vocab.src.words2indices(src_sents)
             tgt_sents = self.vocab.tgt.words2indices(tgt_sents)
             src_sents, src_len, y_input, y_tgt, tgt_len = sent_padding(src_sents, tgt_sents)
@@ -232,10 +237,32 @@ class NMT(object):
             cum_loss += loss
             count += 1
 
+            # decoder outputs to word sequence
+            hyp_np = np.zeros((batch_size, len(decoder_outputs), len(self.vocab.tgt)))
+
+            for step in range(len(decoder_outputs)):
+                hyp_np[:, step, :] = decoder_outputs[step].cpu().data.numpy()
+            # print(hyp_np.shape)
+
+            # converting softmax to word string
+            for b in range(hyp_np.shape[0]):
+                word_seq = []
+                for step in range(hyp_np.shape[1]):
+                    pred_idx = np.argmax(hyp_np[b,step,:])
+                    # print(pred_idx)
+                    if pred_idx == self.vocab.tgt.word2id['</s>']:
+                        break
+                    word_seq.append(self.vocab.tgt.id2word[pred_idx])
+                hyp_corpus.append(word_seq)
+
             # tgt_word_num_to_predict = sum(len(s[1:]) for s in tgt_sents)  # omitting the leading `<s>`
             # cum_tgt_words += tgt_word_num_to_predict
 
         # ppl = np.exp(cum_loss / cum_tgt_words)
+        print(ref_corpus)
+        print(hyp_corpus)
+        bleu = compute_corpus_level_bleu_score(ref_corpus, hyp_corpus)
+        print('bleu score: ', bleu)
 
         return cum_loss / count
 
@@ -308,8 +335,10 @@ def compute_corpus_level_bleu_score(references, hypotheses):
     if references[0][0] == '<s>':
         references = [ref[1:-1] for ref in references]
 
-    bleu_score = corpus_bleu([[ref] for ref in references],
-                             [hyp.value for hyp in hypotheses])
+    bleu_score = corpus_bleu([[ref] for ref in references], hypotheses)
+
+    # bleu_score = corpus_bleu([[ref] for ref in references],
+    #                          [hyp.value for hyp in hypotheses])
 
     return bleu_score
 
@@ -347,7 +376,7 @@ def train(args):
     train_time = begin_time = time.time()
     print('begin Maximum Likelihood training')
 
-    # train_iter = -1
+    train_iter = -1
 
     while True:
         epoch += 1
@@ -426,8 +455,8 @@ def train(args):
                             exit(0)
 
                         # decay learning rate, and restore from previously best checkpoint
-                        lr = lr * float(args['--lr-decay'])
-                        print('load previously best model and decay learning rate to %f' % lr, file=sys.stderr)
+                        model.scheduler.step()
+                        print('load previously best model and decay learning rate by half', file=sys.stderr)
 
                         # load model
                         model.load(model_save_path)
