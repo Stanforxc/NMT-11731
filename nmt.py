@@ -242,7 +242,7 @@ class NMT(object):
 
             for step in range(len(decoder_outputs)):
                 tmp = decoder_outputs[step].cpu().data.numpy()
-                print(tmp.shape)
+                # print(tmp.shape)
                 hyp_np[:, step, :] = tmp
             # print(hyp_np.shape)
 
