@@ -238,7 +238,7 @@ class NMT(object):
             count += 1
 
             # decoder outputs to word sequence
-            hyp_np = np.zeros((batch_size, len(decoder_outputs), len(self.vocab.tgt)))
+            hyp_np = np.zeros((len(tgt_sents), len(decoder_outputs), len(self.vocab.tgt)))
 
             for step in range(len(decoder_outputs)):
                 tmp = decoder_outputs[step].cpu().data.numpy()
@@ -261,8 +261,10 @@ class NMT(object):
             # cum_tgt_words += tgt_word_num_to_predict
 
         # ppl = np.exp(cum_loss / cum_tgt_words)
-        print(ref_corpus)
-        print(hyp_corpus)
+        for r, h in zip(ref_corpus, hyp_corpus):
+            print(r)
+            print(h)
+            print()
         bleu = compute_corpus_level_bleu_score(ref_corpus, hyp_corpus)
         print('bleu score: ', bleu)
 
