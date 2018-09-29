@@ -35,6 +35,10 @@ For training and decoding/testing, you may refer to `data/train.sh`. Note that i
 
 ### test run command
 
+<<<<<<< HEAD
 ```[bash]
 python nmt.py train --train-src=data/train.de-en.en.wmixerprep --train-tgt=data/train.de-en.de.wmixerprep --dev-src=data/valid.de-en.en.wmixerprep --dev-tgt=data/train.de-en.de.wmixerprep --vocab=data/vocab.bin --batch-size=64
 ```
+=======
+python nmt.py train --train-src=data/train.de-en.en.wmixerprep --train-tgt=data/train.de-en.de.wmixerprep --dev-src=data/valid.de-en.en.wmixerprep --dev-tgt=data/valid.de-en.de.wmixerprep --vocab=data/vocab.bin --batch-size=64
+>>>>>>> 9ad4da9ddf768fa00a3562747a2b09bbdc79f5e4
