@@ -144,6 +144,8 @@ class NMT(object):
                 log-likelihood of generating the gold-standard target sentence for 
                 each example in the input batch
         """
+        self.optimizer.zero_grad()
+
         tgt_input,tgt_target = tgt_sents
         decoder_outputs, decoder_hidden = self.decoder(tgt_input, decoder_init_state, src_encodings)
         loss = self.loss
@@ -151,7 +153,7 @@ class NMT(object):
         for step, step_output in enumerate(decoder_outputs):
             batch_size = tgt_input.size(0)
             loss.eval_batch(step_output.contiguous().view(batch_size, -1), tgt_target[:, step])
-        self.optimizer.zero_grad()
+
         loss.backward()
         self.optimizer.step()
 
@@ -381,8 +383,6 @@ def train(args):
     hist_valid_scores = []
     train_time = begin_time = time.time()
     print('begin Maximum Likelihood training')
-
-    train_iter = -1
 
     while True:
         epoch += 1
