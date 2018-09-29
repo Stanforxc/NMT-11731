@@ -7,7 +7,7 @@ from attention import Attention
 import numpy as np
 
 class Decoder(BaseCoder):
-    def __init__(self, vocab_size, hidden_size, embedding_size, input_dropout=0, output_dropout=0.0, n_layers=1, bidirectional=False,rnn="lstm"):
+    def __init__(self, vocab_size, hidden_size, embedding_size, input_dropout=0.0, output_dropout=0.0, n_layers=1, bidirectional=False,rnn="lstm"):
         super(Decoder,self).__init__(vocab_size, hidden_size,embedding_size,input_dropout,output_dropout, n_layers, rnn)
         self.rnn = self.baseModel(input_size=embedding_size, hidden_size=hidden_size, num_layers=n_layers, 
                     batch_first=True,dropout=output_dropout)

@@ -73,8 +73,8 @@ class NMT(object):
         nvocab_src = len(vocab.src)
         nvocab_tgt = len(vocab.tgt)
         self.vocab = vocab
-        self.encoder = Encoder(nvocab_src, hidden_size, embed_size,  n_layers=1)
-        self.decoder = Decoder(nvocab_tgt, 2*hidden_size, embed_size, n_layers=1)
+        self.encoder = Encoder(nvocab_src, hidden_size, embed_size, input_dropout=dropout_rate, n_layers=2)
+        self.decoder = Decoder(nvocab_tgt, 2*hidden_size, embed_size,output_dropout=dropout_rate, n_layers=2)
         LAS_params = list(self.encoder.parameters()) + list(self.decoder.parameters())
         self.optimizer = optim.Adam(LAS_params, lr=0.01)
         weight = torch.ones(nvocab_tgt)
