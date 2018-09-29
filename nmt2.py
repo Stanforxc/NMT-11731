@@ -375,8 +375,8 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
     decoder = Decoder(vocab_size=tgt_vocab_size, hidden_dim=256, attention_dim=128, value_dim=256, tf_rate=tf_rate)
 
     # Initialize weights
-    encoder.apply(weights_init)
-    decoder.apply(weights_init)
+    # encoder.apply(weights_init)
+    # decoder.apply(weights_init)
 
     # [optional] load state dicts
     if encoder_state and decoder_state:
@@ -401,7 +401,7 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
         count = -1
 
         total = len(train_dataset) / batch_size
-        interval = total // 100
+        interval = total // 1000
 
         for (src_sents, src_lens, Yinput, Ytarget, transcript_lens) in train_dataloader:
 
@@ -438,8 +438,8 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
             losses.append(loss_np)
 
             # clip gradients
-            torch.nn.utils.clip_grad_norm_(encoder.parameters(), 0.5)  # todo: tune???
-            torch.nn.utils.clip_grad_norm_(decoder.parameters(), 0.5)
+            # torch.nn.utils.clip_grad_norm_(encoder.parameters(), 0.5)  # todo: tune???
+            # torch.nn.utils.clip_grad_norm_(decoder.parameters(), 0.5)
 
             # UPDATE THE NETWORK!!!
             optim.step()
@@ -500,5 +500,5 @@ if len(sys.argv) == 3:
     encoder_state = sys.argv[1]
     decoder_state = sys.argv[2]
 
-train_model(batch_size=32, epochs=5, learn_rate=1e-4, name='beta0', tf_rate=1,
+train_model(batch_size=32, epochs=5, learn_rate=1e-4, name='beta0', tf_rate=0,
             encoder_state=encoder_state, decoder_state=decoder_state)
