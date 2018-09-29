@@ -438,8 +438,8 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
             losses.append(loss_np)
 
             # clip gradients
-            # torch.nn.utils.clip_grad_norm_(encoder.parameters(), 0.5)  # todo: tune???
-            # torch.nn.utils.clip_grad_norm_(decoder.parameters(), 0.5)
+            torch.nn.utils.clip_grad_value_(encoder.parameters(), 5.)  # todo: tune???
+            torch.nn.utils.clip_grad_value_(decoder.parameters(), 5.)
 
             # UPDATE THE NETWORK!!!
             optim.step()
@@ -500,5 +500,5 @@ if len(sys.argv) == 3:
     encoder_state = sys.argv[1]
     decoder_state = sys.argv[2]
 
-train_model(batch_size=32, epochs=5, learn_rate=1e-4, name='beta0', tf_rate=0,
+train_model(batch_size=32, epochs=5, learn_rate=1e-2, name='beta0', tf_rate=0,
             encoder_state=encoder_state, decoder_state=decoder_state)
