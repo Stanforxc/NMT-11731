@@ -84,6 +84,7 @@ class NMT(object):
             # Move the network and the optimizer to the GPU
             self.encoder = self.encoder.cuda()
             self.decoder = self.decoder.cuda()
+            self.loss.cuda()
 
 
     def __call__(self, src_sents, tgt_sents):
