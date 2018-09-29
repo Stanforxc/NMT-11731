@@ -82,7 +82,7 @@ class NMT(object):
 
         if torch.cuda.is_available():
             # Move the network and the optimizer to the GPU
-            self.encoder = self.encoderder.cuda()
+            self.encoder = self.encoder.cuda()
             self.decoder = self.decoder.cuda()
 
 
