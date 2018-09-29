@@ -331,7 +331,7 @@ def train(args):
     log_every = int(args['--log-every'])
     # model_save_path = args['--save-to']
     model_save_path = 'model'
-    valid_niter = 10
+    valid_niter = 100
 
     vocab = pickle.load(open(args['--vocab'], 'rb'))
 
