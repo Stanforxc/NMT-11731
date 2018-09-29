@@ -80,6 +80,11 @@ class NMT(object):
         weight = torch.ones(nvocab_tgt)
         self.loss = Perplexity(weight, 0)
 
+        if torch.cuda.is_available():
+            # Move the network and the optimizer to the GPU
+            self.encoder = self.encoderder.cuda()
+            self.decoder = self.decoder.cuda()
+
 
     def __call__(self, src_sents, tgt_sents):
         """
@@ -234,22 +239,25 @@ class NMT(object):
         return cum_loss / count
 
     # @staticmethod
-    # def load(model_path: str):
-    #     """
-    #     Load a pre-trained model
+    def load(self, model_path):
 
-    #     Returns:
-    #         model: the loaded model
-    #     """
+        self.encoder.load_state_dict(torch.load(model_path + '-encoder'))
+        self.decoder.load_state_dict(torch.load(model_path + '-decoder'))
 
-    #     return model
+    def save(self, model_save_path):
+        """
+        Save current model to file
+        """
+        torch.save(self.encoder.state_dict(), model_save_path + '-encoder')
+        torch.save(self.decoder.state_dict(), model_save_path + '-decoder')
 
-    # def save(self, path: str):
-    #     """
-    #     Save current model to file
-    #     """
 
-    #     raise NotImplementedError()
+def to_cuda(tensor):
+    # Tensor -> Variable (on GPU if possible)
+    if torch.cuda.is_available():
+    # Tensor -> GPU Tensor
+        tensor = tensor.cuda()
+    return tensor
 
 
 def sent_padding(src_sents, tgt_sents):
@@ -280,8 +288,8 @@ def sent_padding(src_sents, tgt_sents):
         src_lens.append(src_len)
         tgt_lens.append(tgt_len)
 
-    return torch.LongTensor(padded_src_sents), src_lens, \
-           torch.LongTensor(padded_Yinput), torch.LongTensor(padded_Ytarget), tgt_lens
+    return to_cuda(torch.LongTensor(padded_src_sents)), src_lens, \
+           to_cuda(torch.LongTensor(padded_Yinput)), to_cuda(torch.LongTensor(padded_Ytarget)), tgt_lens
 
 
 # def compute_corpus_level_bleu_score(references: List[List[str]], hypotheses: List[Hypothesis]) -> float:
@@ -318,9 +326,11 @@ def train(args):
 
     train_batch_size = int(args['--batch-size'])
     clip_grad = float(args['--clip-grad'])
-    valid_niter = int(args['--valid-niter'])
+    # valid_niter = int(args['--valid-niter'])
     log_every = int(args['--log-every'])
-    model_save_path = args['--save-to']
+    # model_save_path = args['--save-to']
+    model_save_path = 'model'
+    valid_niter = 10
 
     vocab = pickle.load(open(args['--vocab'], 'rb'))
 
@@ -400,8 +410,7 @@ def train(args):
                 if is_better:
                     patience = 0
                     print('save currently the best model to [%s]' % model_save_path, file=sys.stderr)
-                    torch.save(model.encoder.state_dict(), model_save_path + 'encoder')
-                    torch.save(model.decoder.state_dict(), model_save_path + 'decoder')
+                    model.save(model_save_path)
 
                     # You may also save the optimizer's state
                 elif patience < int(args['--patience']):
@@ -420,8 +429,7 @@ def train(args):
                         print('load previously best model and decay learning rate to %f' % lr, file=sys.stderr)
 
                         # load model
-                        model.encoder.load_state_dict(torch.load(model_save_path + 'encoder'))
-                        model.decoder.load_state_dict(torch.load(model_save_path + 'decoder'))
+                        model.load(model_save_path)
 
                         print('restore parameters of the optimizers', file=sys.stderr)
                         # You may also need to load the state of the optimizer saved before
