@@ -150,6 +150,35 @@ class NMT(object):
 
         return scores
 
+
+    def decode_without_bp(self, src_encodings, decoder_init_state, tgt_sents):
+        """
+        Given source encodings, compute the log-likelihood of predicting the gold-standard target
+        sentence tokens
+
+        Args:
+            src_encodings: hidden states of tokens in source sentences
+            decoder_init_state: decoder GRU/LSTM's initial state
+            tgt_sents: list of gold-standard target sentences, wrapped by `<s>` and `</s>`
+
+        Returns:
+            scores: could be a variable of shape (batch_size, ) representing the
+                log-likelihood of generating the gold-standard target sentence for
+                each example in the input batch
+        """
+        tgt_input,tgt_target = tgt_sents
+        decoder_outputs, decoder_hidden = self.decoder(tgt_input, decoder_init_state, src_encodings)
+        loss = self.loss
+        loss.reset()
+        for step, step_output in enumerate(decoder_outputs):
+            batch_size = tgt_input.size(0)
+            loss.eval_batch(step_output.contiguous().view(batch_size, -1), tgt_target[:, step])
+
+        scores = loss.get_loss()
+
+        return decoder_outputs, scores
+
+
     # def beam_search(self, src_sent: List[str], beam_size: int=5, max_decoding_time_step: int=70) -> List[Hypothesis]:
     def beam_search(self, src_sent, beam_size, max_decoding_time_step):
         """
@@ -182,22 +211,27 @@ class NMT(object):
         """
 
         cum_loss = 0.
-        cum_tgt_words = 0.
+        count = 0
 
         # you may want to wrap the following code using a context manager provided
         # by the NN library to signal the backend to not to keep gradient information
         # e.g., `torch.no_grad()`
 
         for src_sents, tgt_sents in batch_iter(dev_data, batch_size):
-            loss = -model(src_sents, tgt_sents).sum()
-
+            src_sents = self.vocab.src.words2indices(src_sents)
+            tgt_sents = self.vocab.tgt.words2indices(tgt_sents)
+            src_sents, src_len, y_input, y_tgt, tgt_len = sent_padding(src_sents, tgt_sents)
+            src_encodings, decoder_init_state = self.encode(src_sents, src_len)
+            decoder_outputs, loss = self.decode_without_bp(src_encodings, decoder_init_state, [y_input, y_tgt])
             cum_loss += loss
-            tgt_word_num_to_predict = sum(len(s[1:]) for s in tgt_sents)  # omitting the leading `<s>`
-            cum_tgt_words += tgt_word_num_to_predict
+            count += 1
 
-        ppl = np.exp(cum_loss / cum_tgt_words)
+            # tgt_word_num_to_predict = sum(len(s[1:]) for s in tgt_sents)  # omitting the leading `<s>`
+            # cum_tgt_words += tgt_word_num_to_predict
 
-        return ppl
+        # ppl = np.exp(cum_loss / cum_tgt_words)
+
+        return cum_loss / count
 
     # @staticmethod
     # def load(model_path: str):
@@ -216,6 +250,7 @@ class NMT(object):
     #     """
 
     #     raise NotImplementedError()
+
 
 def sent_padding(src_sents, tgt_sents):
     batch_size = len(src_sents)
@@ -301,6 +336,8 @@ def train(args):
     train_time = begin_time = time.time()
     print('begin Maximum Likelihood training')
 
+    # train_iter = -1
+
     while True:
         epoch += 1
 
@@ -311,10 +348,6 @@ def train(args):
 
             # (batch_size)
             loss = model(src_sents, tgt_sents)
-
-
-
-            
 
             report_loss += loss
             cum_loss += loss
@@ -343,7 +376,7 @@ def train(args):
             # if the dev score does not increase after `--patience` iterations, we reload the previously
             # saved best model (and the state of the optimizer), halve the learning rate and continue
             # training. This repeats for up to `--max-num-trial` times.
-            """
+
             if train_iter % valid_niter == 0:
                 print('epoch %d, iter %d, cum. loss %.2f, cum. ppl %.2f cum. examples %d' % (epoch, train_iter,
                                                                                          cum_loss / cumulative_examples,
@@ -367,7 +400,8 @@ def train(args):
                 if is_better:
                     patience = 0
                     print('save currently the best model to [%s]' % model_save_path, file=sys.stderr)
-                    model.save(model_save_path)
+                    torch.save(model.encoder.state_dict(), model_save_path + 'encoder')
+                    torch.save(model.decoder.state_dict(), model_save_path + 'decoder')
 
                     # You may also save the optimizer's state
                 elif patience < int(args['--patience']):
@@ -386,7 +420,8 @@ def train(args):
                         print('load previously best model and decay learning rate to %f' % lr, file=sys.stderr)
 
                         # load model
-                        model_save_path
+                        model.encoder.load_state_dict(torch.load(model_save_path + 'encoder'))
+                        model.decoder.load_state_dict(torch.load(model_save_path + 'decoder'))
 
                         print('restore parameters of the optimizers', file=sys.stderr)
                         # You may also need to load the state of the optimizer saved before
@@ -397,7 +432,7 @@ def train(args):
                 if epoch == int(args['--max-epoch']):
                     print('reached maximum number of epochs!', file=sys.stderr)
                     exit(0)
-            """
+
 
 
 def beam_search(model: NMT, test_data_src: List[List[str]], beam_size: int, max_decoding_time_step: int) -> List[List[Hypothesis]]:
