@@ -241,7 +241,9 @@ class NMT(object):
             hyp_np = np.zeros((batch_size, len(decoder_outputs), len(self.vocab.tgt)))
 
             for step in range(len(decoder_outputs)):
-                hyp_np[:, step, :] = decoder_outputs[step].cpu().data.numpy()
+                tmp = decoder_outputs[step].cpu().data.numpy()
+                print(tmp.shape)
+                hyp_np[:, step, :] = tmp
             # print(hyp_np.shape)
 
             # converting softmax to word string
