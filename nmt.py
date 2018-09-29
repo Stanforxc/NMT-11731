@@ -59,6 +59,7 @@ from decoder import Decoder
 from torch import optim
 
 from loss import Perplexity
+from loss import NLLLoss
 from optim import Optimizer
 
 
@@ -77,9 +78,10 @@ class NMT(object):
         self.decoder = Decoder(nvocab_tgt, 2*hidden_size, embed_size,output_dropout=dropout_rate, n_layers=2)
         LAS_params = list(self.encoder.parameters()) + list(self.decoder.parameters())
         self.optimizer = optim.Adam(LAS_params, lr=0.01)
-        self.scheduler = torch.optim.lr_scheduler.StepLR(self.optimizer, step_size=1, gamma=0.5)
+        self.scheduler = optim.lr_scheduler.StepLR(self.optimizer, step_size=1, gamma=0.5)
         weight = torch.ones(nvocab_tgt)
-        self.loss = Perplexity(weight, 0)
+        # TODO: Perplexity or NLLLoss
+        self.loss = NLLLoss(weight, 0)
 
         if torch.cuda.is_available():
             # Move the network and the optimizer to the GPU
