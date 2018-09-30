@@ -100,7 +100,7 @@ class Decoder(nn.Module):
         # print(pred_idx.size())
 
         if not training:
-            max_len = 500
+            max_len = 100
 
         for step in range(max_len):
 
