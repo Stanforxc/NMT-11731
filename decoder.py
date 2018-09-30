@@ -49,7 +49,7 @@ class Decoder(BaseCoder):
         batch_size = decoder_input.size(0)
         output_size = decoder_input.size(1)
         embedded = self.embedding(decoder_input)
-        embedded = self.input_dropout(embedded)
+        # embedded = self.input_dropout(embedded)
         output,hidden = self.rnn(embedded, decoder_hidden)
         output, attention = self.attention(output, encoder_outputs) # attention
         softmax = func(self.wsm(output.view(-1, self.hidden_size)), dim=1).view(batch_size,output_size,-1)

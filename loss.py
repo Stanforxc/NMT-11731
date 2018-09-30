@@ -61,7 +61,10 @@ class NLLLoss(Loss):
 
     def eval_batch(self, outputs, target):
         self.acc_loss += self.criterion(outputs, target)
-        self.norm_term += 1
+        if self.mask is None:
+            self.norm_term += np.prod(target.size())
+        else:
+            self.norm_term += target.data.ne(self.mask).sum()
 
 class Perplexity(NLLLoss):
 
