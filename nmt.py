@@ -81,7 +81,9 @@ class NMT(object):
         self.scheduler = optim.lr_scheduler.StepLR(self.optimizer, step_size=1, gamma=0.5)
         weight = torch.ones(nvocab_tgt)
         # TODO: Perplexity or NLLLoss
-        self.loss = NLLLoss(weight, 0)
+        # TODO: pass in mask to loss funciton
+        # self.loss = NLLLoss(weight, 0)
+        self.loss = Perplexity(weight, 0)
 
         if torch.cuda.is_available():
             # Move the network and the optimizer to the GPU
