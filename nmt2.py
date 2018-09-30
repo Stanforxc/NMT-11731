@@ -197,6 +197,10 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
                     word_seq.append(vocab.tgt.id2word[pred_idx])
                 hyp_corpus.append(word_seq)
 
+        for r, h in zip(ref_corpus, hyp_corpus):
+            print(r)
+            print(h)
+            print()
         bleu_score = compute_corpus_level_bleu_score(ref_corpus, hyp_corpus)
 
         if not best_bleu or bleu_score > best_bleu:
