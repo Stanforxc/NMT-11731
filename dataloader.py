@@ -44,8 +44,6 @@ class TrainDataset(torch.utils.data.Dataset):
     def __init__(self, dataset, vocab):
         train_src = "data/train.de-en.de.wmixerprep"
         train_tgt = "data/train.de-en.en.wmixerprep"
-        dev_src = "data/valid.de-en.de"
-        dev_tgt = "data/valid.de-en.en"
         test_src = "data/test.de-en.de"
         test_tgt = "data/test.de-en.en"
 
@@ -80,8 +78,8 @@ class TrainDataset(torch.utils.data.Dataset):
 class DevDataset(torch.utils.data.Dataset):
 
     def __init__(self, dataset, vocab):
-        dev_src = "data/valid.de-en.de"
-        dev_tgt = "data/valid.de-en.en"
+        dev_src = "data/valid.de-en.de.wmixerprep"
+        dev_tgt = "data/valid.de-en.en.wmixerprep"
 
         src_sents = read_corpus(dev_src, 'src')
         tgt_sents = read_corpus(dev_tgt, 'tgt')
