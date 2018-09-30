@@ -75,15 +75,15 @@ class NMT(object):
         nvocab_tgt = len(vocab.tgt)
         self.vocab = vocab
         self.encoder = Encoder(nvocab_src, hidden_size, embed_size, input_dropout=dropout_rate, n_layers=2)
-        self.decoder = Decoder(nvocab_tgt, 2*hidden_size, embed_size,output_dropout=dropout_rate, n_layers=2, tf_rate=0.5)
+        self.decoder = Decoder(nvocab_tgt, 2*hidden_size, embed_size,output_dropout=dropout_rate, n_layers=2, tf_rate=0.9)
         LAS_params = list(self.encoder.parameters()) + list(self.decoder.parameters())
         self.optimizer = optim.Adam(LAS_params, lr=1e-4)
         self.scheduler = optim.lr_scheduler.StepLR(self.optimizer, step_size=1, gamma=0.5)
         weight = torch.ones(nvocab_tgt)
         # TODO: Perplexity or NLLLoss
         # TODO: pass in mask to loss funciton
-        self.loss = NLLLoss(weight, 0)
-        # self.loss = Perplexity(weight, 0)
+        # self.loss = NLLLoss(weight, 0)
+        self.loss = Perplexity(weight, 0)
 
         if torch.cuda.is_available():
             # Move the network and the optimizer to the GPU
