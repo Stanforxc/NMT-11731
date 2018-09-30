@@ -98,7 +98,7 @@ class DevDataset(torch.utils.data.Dataset):
     def __getitem__(self, index):
         return np.array(self.X[index]), len(self.X[index]), \
                np.array(self.Yinput[index]), np.array(self.Ytarget[index]), len(self.Yinput[index]),\
-               self.tgt_sents[index]
+               ' '.join(self.tgt_sents[index])
 
     def __len__(self):
         return len(self.X)
