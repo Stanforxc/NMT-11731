@@ -187,7 +187,7 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
             # record word sequence
             ref_corpus.extend(tgt_sents_str)
             hyp_np = pred_seq.data.cpu().numpy()
-            # print(hyp_np.shape)
+            print(hyp_np.shape)
 
             for b in range(hyp_np.shape[0]):
                 word_seq = []
@@ -240,5 +240,5 @@ if len(sys.argv) == 3:
     encoder_state = sys.argv[1]
     decoder_state = sys.argv[2]
 
-train_model(batch_size=32, epochs=5, learn_rate=1e-3, name='beta0', tf_rate=0.5,
+train_model(batch_size=16, epochs=5, learn_rate=1e-3, name='beta0', tf_rate=0.5,
             encoder_state=encoder_state, decoder_state=decoder_state)
