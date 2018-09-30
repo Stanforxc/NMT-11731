@@ -10,7 +10,7 @@ import pickle
 from utils import read_corpus
 from vocab import Vocab, VocabEntry
 from nltk.translate.bleu_score import corpus_bleu
-from dataloader import TrainDataset, DevDataset, my_collate
+from dataloader import TrainDataset, DevDataset, my_collate, dev_collate
 from model import Encoder, Decoder
 
 '''
@@ -91,7 +91,7 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
                                                    shuffle=True, collate_fn=my_collate)
     dev_dataset = DevDataset('dev', vocab)
     dev_dataloader = torch.utils.data.DataLoader(dev_dataset, batch_size=batch_size,
-                                                   shuffle=False)
+                                                   shuffle=False, collate_fn=dev_collate)
 
     # test_dataset = TestDataset()
     # test_dataloader = torch.utils.data.DataLoader(test_dataset, batch_size=1, shuffle=False)
@@ -185,7 +185,7 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
             # print(pred_seq.size())
 
             # record word sequence
-            ref_corpus.extend([sent.split() for sent in tgt_sents_str])
+            ref_corpus.extend(tgt_sents_str)
             hyp_np = pred_seq.data.cpu().numpy()
             # print(hyp_np.shape)
 
