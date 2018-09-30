@@ -386,7 +386,8 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
     loss_fn = nn.CrossEntropyLoss(reduce=False)
 
     LAS_params = list(encoder.parameters()) + list(decoder.parameters())
-    optim = torch.optim.Adam(LAS_params, lr=learn_rate, weight_decay=1e-5) # todo: change back to 1e-5
+    # optim = torch.optim.Adam(LAS_params, lr=learn_rate, weight_decay=1e-5) # todo: change back to 1e-5
+    optim = torch.optim.SGD(LAS_params, lr=learn_rate)
     scheduler = torch.optim.lr_scheduler.StepLR(optim, step_size=1, gamma=0.33)
 
     if torch.cuda.is_available():
@@ -500,5 +501,5 @@ if len(sys.argv) == 3:
     encoder_state = sys.argv[1]
     decoder_state = sys.argv[2]
 
-train_model(batch_size=32, epochs=5, learn_rate=1e-2, name='beta0', tf_rate=0.5,
+train_model(batch_size=32, epochs=5, learn_rate=1e-4, name='beta0', tf_rate=0.9,
             encoder_state=encoder_state, decoder_state=decoder_state)
