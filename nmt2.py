@@ -131,46 +131,46 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
         total = len(train_dataset) / batch_size
         interval = total // 100
 
-        # for (src_sents, src_lens, Yinput, Ytarget, tgt_lens) in train_dataloader:
-        #
-        #     actual_batch_size = len(src_lens)
-        #     count += 1
-        #     optim.zero_grad()  # Reset the gradients
-        #
-        #     # forward
-        #     key, value = encoder(to_variable(src_sents), src_lens)
-        #     pred_seq = decoder(key, value, to_variable(Yinput), Yinput.size(-1), True, src_lens)
-        #     pred_seq = pred_seq.resize(pred_seq.size(0) * pred_seq.size(1), tgt_vocab_size)
-        #
-        #     # create the tgt mask
-        #     tgt_mask = np.zeros((actual_batch_size, max(tgt_lens)))
-        #     # print('max', max(tgt_lens))
-        #
-        #     for i in range(actual_batch_size):
-        #         tgt_mask[i, :tgt_lens[i]] = np.ones(tgt_lens[i])
-        #     tgt_mask = to_variable(to_tensor(tgt_mask)).resize(actual_batch_size * max(tgt_lens))
-        #
-        #     # loss
-        #     loss = loss_fn(pred_seq, to_variable(Ytarget).resize(Ytarget.size(0) * Ytarget.size(1)))
-        #     loss = torch.sum(loss * tgt_mask) / actual_batch_size
-        #
-        #     # backword
-        #     loss.backward()
-        #     loss_np = loss.data.cpu().numpy()
-        #     losses.append(loss_np)
-        #
-        #     # clip gradients
-        #     torch.nn.utils.clip_grad_norm_(encoder.parameters(), 5.)  # todo: tune???
-        #     torch.nn.utils.clip_grad_norm_(decoder.parameters(), 5.)
-        #
-        #     # UPDATE THE NETWORK!!!
-        #     optim.step()
-        #     # scheduler.step()  # after train
-        #
-        #     if count % interval == 0:
-        #         print('Train Loss: %.2f  Progress: %d%%' % (np.asscalar(np.mean(losses)), count * 100 / total))
-        #
-        # print("### Epoch {} Loss: {:.4f} ###".format(epoch, np.asscalar(np.mean(losses))))
+        for (src_sents, src_lens, Yinput, Ytarget, tgt_lens) in train_dataloader:
+
+            actual_batch_size = len(src_lens)
+            count += 1
+            optim.zero_grad()  # Reset the gradients
+
+            # forward
+            key, value = encoder(to_variable(src_sents), src_lens)
+            pred_seq = decoder(key, value, to_variable(Yinput), Yinput.size(-1), True, src_lens)
+            pred_seq = pred_seq.resize(pred_seq.size(0) * pred_seq.size(1), tgt_vocab_size)
+
+            # create the tgt mask
+            tgt_mask = np.zeros((actual_batch_size, max(tgt_lens)))
+            # print('max', max(tgt_lens))
+
+            for i in range(actual_batch_size):
+                tgt_mask[i, :tgt_lens[i]] = np.ones(tgt_lens[i])
+            tgt_mask = to_variable(to_tensor(tgt_mask)).resize(actual_batch_size * max(tgt_lens))
+
+            # loss
+            loss = loss_fn(pred_seq, to_variable(Ytarget).resize(Ytarget.size(0) * Ytarget.size(1)))
+            loss = torch.sum(loss * tgt_mask) / actual_batch_size
+
+            # backword
+            loss.backward()
+            loss_np = loss.data.cpu().numpy()
+            losses.append(loss_np)
+
+            # clip gradients
+            torch.nn.utils.clip_grad_norm_(encoder.parameters(), 5.)  # todo: tune???
+            torch.nn.utils.clip_grad_norm_(decoder.parameters(), 5.)
+
+            # UPDATE THE NETWORK!!!
+            optim.step()
+            # scheduler.step()  # after train
+
+            if count % interval == 0:
+                print('Train Loss: %.2f  Progress: %d%%' % (np.asscalar(np.mean(losses)), count * 100 / total))
+
+        print("### Epoch {} Loss: {:.4f} ###".format(epoch, np.asscalar(np.mean(losses))))
 
         # # validation
         hyp_corpus = []
@@ -187,7 +187,7 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
             # record word sequence
             ref_corpus.extend(tgt_sents_str)
             hyp_np = pred_seq.data.cpu().numpy()
-            print(hyp_np.shape)
+            # print(hyp_np.shape)
 
             for b in range(hyp_np.shape[0]):
                 word_seq = []
@@ -198,10 +198,15 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
                     word_seq.append(vocab.tgt.id2word[pred_idx])
                 hyp_corpus.append(word_seq)
 
+        count = 0
         for r, h in zip(ref_corpus, hyp_corpus):
             print(r)
             print(h)
             print()
+            count += 1
+            if count == 20:
+                break
+
         bleu_score = compute_corpus_level_bleu_score(ref_corpus, hyp_corpus)
 
         if not best_bleu or bleu_score > best_bleu:
