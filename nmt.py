@@ -75,7 +75,7 @@ class NMT(object):
         nvocab_tgt = len(vocab.tgt)
         self.vocab = vocab
         self.encoder = Encoder(nvocab_src, hidden_size, embed_size, input_dropout=dropout_rate, n_layers=2)
-        self.decoder = Decoder(nvocab_tgt, 2*hidden_size, embed_size,output_dropout=dropout_rate, n_layers=2)
+        self.decoder = Decoder(nvocab_tgt, 2*hidden_size, embed_size,output_dropout=dropout_rate, n_layers=2, tf_rate=0.5)
         LAS_params = list(self.encoder.parameters()) + list(self.decoder.parameters())
         self.optimizer = optim.Adam(LAS_params, lr=0.01)
         self.scheduler = optim.lr_scheduler.StepLR(self.optimizer, step_size=1, gamma=0.5)
