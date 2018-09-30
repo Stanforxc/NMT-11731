@@ -188,6 +188,8 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
             # record word sequence
             ref_corpus.append(tgt_sents_str)
             hyp_np = pred_seq.data.cpu().numpy()
+            print(hyp_np.shape)
+
             for b in range(hyp_np.shape[0]):
                 word_seq = []
                 for step in range(hyp_np.shape[1]):

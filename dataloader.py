@@ -47,12 +47,8 @@ class TrainDataset(torch.utils.data.Dataset):
         test_src = "data/test.de-en.de"
         test_tgt = "data/test.de-en.en"
 
-        if dataset == 'train':
-            src_sents = read_corpus(train_src, 'src')
-            tgt_sents = read_corpus(train_tgt, 'tgt')
-        elif dataset == 'dev':
-            src_sents = read_corpus(dev_src, 'src')
-            tgt_sents = read_corpus(dev_tgt, 'tgt')
+        src_sents = read_corpus(train_src, 'src')
+        tgt_sents = read_corpus(train_tgt, 'tgt')
 
         self.X = vocab.src.words2indices(src_sents)
         self.Y = vocab.tgt.words2indices(tgt_sents)
