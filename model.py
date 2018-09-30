@@ -123,8 +123,8 @@ class Decoder(nn.Module):
             pred_idx = torch.max(pred, dim=2)[1]  # argmax size [1, 1]
             pred_idx = pred_idx.squeeze(dim=1)
 
-            if not training and pred_idx.cpu().data.numpy()[0] == 2:  # TODO: 2 is the index for eos char
-                break  # end of sentence
+            # if not training and pred_idx.cpu().data.numpy()[0] == 2:  # TODO: 2 is the index for eos char
+            #     break  # end of sentence
 
             # add to the prediction if not eos
             if pred_seq is None:

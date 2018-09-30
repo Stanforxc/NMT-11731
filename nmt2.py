@@ -90,7 +90,7 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
     train_dataloader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size,
                                                    shuffle=True, collate_fn=my_collate)
     dev_dataset = DevDataset('dev', vocab)
-    dev_dataloader = torch.utils.data.DataLoader(dev_dataset, batch_size=1,
+    dev_dataloader = torch.utils.data.DataLoader(dev_dataset, batch_size=batch_size,
                                                    shuffle=False)
 
     # test_dataset = TestDataset()
@@ -178,15 +178,14 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
         for (src_sents, src_lens, Yinput, Ytarget, tgt_lens, tgt_sents_str) in dev_dataloader:
 
             actual_batch_size = len(src_lens)
-            assert actual_batch_size == 1
 
             # forward
             key, value = encoder(to_variable(src_sents), src_lens)
-            pred_seq = decoder(key, value, None, None, False, src_lens) # batch, sent_len, emb
+            pred_seq = decoder(key, value, None, None, False, src_lens)  # batch, sent_len, emb
             # print(pred_seq.size())
 
             # record word sequence
-            ref_corpus.append(tgt_sents_str)
+            ref_corpus.extend(tgt_sents_str)
             hyp_np = pred_seq.data.cpu().numpy()
             print(hyp_np.shape)
 
