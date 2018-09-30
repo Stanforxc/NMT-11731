@@ -58,7 +58,12 @@ from encoder import Encoder
 from decoder import Decoder
 from torch import optim
 
+<<<<<<< HEAD
 from loss import Perplexity,NLLLoss
+=======
+from loss import Perplexity
+from loss import NLLLoss
+>>>>>>> 8caeeaf212a09fde38c30edbb84ce64eca1496dc
 from optim import Optimizer
 
 
@@ -73,6 +78,7 @@ class NMT(object):
         nvocab_src = len(vocab.src)
         nvocab_tgt = len(vocab.tgt)
         self.vocab = vocab
+<<<<<<< HEAD
         self.encoder = Encoder(nvocab_src, hidden_size, embed_size, input_dropout=dropout_rate, n_layers=1)
         self.decoder = Decoder(nvocab_tgt, 2*hidden_size, embed_size,output_dropout=dropout_rate, n_layers=1)
         LAS_params = list(self.encoder.parameters()) + list(self.decoder.parameters())
@@ -80,6 +86,18 @@ class NMT(object):
         self.scheduler = torch.optim.lr_scheduler.StepLR(self.optimizer, step_size=1, gamma=0.5)
         weight = torch.ones(nvocab_tgt)
         self.loss = NLLLoss(weight=weight, mask=0,size_average=False)
+=======
+        self.encoder = Encoder(nvocab_src, hidden_size, embed_size, input_dropout=dropout_rate, n_layers=2)
+        self.decoder = Decoder(nvocab_tgt, 2*hidden_size, embed_size,output_dropout=dropout_rate, n_layers=2, tf_rate=0.9)
+        LAS_params = list(self.encoder.parameters()) + list(self.decoder.parameters())
+        self.optimizer = optim.Adam(LAS_params, lr=1e-4)
+        self.scheduler = optim.lr_scheduler.StepLR(self.optimizer, step_size=1, gamma=0.5)
+        weight = torch.ones(nvocab_tgt)
+        # TODO: Perplexity or NLLLoss
+        # TODO: pass in mask to loss funciton
+        # self.loss = NLLLoss(weight, 0)
+        self.loss = Perplexity(weight, 0)
+>>>>>>> 8caeeaf212a09fde38c30edbb84ce64eca1496dc
 
         if torch.cuda.is_available():
             # Move the network and the optimizer to the GPU
@@ -142,6 +160,8 @@ class NMT(object):
                 log-likelihood of generating the gold-standard target sentence for 
                 each example in the input batch
         """
+        self.optimizer.zero_grad()
+
         tgt_input,tgt_target = tgt_sents
         loss = self.loss
         decoder_outputs, decoder_hidden = self.decoder(tgt_input, decoder_init_state, src_encodings)
@@ -149,7 +169,7 @@ class NMT(object):
         for step, step_output in enumerate(decoder_outputs):
             batch_size = tgt_input.size(0)
             loss.eval_batch(step_output.contiguous().view(batch_size, -1), tgt_target[:, step])
-        self.optimizer.zero_grad()
+
         loss.backward()
         self.optimizer.step()
 
@@ -379,8 +399,6 @@ def train(args):
     hist_valid_scores = []
     train_time = begin_time = time.time()
     print('begin Maximum Likelihood training')
-
-    train_iter = -1
 
     while True:
         epoch += 1

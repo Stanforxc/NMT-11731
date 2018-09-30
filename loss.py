@@ -88,5 +88,3 @@ class Perplexity(NLLLoss):
             print("WARNING: Loss exceeded maximum value, capping to e^100")
             return math.exp(Perplexity._MAX_EXP)
         return math.exp(nll)
-
-        

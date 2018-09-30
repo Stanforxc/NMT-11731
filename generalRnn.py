@@ -9,6 +9,7 @@ class BaseCoder(nn.Module):
         self.hidden_size = hidden_size
         self.n_layers = n_layers
         self.embedding_size = embedding_size
+        # TODO: why two self.input_dropout here?
         self.input_dropout = input_dropout
         self.input_dropout = nn.Dropout(p=input_dropout)
         self.output_dropout = output_dropout
