@@ -90,7 +90,7 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
     train_dataloader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size,
                                                    shuffle=True, collate_fn=my_collate)
     dev_dataset = DevDataset('dev', vocab)
-    dev_dataloader = torch.utils.data.DataLoader(dev_dataset, batch_size=batch_size,
+    dev_dataloader = torch.utils.data.DataLoader(dev_dataset, batch_size=16,
                                                    shuffle=False, collate_fn=dev_collate)
 
     # test_dataset = TestDataset()
@@ -245,5 +245,5 @@ if len(sys.argv) == 3:
     encoder_state = sys.argv[1]
     decoder_state = sys.argv[2]
 
-train_model(batch_size=16, epochs=5, learn_rate=1e-3, name='beta0', tf_rate=0.5,
+train_model(batch_size=48, epochs=5, learn_rate=1e-3, name='beta0', tf_rate=0.5,
             encoder_state=encoder_state, decoder_state=decoder_state)
