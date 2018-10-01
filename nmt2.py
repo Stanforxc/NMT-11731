@@ -241,9 +241,8 @@ def decode(encoder_state, decoder_state, mode, output_path):
     encoder.load_state_dict(torch.load(encoder_state))
     decoder.load_state_dict(torch.load(decoder_state))
 
-    # TODO: try
-    # encoder.eval()
-    # decoder.eval()
+    encoder.eval()
+    decoder.eval()
 
     hyp_corpus = []
     ref_corpus = []
@@ -296,11 +295,7 @@ if __name__ == '__main__':
         encoder_state = sys.argv[1]
         decoder_state = sys.argv[2]
 
-<<<<<<< HEAD
-    train_model(batch_size=32, epochs=20, learn_rate=1e-3, name='try3', tf_rate=0.0,
-=======
     train_model(batch_size=64, epochs=20, learn_rate=1e-3, name='try3', tf_rate=0.5,
->>>>>>> f7941b74d6e4cdc56b5cda329abba92e52f8b694
                 encoder_state=encoder_state, decoder_state=decoder_state)
 
     # decode(encoder_state, decoder_state, 'dev', 'decode-dev.txt')
