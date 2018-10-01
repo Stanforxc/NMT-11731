@@ -56,17 +56,7 @@ class Decoder(BaseCoder):
             symbols.append(prev.view(-1))
 
         return outputs,decoder_hidden,symbols
-            
 
-            # no more input if i is the last one
-            if i == max_length - 1: break
-
-            if np.random.random_sample() < self.tf_rate:
-                prev = inputs[:, i+1].unsqueeze(1)
-            else:
-                prev = output_seq.topk(1)[1] # max probability index
-
-        return outputs,decoder_hidden
 
 
     # could insert one parameter like: src_matrix
