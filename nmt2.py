@@ -160,7 +160,7 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
             losses.append(loss_np)
             tmp_losses.append(loss_np)
 
-            ppl = loss_np * actual_batch_size / tgt_num_words
+            ppl = np.exp(loss_np * actual_batch_size / tgt_num_words)
 
             # clip gradients
             torch.nn.utils.clip_grad_norm_(encoder.parameters(), 5.)
