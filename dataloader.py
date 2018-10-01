@@ -80,8 +80,6 @@ class TrainDataset(torch.utils.data.Dataset):
     def __init__(self, dataset, vocab):
         train_src = "data/train.de-en.de.wmixerprep"
         train_tgt = "data/train.de-en.en.wmixerprep"
-        test_src = "data/test.de-en.de"
-        test_tgt = "data/test.de-en.en"
 
         src_sents = read_corpus(train_src, 'src')
         tgt_sents = read_corpus(train_tgt, 'tgt')
@@ -110,8 +108,13 @@ class TrainDataset(torch.utils.data.Dataset):
 class DevDataset(torch.utils.data.Dataset):
 
     def __init__(self, dataset, vocab):
-        dev_src = "data/valid.de-en.de.wmixerprep"
-        dev_tgt = "data/valid.de-en.en.wmixerprep"
+        dev_src = dev_tgt = None
+        if dataset == 'dev':
+            dev_src = "data/valid.de-en.de.wmixerprep"
+            dev_tgt = "data/valid.de-en.en.wmixerprep"
+        elif dataset == 'test':
+            dev_src = "data/test.de-en.de"
+            dev_tgt = "data/test.de-en.en"
 
         src_sents = read_corpus(dev_src, 'src')
         tgt_sents = read_corpus(dev_tgt, 'tgt')
@@ -137,21 +140,6 @@ class DevDataset(torch.utils.data.Dataset):
 
     def __len__(self):
         return len(self.X)
-
-
-# # TODO: update for testing
-# class TestDataset(torch.utils.data.Dataset):
-#
-#     def __init__(self):
-#         utterances = np.load(data_path + 'test.npy')
-#         self.X = utterances
-#
-#     def __getitem__(self, index):
-#         eight_multiples = len(self.X[index]) // 8 * 8
-#         return self.X[index][:eight_multiples], eight_multiples
-#
-#     def __len__(self):
-#         return len(self.X)
 
 
 def to_tensor(numpy_array):

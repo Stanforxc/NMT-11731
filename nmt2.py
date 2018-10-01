@@ -90,11 +90,10 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
     train_dataloader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size,
                                                    shuffle=True, collate_fn=my_collate)
     dev_dataset = DevDataset('dev', vocab)
-    dev_dataloader = torch.utils.data.DataLoader(dev_dataset, batch_size=16,
-                                                   shuffle=False, collate_fn=dev_collate)
+    dev_dataloader = torch.utils.data.DataLoader(dev_dataset, batch_size=16, shuffle=False, collate_fn=dev_collate)
 
-    # test_dataset = TestDataset()
-    # test_dataloader = torch.utils.data.DataLoader(test_dataset, batch_size=1, shuffle=False)
+    test_dataset = DevDataset('test', vocab)
+    test_dataloader = torch.utils.data.DataLoader(test_dataset, batch_size=1, shuffle=False, collate_fn=dev_collate)
 
     # Create the seq2seq network
     encoder = Encoder(vocab_size=len(vocab.src), hidden_dim=256, attention_dim=128, value_dim=256)
@@ -246,17 +245,71 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
     #         index += 1
 
 
-encoder_state = None
-decoder_state = None
+def decode(encoder_state, decoder_state, mode):
 
-if len(sys.argv) == 3:
-    encoder_state = sys.argv[1]
-    decoder_state = sys.argv[2]
+    vocab = pickle.load(open(data_path + 'vocab.bin', 'rb'))
+    tgt_vocab_size = len(vocab.tgt)
+    decode_dataset = DevDataset(mode, vocab)
+    decode_dataloader = torch.utils.data.DataLoader(decode_dataset, batch_size=16, shuffle=False, collate_fn=dev_collate)
 
-train_model(batch_size=64, epochs=10, learn_rate=1e-4, name='try1', tf_rate=0.5,
-            encoder_state=encoder_state, decoder_state=decoder_state)
+    # Create the seq2seq network
+    encoder = Encoder(vocab_size=len(vocab.src), hidden_dim=256, attention_dim=128, value_dim=256)
+    decoder = Decoder(vocab_size=tgt_vocab_size, hidden_dim=256, attention_dim=128, value_dim=256, tf_rate=0)
 
-"""
-# try1. lr 1e-4, lr_decay 0.8 every two epochs
-# try2: attention_dim to 256 2
-"""
+    encoder.load_state_dict(torch.load(encoder_state))
+    decoder.load_state_dict(torch.load(decoder_state))
+
+    # TODO: try
+    # encoder.eval()
+    # decoder.eval()
+
+    hyp_corpus = []
+    ref_corpus = []
+    for (src_sents, src_lens, Yinput, Ytarget, tgt_lens, tgt_sents_str) in decode_dataloader:
+
+        # forward
+        key, value = encoder(to_variable(src_sents), src_lens)
+        pred_seq = decoder(key, value, None, None, mode=mode, src_lens=src_lens)  # batch, sent_len, emb
+
+        # record word sequence
+        ref_corpus.extend(tgt_sents_str)
+        hyp_np = pred_seq.data.cpu().numpy()
+
+        for b in range(hyp_np.shape[0]):
+            word_seq = []
+            for step in range(hyp_np.shape[1]):
+                pred_idx = np.argmax(hyp_np[b, step, :])
+                if pred_idx == vocab.tgt.word2id['</s>']:
+                    break
+                word_seq.append(vocab.tgt.id2word[pred_idx])
+            hyp_corpus.append(word_seq)
+
+    count = 0
+    for r, h in zip(ref_corpus, hyp_corpus):
+        print(r)
+        print(h)
+        print()
+        count += 1
+        if count == 20:
+            break
+    bleu_score = compute_corpus_level_bleu_score(ref_corpus, hyp_corpus)
+    print(mode, 'BLEU Score: ', bleu_score)
+
+
+if __name__ == '__main__':
+    encoder_state = None
+    decoder_state = None
+
+    if len(sys.argv) == 3:
+        encoder_state = sys.argv[1]
+        decoder_state = sys.argv[2]
+
+    # train_model(batch_size=64, epochs=10, learn_rate=1e-4, name='try1', tf_rate=0.5,
+    #             encoder_state=encoder_state, decoder_state=decoder_state)
+
+    decode(encoder_state, decoder_state, 'dev')
+    decode(encoder_state, decoder_state, 'test')
+    """
+    # try1. lr 1e-4, lr_decay 0.8 every two epochs
+    # try2: attention_dim to 256 2
+    """

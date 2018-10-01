@@ -78,7 +78,7 @@ class Decoder(nn.Module):
 
     # listener_feature (N, T, 256)
     # Yinput (N, L )
-    def forward(self, key, value, Yinput, max_len, training, src_lens):
+    def forward(self, key, value, Yinput, max_len, mode, src_lens):
 
         # Create a binary mask for attention (N, L)
         src_lens = np.array(src_lens)
@@ -99,7 +99,8 @@ class Decoder(nn.Module):
         pred_idx = to_variable(torch.zeros(batch_size).long())  # size [N] batch size = 1 for test
         # print(pred_idx.size())
 
-        if not training:
+        # not based on ref tgt
+        if mode != 'train':
             max_len = 100
 
         for step in range(max_len):
@@ -108,9 +109,9 @@ class Decoder(nn.Module):
             teacher_force = True if np.random.random_sample() < self.tf_rate else False
 
             # label_embedding from Y input or previous prediction
-            if training and teacher_force:
+            if mode == 'train' and teacher_force:
                 label_embedding = self.embedding(Yinput[:, step])
-            else:
+            else:  # no teacher force for dev and test
                 label_embedding = self.embedding(pred_idx)  # make sure size [N]
             # print(label_embedding.size(), context.size())
 
@@ -123,7 +124,8 @@ class Decoder(nn.Module):
             pred_idx = torch.max(pred, dim=2)[1]  # argmax size [1, 1]
             pred_idx = pred_idx.squeeze(dim=1)
 
-            # if not training and pred_idx.cpu().data.numpy()[0] == 2:  # TODO: 2 is the index for eos char
+            # Checking eos for the whole batch matrix later
+            # if not training and pred_idx.cpu().data.numpy()[0] == 2:
             #     break  # end of sentence
 
             # add to the prediction if not eos
