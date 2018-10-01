@@ -7,7 +7,7 @@ from attention import Attention
 import numpy as np
 
 class Decoder(BaseCoder):
-    def __init__(self, vocab_size, hidden_size, embedding_size, input_dropout=0.0, output_dropout=0.0, n_layers=1, bidirectional=False,rnn="lstm"):
+    def __init__(self, vocab_size, hidden_size, embedding_size, input_dropout=0.0, output_dropout=0.0, n_layers=1, bidirectional=False,rnn="lstm",tf_rate=0.9):
         super(Decoder,self).__init__(vocab_size, hidden_size,embedding_size,input_dropout,output_dropout, n_layers, rnn)
         self.rnn = self.baseModel(input_size=embedding_size, hidden_size=hidden_size, num_layers=n_layers, 
                     batch_first=True,dropout=output_dropout)
@@ -16,10 +16,11 @@ class Decoder(BaseCoder):
 
         # temporary set attention embedding size to hidden size
         self.attention = Attention(self.hidden_size)
-
         self.wsm = nn.Linear(self.hidden_size, self.output_size)
+        self.tf_rate = tf_rate
 
-    def forward(self, input_seq, encoder_hidden, encoder_outputs, func=F.log_softmax):
+
+    def forward(self, input_seq, encoder_hidden, encoder_outputs, func=F.log_softmax, stage="train"):
         # batch_size = input_seq.size(0)
         max_length = input_seq.size(1)
 
@@ -31,16 +32,24 @@ class Decoder(BaseCoder):
         decoder_hidden = tuple([torch.cat([h[0:h.size(0):2], h[1:h.size(0):2]], 2) for h in encoder_hidden])
 
         outputs = []
-        # lengths = np.array([max_length] * batch_size)
+        symbols = []        
 
         prev = inputs[:, 0].unsqueeze(1)
         for i in range(max_length):
             softmax, decoder_hidden, attention = self.forward_helper(prev, decoder_hidden,encoder_outputs ,func)
             output_seq = softmax.squeeze(1) # batch * seq_length
             outputs.append(output_seq)
-            prev = output_seq.topk(1)[1] # max probability index
 
-        return outputs,decoder_hidden
+            if i == max_length - 1: break
+            if np.random.random_sample() < self.tf_rate:
+                prev = inputs[:, i+1].unsqueeze(1)
+            else:
+                prev = outputs[-1].topk(1)[1] # max probability index
+            if stage != "train":
+                prev = output_seq.topk(1)[1]
+            symbols.append(prev.view(-1))
+
+        return outputs,decoder_hidden,symbols
             
 
 
@@ -49,7 +58,7 @@ class Decoder(BaseCoder):
         batch_size = decoder_input.size(0)
         output_size = decoder_input.size(1)
         embedded = self.embedding(decoder_input)
-        embedded = self.input_dropout(embedded)
+        #embedded = self.input_dropout(embedded)
         output,hidden = self.rnn(embedded, decoder_hidden)
         output, attention = self.attention(output, encoder_outputs) # attention
         softmax = func(self.wsm(output.view(-1, self.hidden_size)), dim=1).view(batch_size,output_size,-1)

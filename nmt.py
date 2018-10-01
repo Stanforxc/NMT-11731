@@ -58,7 +58,7 @@ from encoder import Encoder
 from decoder import Decoder
 from torch import optim
 
-from loss import Perplexity
+from loss import Perplexity,NLLLoss
 from optim import Optimizer
 
 
@@ -67,19 +67,21 @@ Hypothesis = namedtuple('Hypothesis', ['value', 'score'])
 
 class NMT(object):
 
-    def __init__(self, embed_size, hidden_size, vocab, dropout_rate=0.2):
+    def __init__(self, embed_size, hidden_size, vocab, dropout_rate=0.2,keep_train=False):
         super(NMT, self).__init__()
 
         nvocab_src = len(vocab.src)
         nvocab_tgt = len(vocab.tgt)
         self.vocab = vocab
-        self.encoder = Encoder(nvocab_src, hidden_size, embed_size, input_dropout=dropout_rate, n_layers=2)
-        self.decoder = Decoder(nvocab_tgt, 2*hidden_size, embed_size,output_dropout=dropout_rate, n_layers=2)
+        self.encoder = Encoder(nvocab_src, hidden_size, embed_size, input_dropout=dropout_rate, n_layers=1)
+        self.decoder = Decoder(nvocab_tgt, 2*hidden_size, embed_size,output_dropout=dropout_rate, n_layers=1,tf_rate=0.6)
+        if keep_train:
+            self.load('model')
         LAS_params = list(self.encoder.parameters()) + list(self.decoder.parameters())
-        self.optimizer = optim.Adam(LAS_params, lr=0.01)
+        self.optimizer = optim.Adam(LAS_params, lr=0.001)
         self.scheduler = torch.optim.lr_scheduler.StepLR(self.optimizer, step_size=1, gamma=0.5)
         weight = torch.ones(nvocab_tgt)
-        self.loss = Perplexity(weight, 0)
+        self.loss = NLLLoss(weight=weight, mask=0,size_average=False)
 
         if torch.cuda.is_available():
             # Move the network and the optimizer to the GPU
@@ -106,7 +108,7 @@ class NMT(object):
         tgt_sents = self.vocab.tgt.words2indices(tgt_sents)
         src_sents, src_len, y_input, y_tgt, tgt_len  = sent_padding(src_sents, tgt_sents)
         src_encodings, decoder_init_state = self.encode(src_sents,src_len)
-        scores = self.decode(src_encodings, decoder_init_state, [y_input, y_tgt])
+        scores, symbols = self.decode(src_encodings, decoder_init_state, [y_input, y_tgt], stage="train")
 
         return scores
 
@@ -127,7 +129,7 @@ class NMT(object):
         return encoder_outputs, encoder_hidden
 
 
-    def decode(self, src_encodings, decoder_init_state, tgt_sents):
+    def decode(self, src_encodings, decoder_init_state, tgt_sents, stage="train"):
         """
         Given source encodings, compute the log-likelihood of predicting the gold-standard target
         sentence tokens
@@ -143,19 +145,21 @@ class NMT(object):
                 each example in the input batch
         """
         tgt_input,tgt_target = tgt_sents
-        decoder_outputs, decoder_hidden = self.decoder(tgt_input, decoder_init_state, src_encodings)
         loss = self.loss
+        decoder_outputs, decoder_hidden, symbols = self.decoder(tgt_input, decoder_init_state, src_encodings)
         loss.reset()
         for step, step_output in enumerate(decoder_outputs):
             batch_size = tgt_input.size(0)
             loss.eval_batch(step_output.contiguous().view(batch_size, -1), tgt_target[:, step])
         self.optimizer.zero_grad()
         loss.backward()
+        torch.nn.utils.clip_grad_norm_(self.encoder.parameters(), 5.0)
+        torch.nn.utils.clip_grad_norm_(self.decoder.parameters(), 5.0)
         self.optimizer.step()
 
         scores = loss.get_loss()
 
-        return scores
+        return scores, symbols
 
 
     def decode_without_bp(self, src_encodings, decoder_init_state, tgt_sents):
@@ -174,8 +178,8 @@ class NMT(object):
                 each example in the input batch
         """
         tgt_input,tgt_target = tgt_sents
-        decoder_outputs, decoder_hidden = self.decoder(tgt_input, decoder_init_state, src_encodings)
         loss = self.loss
+        decoder_outputs, decoder_hidden, symbols = self.decoder(tgt_input, decoder_init_state, src_encodings, stage="valid")
         loss.reset()
         for step, step_output in enumerate(decoder_outputs):
             batch_size = tgt_input.size(0)
@@ -183,7 +187,7 @@ class NMT(object):
 
         scores = loss.get_loss()
 
-        return decoder_outputs, scores
+        return scores, symbols
 
     # TODO: sent_padding for only src
     # def beam_search(self, src_sent: List[str], beam_size: int=5, max_decoding_time_step: int=70) -> List[Hypothesis]:
@@ -218,53 +222,42 @@ class NMT(object):
             ppl: the perplexity on dev sentences
         """
 
-        cum_loss = 0.
-        count = 0
-
-        # you may want to wrap the following code using a context manager provided
-        # by the NN library to signal the backend to not to keep gradient information
-        # e.g., `torch.no_grad()`
-
         ref_corpus = []
         hyp_corpus = []
-        for src_sents, tgt_sents in batch_iter(dev_data, batch_size):
-            ref_corpus.extend(tgt_sents)
-            src_sents = self.vocab.src.words2indices(src_sents)
-            tgt_sents = self.vocab.tgt.words2indices(tgt_sents)
-            src_sents, src_len, y_input, y_tgt, tgt_len = sent_padding(src_sents, tgt_sents)
-            src_encodings, decoder_init_state = self.encode(src_sents, src_len)
-            decoder_outputs, loss = self.decode_without_bp(src_encodings, decoder_init_state, [y_input, y_tgt])
-            cum_loss += loss
-            count += 1
-
-            # decoder outputs to word sequence
-            hyp_np = np.zeros((len(tgt_sents), len(decoder_outputs), len(self.vocab.tgt)))
-
-            for step in range(len(decoder_outputs)):
-                tmp = decoder_outputs[step].cpu().data.numpy()
-                # print(tmp.shape)
-                hyp_np[:, step, :] = tmp
-            # print(hyp_np.shape)
-
-            # converting softmax to word string
-            for b in range(hyp_np.shape[0]):
-                word_seq = []
-                for step in range(hyp_np.shape[1]):
-                    pred_idx = np.argmax(hyp_np[b,step,:])
-                    # print(pred_idx)
-                    if pred_idx == self.vocab.tgt.word2id['</s>']:
-                        break
-                    word_seq.append(self.vocab.tgt.id2word[pred_idx])
-                hyp_corpus.append(word_seq)
-
-            # tgt_word_num_to_predict = sum(len(s[1:]) for s in tgt_sents)  # omitting the leading `<s>`
-            # cum_tgt_words += tgt_word_num_to_predict
-
-        # ppl = np.exp(cum_loss / cum_tgt_words)
+        cum_loss = 0
+        count = 0
+        with torch.no_grad():
+            for src_sents, tgt_sents in batch_iter(dev_data, batch_size):
+                ref_corpus.extend(tgt_sents)
+                actual_size = len(src_sents)
+                src_sents = self.vocab.src.words2indices(src_sents)
+                tgt_sents = self.vocab.tgt.words2indices(tgt_sents)
+                src_sents, src_len, y_input, y_tgt, tgt_len  = sent_padding(src_sents, tgt_sents)
+                src_encodings, decoder_init_state = self.encode(src_sents,src_len)
+                scores, symbols = self.decode_without_bp(src_encodings, decoder_init_state, [y_input, y_tgt])
+                sents = np.zeros((len(symbols),actual_size))
+                for i,symbol in enumerate(symbols):
+                    sents[i,:] = symbol
+                # print(sents.T)
+                for sent in sents.T:
+                    word_seq = []
+                    for idx in sent:
+                        if idx == 2:
+                            break
+                        word_seq.append(self.vocab.tgt.id2word[idx])
+                    hyp_corpus.append(word_seq)
+        
+                cum_loss += scores
+                count += 1
+        out_num = 0
         for r, h in zip(ref_corpus, hyp_corpus):
-            print(r)
-            print(h)
+            print(" ".join(r))
+            print(" ".join(h))
             print()
+            out_num += 1
+            if out_num >= 10:
+                break
+
         bleu = compute_corpus_level_bleu_score(ref_corpus, hyp_corpus)
         print('bleu score: ', bleu)
 
@@ -360,18 +353,18 @@ def train(args):
 
     train_batch_size = int(args['--batch-size'])
     clip_grad = float(args['--clip-grad'])
-    # valid_niter = int(args['--valid-niter'])
+    valid_niter = int(args['--valid-niter'])
     log_every = int(args['--log-every'])
     # model_save_path = args['--save-to']
     model_save_path = 'model'
-    valid_niter = 100
+    #valid_niter = 100
 
     vocab = pickle.load(open(args['--vocab'], 'rb'))
 
     model = NMT(embed_size=int(args['--embed-size']),
                 hidden_size=int(args['--hidden-size']),
                 dropout_rate=float(args['--dropout']),
-                vocab=vocab)
+                vocab=vocab,keep_train=False)
 
     num_trial = 0
     train_iter = patience = cum_loss = report_loss = cumulative_tgt_words = report_tgt_words = 0
@@ -380,7 +373,7 @@ def train(args):
     train_time = begin_time = time.time()
     print('begin Maximum Likelihood training')
 
-    train_iter = -1
+    # train_iter = -1
 
     while True:
         epoch += 1

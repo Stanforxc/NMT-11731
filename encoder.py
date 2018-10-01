@@ -10,12 +10,12 @@ class Encoder(BaseCoder):
         # TODO: add pretrained embeddings
 
         self.rnn = self.baseModel(input_size=embedding_size, hidden_size=hidden_size, num_layers=n_layers,
-                    batch_first=True, bidirectional=bidirectional, dropout=output_dropout)
+                    batch_first=True, bidirectional=bidirectional, dropout=input_dropout)
 
     def forward(self, input_seq, input_lengths=None):
         embedded = self.embedding(input_seq)
-        embedded = self.input_dropout(embedded)
-        # embedded = nn.utils.rnn.pack_padded_sequence(embedded, input_lengths, batch_first=True)
+        #embedded = self.input_dropout(embedded)
+        #embedded = nn.utils.rnn.pack_padded_sequence(embedded, input_lengths, batch_first=True)
         output, hidden = self.rnn(embedded)
         # output, _ = nn.utils.rnn.pad_packed_sequence(output, batch_first=True)
         return output, hidden
