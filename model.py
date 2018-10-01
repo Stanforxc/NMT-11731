@@ -192,7 +192,9 @@ class Attention(nn.Module):
 
         attention = self.dropout(attention)
 
+        # TODO: add dropout after context instead
         context = torch.bmm(attention, value)  # (N, 1, B) Eq. 5 in paper
+
         context = context.squeeze(dim=1)  # (N, B)
         return attention, context
 
