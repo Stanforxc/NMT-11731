@@ -14,13 +14,10 @@ class Encoder(BaseCoder):
 
     def forward(self, input_seq, input_lengths=None):
         embedded = self.embedding(input_seq)
-<<<<<<< HEAD
         #embedded = self.input_dropout(embedded)
         #embedded = nn.utils.rnn.pack_padded_sequence(embedded, input_lengths, batch_first=True)
-=======
         # embedded = self.input_dropout(embedded)
         # embedded = nn.utils.rnn.pack_padded_sequence(embedded, input_lengths, batch_first=True)
->>>>>>> f7941b74d6e4cdc56b5cda329abba92e52f8b694
         output, hidden = self.rnn(embedded)
         # output, _ = nn.utils.rnn.pad_packed_sequence(output, batch_first=True)
         return output, hidden
