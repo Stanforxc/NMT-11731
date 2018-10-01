@@ -129,7 +129,7 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
         count = -1
 
         total = len(train_dataset) / batch_size
-        interval = total // 100
+        interval = total // 20
 
         for (src_sents, src_lens, Yinput, Ytarget, tgt_lens) in train_dataloader:
 
@@ -148,6 +148,7 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
 
             for i in range(actual_batch_size):
                 tgt_mask[i, :tgt_lens[i]] = np.ones(tgt_lens[i])
+            tgt_num_words = tgt_mask.sum()
             tgt_mask = to_variable(to_tensor(tgt_mask)).resize(actual_batch_size * max(tgt_lens))
 
             # loss
@@ -159,6 +160,8 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
             loss_np = loss.data.cpu().numpy()
             losses.append(loss_np)
 
+            ppl = loss_np * actual_batch_size / tgt_num_words
+
             # clip gradients
             torch.nn.utils.clip_grad_norm_(encoder.parameters(), 5.)  # todo: tune???
             torch.nn.utils.clip_grad_norm_(decoder.parameters(), 5.)
@@ -168,7 +171,7 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
             # scheduler.step()  # after train
 
             if count % interval == 0:
-                print('Train Loss: %.2f  Progress: %d%%' % (np.asscalar(np.mean(losses)), count * 100 / total))
+                print('Train Loss: %.2f Perplexity: %.2f Progress: %d%%' % (np.asscalar(loss_np), np.asscalar(ppl), count * 100 / total))
 
         print("### Epoch {} Loss: {:.4f} ###".format(epoch, np.asscalar(np.mean(losses))))
 
@@ -245,5 +248,5 @@ if len(sys.argv) == 3:
     encoder_state = sys.argv[1]
     decoder_state = sys.argv[2]
 
-train_model(batch_size=48, epochs=5, learn_rate=1e-4, name='r1', tf_rate=0.5,
+train_model(batch_size=64, epochs=10, learn_rate=1e-4, name='r1', tf_rate=0.5,
             encoder_state=encoder_state, decoder_state=decoder_state)
