@@ -13,6 +13,7 @@ class Attention(nn.Module):
         self.mask = mask
 
     def forward(self, output, context):
+        context = nn.Dropout(p=0.2)
         batch_size = output.size(0)
         hidden_size = output.size(2)
         input_size = context.size(1)

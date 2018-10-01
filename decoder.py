@@ -24,9 +24,7 @@ class Decoder(BaseCoder):
 
 
     def forward(self, input_seq, encoder_hidden, encoder_outputs, func=F.log_softmax, stage="train"):
-        self.tf_rate = tf_rate
 
-    def forward(self, input_seq, encoder_hidden, encoder_outputs, func=F.log_softmax):
         # batch_size = input_seq.size(0)
         max_length = input_seq.size(1)
 
@@ -65,7 +63,6 @@ class Decoder(BaseCoder):
         output_size = decoder_input.size(1)
         embedded = self.embedding(decoder_input)
         #embedded = self.input_dropout(embedded)
-        # embedded = self.input_dropout(embedded)
         output,hidden = self.rnn(embedded, decoder_hidden)
         output, attention = self.attention(output, encoder_outputs) # attention
         softmax = func(self.wsm(output.view(-1, self.hidden_size)), dim=1).view(batch_size,output_size,-1)
