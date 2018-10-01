@@ -227,47 +227,95 @@ class NMT(object):
         Returns:
             ppl: the perplexity on dev sentences
         """
+        cum_loss = 0.
+        count = 0
 
         ref_corpus = []
         hyp_corpus = []
-        cum_loss = 0
-        count = 0
-        with torch.no_grad():
-            for src_sents, tgt_sents in batch_iter(dev_data, batch_size):
-                ref_corpus.extend(tgt_sents)
-                actual_size = len(src_sents)
-                src_sents = self.vocab.src.words2indices(src_sents)
-                tgt_sents = self.vocab.tgt.words2indices(tgt_sents)
-                src_sents, src_len, y_input, y_tgt, tgt_len  = sent_padding(src_sents, tgt_sents)
-                src_encodings, decoder_init_state = self.encode(src_sents,src_len)
-                scores, symbols = self.decode_without_bp(src_encodings, decoder_init_state, [y_input, y_tgt])
-                sents = np.zeros((len(symbols),actual_size))
-                for i,symbol in enumerate(symbols):
-                    sents[i,:] = symbol
-                # print(sents.T)
-                for sent in sents.T:
-                    word_seq = []
-                    for idx in sent:
-                        if idx == 2:
-                            break
-                        word_seq.append(self.vocab.tgt.id2word[idx])
-                    hyp_corpus.append(word_seq)
-        
-                cum_loss += scores
-                count += 1
-        out_num = 0
-        for r, h in zip(ref_corpus, hyp_corpus):
-            print(" ".join(r))
-            print(" ".join(h))
-            print()
-            out_num += 1
-            if out_num >= 10:
-                break
+        for src_sents, tgt_sents in batch_iter(dev_data, batch_size):
+            ref_corpus.extend(tgt_sents)
+            src_sents = self.vocab.src.words2indices(src_sents)
+            tgt_sents = self.vocab.tgt.words2indices(tgt_sents)
+            src_sents, src_len, y_input, y_tgt, tgt_len = sent_padding(src_sents, tgt_sents)
+            src_encodings, decoder_init_state = self.encode(src_sents, src_len)
+            decoder_outputs, loss = self.decode_without_bp(src_encodings, decoder_init_state, [y_input, y_tgt])
+            cum_loss += loss
+            count += 1
 
+            # decoder outputs to word sequence
+            hyp_np = np.zeros((len(tgt_sents), len(decoder_outputs), len(self.vocab.tgt)))
+
+            for step in range(len(decoder_outputs)):
+                tmp = decoder_outputs[step].cpu().data.numpy()
+                # print(tmp.shape)
+                hyp_np[:, step, :] = tmp
+            # print(hyp_np.shape)
+
+            # converting softmax to word string
+            for b in range(hyp_np.shape[0]):
+                word_seq = []
+                for step in range(hyp_np.shape[1]):
+                    pred_idx = np.argmax(hyp_np[b, step, :])
+                    # print(pred_idx)
+                    if pred_idx == self.vocab.tgt.word2id['</s>']:
+                        break
+                    word_seq.append(self.vocab.tgt.id2word[pred_idx])
+                hyp_corpus.append(word_seq)
+
+            # tgt_word_num_to_predict = sum(len(s[1:]) for s in tgt_sents)  # omitting the leading `<s>`
+            # cum_tgt_words += tgt_word_num_to_predict
+
+        # ppl = np.exp(cum_loss / cum_tgt_words)
+        for r, h in zip(ref_corpus, hyp_corpus):
+            print(r)
+            print(h)
+            print()
         bleu = compute_corpus_level_bleu_score(ref_corpus, hyp_corpus)
         print('bleu score: ', bleu)
 
         return cum_loss / count
+
+
+        # ref_corpus = []
+        # hyp_corpus = []
+        # cum_loss = 0
+        # count = 0
+        # with torch.no_grad():
+        #     for src_sents, tgt_sents in batch_iter(dev_data, batch_size):
+        #         ref_corpus.extend(tgt_sents)
+        #         actual_size = len(src_sents)
+        #         src_sents = self.vocab.src.words2indices(src_sents)
+        #         tgt_sents = self.vocab.tgt.words2indices(tgt_sents)
+        #         src_sents, src_len, y_input, y_tgt, tgt_len = sent_padding(src_sents, tgt_sents)
+        #         src_encodings, decoder_init_state = self.encode(src_sents,src_len)
+        #         scores, symbols = self.decode_without_bp(src_encodings, decoder_init_state, [y_input, y_tgt])
+        #         sents = np.zeros((len(symbols),actual_size))
+        #         for i,symbol in enumerate(symbols):
+        #             sents[i,:] = symbol
+        #         # print(sents.T)
+        #         for sent in sents.T:
+        #             word_seq = []
+        #             for idx in sent:
+        #                 if idx == 2:
+        #                     break
+        #                 word_seq.append(self.vocab.tgt.id2word[idx])
+        #             hyp_corpus.append(word_seq)
+        #
+        #         cum_loss += scores
+        #         count += 1
+        # out_num = 0
+        # for r, h in zip(ref_corpus, hyp_corpus):
+        #     print(" ".join(r))
+        #     print(" ".join(h))
+        #     print()
+        #     out_num += 1
+        #     if out_num >= 10:
+        #         break
+        #
+        # bleu = compute_corpus_level_bleu_score(ref_corpus, hyp_corpus)
+        # print('bleu score: ', bleu)
+        #
+        # return cum_loss / count
 
     # @staticmethod
     def load(self, model_path):
