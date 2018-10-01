@@ -24,7 +24,7 @@ def my_collate(batch):
 
 
     for i in range(batch_size):
-        src_sent, Yinput, Ytarget, orig_index = tuples[i][1:]
+        src_sent, Yinput, Ytarget = tuples[i][1:]
 
         src_len = src_sent.shape[0]
         tgt_len = Yinput.shape[0]
