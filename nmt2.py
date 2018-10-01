@@ -179,7 +179,7 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
 
         epoch_loss = np.asscalar(np.mean(losses))
         print("### Epoch {} Loss: {:.4f} Cum PPL: {:.4f}###"
-              .format(epoch, epoch_loss, math.exp(epoch_loss * batch_size / cum_num_words)))
+              .format(epoch, epoch_loss, math.exp(np.asscalar(np.sum(losses)) * batch_size / cum_num_words)))
 
         # # validation
         hyp_corpus = []
@@ -223,27 +223,6 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
 
         print("Epoch {} validation BLUE score: {:.4f}".format(epoch, bleu_score))
 
-    # # test
-    # index = 0
-    # fout = open(name+'.csv', 'w')
-    # fout.write('Id,Predicted\n')
-    # for src_sents, src_lens in test_dataloader:
-    #     # input: np array
-    #     # print('Yinput', Yinput.size())
-    #
-    #     # forward
-    #     key, value = encoder(to_variable(src_sents), src_lens.numpy().tolist())
-    #     pred_seq = decoder(key, value, None, None, False, src_lens.numpy().tolist())
-    #     pred_seq = pred_seq.cpu().data.numpy()  # B, L, 33
-    #
-    #     for b in range(pred_seq.shape[0]):
-    #         trans_dist = pred_seq[b,:,:]
-    #
-    #         transcript = ''.join(charlist[np.argmax(trans_dist[i, :])] for i in range(trans_dist.shape[0]))
-    #
-    #         fout.write('%d,%s\n' % (index, transcript))
-    #         index += 1
-
 
 def decode(encoder_state, decoder_state, mode, output_path):
 
@@ -270,7 +249,6 @@ def decode(encoder_state, decoder_state, mode, output_path):
     ref_corpus = []
     hyp_corpus_ordered = []
     for (src_sents, src_lens, Yinput, Ytarget, tgt_lens, tgt_sents_str, orig_indices) in decode_dataloader:
-
         # forward
         key, value = encoder(to_variable(src_sents), src_lens)
         pred_seq = decoder(key, value, None, Ytarget.size(-1), mode=mode, src_lens=src_lens)  # batch, sent_len, emb
