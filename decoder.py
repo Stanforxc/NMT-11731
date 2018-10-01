@@ -8,12 +8,9 @@ import numpy as np
 
 
 class Decoder(BaseCoder):
-<<<<<<< HEAD
     def __init__(self, vocab_size, hidden_size, embedding_size, input_dropout=0.0, output_dropout=0.0, n_layers=1, bidirectional=False,rnn="lstm",tf_rate=0.9):
-=======
     def __init__(self, vocab_size, hidden_size, embedding_size, input_dropout=0.0, output_dropout=0.0, n_layers=1,
                  bidirectional=False, rnn="lstm", tf_rate=0.9):
->>>>>>> f7941b74d6e4cdc56b5cda329abba92e52f8b694
         super(Decoder,self).__init__(vocab_size, hidden_size,embedding_size,input_dropout,output_dropout, n_layers, rnn)
         self.rnn = self.baseModel(input_size=embedding_size, hidden_size=hidden_size, num_layers=n_layers, 
                     batch_first=True,dropout=output_dropout)
@@ -26,13 +23,10 @@ class Decoder(BaseCoder):
         self.tf_rate = tf_rate
 
 
-<<<<<<< HEAD
     def forward(self, input_seq, encoder_hidden, encoder_outputs, func=F.log_softmax, stage="train"):
-=======
         self.tf_rate = tf_rate
 
     def forward(self, input_seq, encoder_hidden, encoder_outputs, func=F.log_softmax):
->>>>>>> f7941b74d6e4cdc56b5cda329abba92e52f8b694
         # batch_size = input_seq.size(0)
         max_length = input_seq.size(1)
 
@@ -51,7 +45,6 @@ class Decoder(BaseCoder):
             softmax, decoder_hidden, attention = self.forward_helper(prev, decoder_hidden,encoder_outputs ,func)
             output_seq = softmax.squeeze(1) # batch * seq_length
             outputs.append(output_seq)
-<<<<<<< HEAD
 
             if i == max_length - 1: break
             if np.random.random_sample() < self.tf_rate:
@@ -64,7 +57,6 @@ class Decoder(BaseCoder):
 
         return outputs,decoder_hidden,symbols
             
-=======
 
             # no more input if i is the last one
             if i == max_length - 1: break
@@ -75,7 +67,6 @@ class Decoder(BaseCoder):
                 prev = output_seq.topk(1)[1] # max probability index
 
         return outputs,decoder_hidden
->>>>>>> f7941b74d6e4cdc56b5cda329abba92e52f8b694
 
 
     # could insert one parameter like: src_matrix
@@ -83,11 +74,8 @@ class Decoder(BaseCoder):
         batch_size = decoder_input.size(0)
         output_size = decoder_input.size(1)
         embedded = self.embedding(decoder_input)
-<<<<<<< HEAD
         #embedded = self.input_dropout(embedded)
-=======
         # embedded = self.input_dropout(embedded)
->>>>>>> f7941b74d6e4cdc56b5cda329abba92e52f8b694
         output,hidden = self.rnn(embedded, decoder_hidden)
         output, attention = self.attention(output, encoder_outputs) # attention
         softmax = func(self.wsm(output.view(-1, self.hidden_size)), dim=1).view(batch_size,output_size,-1)
