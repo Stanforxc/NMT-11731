@@ -114,7 +114,7 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
     model_params = list(encoder.parameters()) + list(decoder.parameters())
     optim = torch.optim.Adam(model_params, lr=learn_rate, weight_decay=1e-5) # todo: change back to 1e-5
     # optim = torch.optim.SGD(LAS_params, lr=learn_rate)
-    # scheduler = torch.optim.lr_scheduler.StepLR(optim, step_size=1, gamma=0.5)
+    scheduler = torch.optim.lr_scheduler.StepLR(optim, step_size=2, gamma=0.8)
 
     if torch.cuda.is_available():
         # Move the network and the optimizer to the GPU
@@ -126,10 +126,13 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
     # start training
     for epoch in range(epochs):
         losses = []
+        tmp_losses = []
         count = -1
 
         total = len(train_dataset) / batch_size
         interval = total // 20
+
+        scheduler.step()
 
         for (src_sents, src_lens, Yinput, Ytarget, tgt_lens) in train_dataloader:
 
@@ -159,19 +162,21 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
             loss.backward()
             loss_np = loss.data.cpu().numpy()
             losses.append(loss_np)
+            tmp_losses.append(loss_np)
 
             ppl = loss_np * actual_batch_size / tgt_num_words
 
             # clip gradients
-            torch.nn.utils.clip_grad_norm_(encoder.parameters(), 5.)  # todo: tune???
+            torch.nn.utils.clip_grad_norm_(encoder.parameters(), 5.)
             torch.nn.utils.clip_grad_norm_(decoder.parameters(), 5.)
 
             # UPDATE THE NETWORK!!!
             optim.step()
-            # scheduler.step()  # after train
 
             if count % interval == 0:
-                print('Train Loss: %.2f Perplexity: %.2f Progress: %d%%' % (np.asscalar(loss_np), np.asscalar(ppl), count * 100 / total))
+                print('Train Loss: %.2f Perplexity: %.2f Progress: %d%%'
+                      % (np.asscalar(np.mean(tmp_losses)), np.asscalar(ppl), count * 100 / total))
+                tmp_losses = []
 
         print("### Epoch {} Loss: {:.4f} ###".format(epoch, np.asscalar(np.mean(losses))))
 
@@ -248,5 +253,10 @@ if len(sys.argv) == 3:
     encoder_state = sys.argv[1]
     decoder_state = sys.argv[2]
 
-train_model(batch_size=64, epochs=10, learn_rate=1e-4, name='r1', tf_rate=0.5,
+train_model(batch_size=64, epochs=10, learn_rate=1e-4, name='try1', tf_rate=0.5,
             encoder_state=encoder_state, decoder_state=decoder_state)
+
+"""
+# try1. lr 1e-4, lr_decay 0.8 every two epochs
+# try2: attention_dim to 256 2
+"""
