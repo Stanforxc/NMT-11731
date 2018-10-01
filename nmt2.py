@@ -124,6 +124,8 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
         losses = []
         tmp_losses = []
         count = -1
+        tgt_num_words = 0
+        cum_num_words = 0
 
         total = len(train_dataset) / batch_size
         interval = total // 20
@@ -147,7 +149,8 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
 
             for i in range(actual_batch_size):
                 tgt_mask[i, :tgt_lens[i]] = np.ones(tgt_lens[i])
-            tgt_num_words = tgt_mask.sum()
+            tgt_num_words += tgt_mask.sum()
+            cum_num_words += tgt_mask.sum()
             tgt_mask = to_variable(to_tensor(tgt_mask)).resize(actual_batch_size * max(tgt_lens))
 
             # loss
@@ -160,8 +163,6 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
             losses.append(loss_np)
             tmp_losses.append(loss_np)
 
-            ppl = np.exp(loss_np * actual_batch_size / tgt_num_words)
-
             # clip gradients
             torch.nn.utils.clip_grad_norm_(encoder.parameters(), 5.)
             torch.nn.utils.clip_grad_norm_(decoder.parameters(), 5.)
@@ -170,11 +171,16 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
             optim.step()
 
             if count % interval == 0:
+                report_loss = np.asscalar(np.mean(tmp_losses))
+                ppl = math.exp(report_loss * actual_batch_size / tgt_num_words)
+                tgt_num_words = 0
                 print('Train Loss: %.2f Perplexity: %.2f Progress: %d%%'
-                      % (np.asscalar(np.mean(tmp_losses)), np.asscalar(ppl), count * 100 / total))
+                      % (report_loss, ppl, count * 100 / total))
                 tmp_losses = []
 
-        print("### Epoch {} Loss: {:.4f} ###".format(epoch, np.asscalar(np.mean(losses))))
+        epoch_loss = np.asscalar(np.mean(losses))
+        print("### Epoch {} Loss: {:.4f} Cum Perplexity: {:.4f}###"
+              .format(epoch, epoch_loss, math.exp(epoch_loss * batch_size / cum_num_words)))
 
         # # validation
         hyp_corpus = []
