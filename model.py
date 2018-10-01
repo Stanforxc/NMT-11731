@@ -99,8 +99,8 @@ class Decoder(nn.Module):
         pred_idx = to_variable(torch.zeros(batch_size).long())  # size [N] batch size = 1 for test
         # print(pred_idx.size())
 
-        # not based on ref tgt
-        if mode != 'train':
+        # if dont want to base on ref tgt
+        if max_len is None:
             max_len = 100
 
         for step in range(max_len):
