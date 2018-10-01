@@ -171,11 +171,10 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
             optim.step()
 
             if count % interval == 0:
-                report_loss = np.asscalar(np.mean(tmp_losses))
-                ppl = math.exp(report_loss * actual_batch_size / tgt_num_words)
+                ppl = math.exp(np.asscalar(np.sum(tmp_losses)) * actual_batch_size / tgt_num_words)
                 tgt_num_words = 0
                 print('Train Loss: %.2f Avg PPL: %.2f Progress: %d%%'
-                      % (report_loss, ppl, count * 100 / total))
+                      % (np.asscalar(np.mean(tmp_losses)), ppl, count * 100 / total))
                 tmp_losses = []
 
         epoch_loss = np.asscalar(np.mean(losses))
@@ -186,8 +185,6 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
         hyp_corpus = []
         ref_corpus = []
         for (src_sents, src_lens, Yinput, Ytarget, tgt_lens, tgt_sents_str, _) in dev_dataloader:
-
-            actual_batch_size = len(src_lens)
 
             # forward
             key, value = encoder(to_variable(src_sents), src_lens)
