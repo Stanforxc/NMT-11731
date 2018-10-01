@@ -174,12 +174,12 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
                 report_loss = np.asscalar(np.mean(tmp_losses))
                 ppl = math.exp(report_loss * actual_batch_size / tgt_num_words)
                 tgt_num_words = 0
-                print('Train Loss: %.2f Perplexity: %.2f Progress: %d%%'
+                print('Train Loss: %.2f Avg PPL: %.2f Progress: %d%%'
                       % (report_loss, ppl, count * 100 / total))
                 tmp_losses = []
 
         epoch_loss = np.asscalar(np.mean(losses))
-        print("### Epoch {} Loss: {:.4f} Cum Perplexity: {:.4f}###"
+        print("### Epoch {} Loss: {:.4f} Cum PPL: {:.4f}###"
               .format(epoch, epoch_loss, math.exp(epoch_loss * batch_size / cum_num_words)))
 
         # # validation
