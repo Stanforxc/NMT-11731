@@ -245,5 +245,5 @@ if len(sys.argv) == 3:
     encoder_state = sys.argv[1]
     decoder_state = sys.argv[2]
 
-train_model(batch_size=48, epochs=5, learn_rate=1e-3, name='beta0', tf_rate=0.5,
+train_model(batch_size=48, epochs=5, learn_rate=1e-4, name='r1', tf_rate=0.5,
             encoder_state=encoder_state, decoder_state=decoder_state)
