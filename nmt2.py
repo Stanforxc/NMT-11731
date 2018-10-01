@@ -92,9 +92,6 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
     dev_dataset = DevDataset('dev', vocab)
     dev_dataloader = torch.utils.data.DataLoader(dev_dataset, batch_size=16, shuffle=False, collate_fn=dev_collate)
 
-    test_dataset = DevDataset('test', vocab)
-    test_dataloader = torch.utils.data.DataLoader(test_dataset, batch_size=1, shuffle=False, collate_fn=dev_collate)
-
     # Create the seq2seq network
     encoder = Encoder(vocab_size=len(vocab.src), hidden_dim=256, attention_dim=128, value_dim=256)
     decoder = Decoder(vocab_size=tgt_vocab_size, hidden_dim=256, attention_dim=128, value_dim=256, tf_rate=tf_rate)
@@ -255,6 +252,9 @@ def decode(encoder_state, decoder_state, mode):
     # Create the seq2seq network
     encoder = Encoder(vocab_size=len(vocab.src), hidden_dim=256, attention_dim=128, value_dim=256)
     decoder = Decoder(vocab_size=tgt_vocab_size, hidden_dim=256, attention_dim=128, value_dim=256, tf_rate=0)
+    if torch.cuda.is_available():
+        encoder = encoder.cuda()
+        decoder = decoder.cuda()
 
     encoder.load_state_dict(torch.load(encoder_state))
     decoder.load_state_dict(torch.load(decoder_state))
