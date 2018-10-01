@@ -42,11 +42,8 @@ def my_collate(batch):
 def dev_collate(batch):
     batch_size = len(batch)
 
-    # sort by src sentence length
     tuples = [(tup[0].shape[0], tup[0], tup[1], tup[2], tup[3]) for tup in batch]
-    tuples.sort(key=lambda x: x[0], reverse=True)  # sort in descending order
-
-    max_src_len = tuples[0][0]
+    max_src_len = max([len(tup[0]) for tup in batch])
     max_tgt_len = max([len(tup[1]) for tup in batch])
 
     padded_src_sents = np.zeros((batch_size, max_src_len))
