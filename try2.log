@@ -1,0 +1,919 @@
+LSTM
+LSTMCell
+Train Loss: 250.36 Perplexity: 11.90 Progress: 0%
+Train Loss: 155.59 Perplexity: 6.73 Progress: 4%
+Train Loss: 122.15 Perplexity: 6.10 Progress: 9%
+Train Loss: 110.73 Perplexity: 5.44 Progress: 14%
+Train Loss: 105.38 Perplexity: 5.37 Progress: 19%
+Train Loss: 102.12 Perplexity: 5.21 Progress: 24%
+Train Loss: 99.52 Perplexity: 5.08 Progress: 29%
+Train Loss: 97.47 Perplexity: 4.90 Progress: 34%
+Train Loss: 96.29 Perplexity: 4.95 Progress: 39%
+Train Loss: 93.94 Perplexity: 4.83 Progress: 44%
+Train Loss: 92.80 Perplexity: 4.62 Progress: 49%
+Train Loss: 91.94 Perplexity: 4.34 Progress: 54%
+Train Loss: 90.12 Perplexity: 4.55 Progress: 59%
+Train Loss: 90.70 Perplexity: 4.59 Progress: 64%
+Train Loss: 90.54 Perplexity: 4.75 Progress: 69%
+Train Loss: 88.39 Perplexity: 4.67 Progress: 74%
+Train Loss: 88.43 Perplexity: 4.50 Progress: 79%
+Train Loss: 86.24 Perplexity: 4.77 Progress: 84%
+Train Loss: 86.97 Perplexity: 4.46 Progress: 89%
+Train Loss: 87.25 Perplexity: 4.41 Progress: 94%
+Train Loss: 85.09 Perplexity: 4.16 Progress: 99%
+### Epoch 0 Loss: 98.0369 ###
+['<s>', 'i', 'keep', 'this', 'photograph', 'close', 'by', 'to', 'me', '--', 'it', '&apos;s', 'in', 'my', 'office', '--', 'because', 'i', '&apos;ve', 'always', 'felt', 'a', 'mystical', 'connection', 'to', 'these', 'two', 'men', ',', 'both', 'of', 'whom', 'i', 'never', 'knew', '.', '</s>']
+['i', '&apos;m', 'this', 'photograph', 'in', 'me', '.', 'it', '&apos;s', 'in', 'my', 'office', '.', 'because', 'i', 'i', 'i', 'i', 'i', 'i', 'to', 'a', 'a', 'to', 'these', 'those', 'two', '<unk>', ',', 'i', '&apos;ve', 'got', 'to', 'to', '.']
+
+['<s>', 'and', 'i', 'remember', 'there', 'sitting', 'at', 'my', 'desk', 'thinking', ',', '&quot;', 'well', ',', 'i', 'know', 'this', '.', 'this', 'is', 'a', 'great', 'scientific', 'discovery', ',', '&quot;', 'but', 'it', 'was', 'so', 'awful', '.', '</s>']
+['and', 'i', 'remember', 'i', 'i', 'i', 'my', 'my', 'my', 'my', 'and', 'and', 'thought', ',', '&quot;', 'i', 'know', 'what', 'i', 'i', '.', 'what', 'a', 'great', 'scientific', 'scientific', 'scientific', '.', '&quot;', 'but', 'it', 'was', 'so', '.', '.']
+
+['<s>', 'and', 'i', '&apos;m', 'hopeful', 'because', 'it', '&apos;s', 'not', 'only', 'philanthropy', 'that', '&apos;s', '<unk>', 'itself', ',', 'it', '&apos;s', 'also', 'whole', 'other', 'portions', 'of', 'the', 'social', 'sector', ',', 'and', 'of', 'business', ',', 'that', 'are', 'busy', 'challenging', '&quot;', 'business', 'as', 'usual', '.', '&quot;', '</s>']
+['and', 'i', '&apos;m', 'because', 'because', 'not', 'just', 'the', 'the', ',', ',', 'the', 'social', 'social', 'social', 'social', 'social', 'and', 'and', 'the', 'in', 'the', ',', 'the', 'the', '.', '&quot;']
+
+['<s>', 'there', 'are', 'now', ',', 'today', ',', 'so', 'many', 'new', 'funds', 'that', 'are', '<unk>', 'giving', 'and', 'investing', ',', 'bringing', 'together', 'people', 'around', 'a', 'common', 'goal', ',', 'to', 'think', 'bigger', '.', '</s>']
+['so', ',', 'there', 'are', 'so', 'many', 'new', ',', ',', 'and', 'the', '<unk>', ',', 'and', ',', 'people', ',', 'the', 'people', ',', 'for', 'a', 'goal', 'in', 'a', 'a', '.']
+
+['<s>', 'clay', 'shirky', ',', 'that', 'great', '<unk>', 'of', 'everything', 'networked', ',', 'has', 'captured', 'the', 'assumption', 'that', 'this', 'challenges', 'in', 'such', 'a', 'beautiful', 'way', '.', '</s>']
+['so', ',', ',', ',', 'this', 'great', '<unk>', 'of', 'all', 'the', ',', ',', 'the', ',', ',', 'the', 'the', ',', ',', 'on', 'the', '<unk>', ',', 'on', '.']
+
+['<s>', 'they', '&apos;re', 'closed', 'more', 'and', 'more', 'and', 'more', 'all', 'around', 'the', 'world', 'for', 'the', 'same', 'reason', ',', 'and', 'i', 'believe', 'we', 'shouldn', '&apos;t', 'tolerate', 'that', 'either', '.', '</s>']
+['they', 'will', 'always', 'all', 'world', 'world', 'world', 'and', 'always', 'the', 'the', 'same', 'reason', '.', 'and', 'i', 'think', 'we', 'should', 'be', '<unk>', '.']
+
+['<s>', 'i', 'started', 'out', 'showing', 'how', 'much', 'we', 'had', 'distressed', 'the', 'monterey', 'bay', 'ecosystem', 'with', 'pollution', 'and', 'the', 'canning', 'industry', 'and', 'all', 'of', 'the', 'attendant', 'problems', '.', '</s>']
+['i', '&apos;ve', 'been', ',', 'i', ',', 'how', 'do', 'we', 'do', 'that', 'the', 'the', 'the', 'the', 'of', 'the', ',', 'and', 'and', 'and', 'and', 'and', 'the', 'and', ',', 'and', 'all', 'the', '.', '.']
+
+['<s>', 'and', 'just', 'around', 'that', 'time', ',', 'his', 'mother', 'had', 'said', ',', '&quot;', 'have', 'you', 'seen', 'this', 'book', 'by', 'michael', '<unk>', 'called', '&apos;', 'war', 'horse', '&apos;', '?', '&quot;', '</s>']
+['about', 'the', 'same', 'time', ',', 'him', ',', 'him', ',', '&quot;', '&quot;', 'you', 'asked', 'the', 'book', 'of', 'went', 'from', 'went', 'from', 'went', 'from', 'went', 'from', 'went', 'from', 'went', 'from', 'went', 'from', 'went', 'from', 'went', 'from', 'went', 'from', 'went', 'from', 'went', 'from', 'went', 'from', 'went', 'from', 'went', 'from', 'went', 'from', 'the', '.', '.']
+
+['<s>', 'and', 'you', 'know', ',', 'our', 'modern', 'ways', 'of', 'doing', 'things', 'have', 'their', 'advantages', ',', 'but', 'i', 'believe', 'we', 'should', 'understand', 'the', 'costs', '.', '</s>']
+['it', '&apos;s', 'our', 'our', 'our', ',', ',', 'a', ',', ',', 'but', 'i', 'think', 'we', 'should', 'have', 'to', 'see', 'to', 'experience', '.']
+
+['<s>', 'here', '&apos;s', 'a', 'diagram', 'of', 'the', '<unk>', 'load', 'of', 'dolphins', 'in', '<unk>', 'bay', '.', '</s>']
+['here', '&apos;s', 'a', '<unk>', 'of', 'the', '<unk>', 'of', 'the', '<unk>', 'in', 'the', '<unk>', '.']
+
+['<s>', 'now', 'why', 'does', 'that', 'matter', 'for', 'human', 'health', '?', '</s>']
+['now', 'why', 'does', 'that', 'the', 'for', 'the', 'human', 'health', 'health', '?']
+
+['<s>', 'here', ',', 'craig', 'is', 'working', 'the', 'head', '.', '</s>']
+['<unk>', 'here', '&apos;s', 'the', 'head', '.']
+
+['<s>', 'you', 'see', 'the', 'skeletal', 'structure', 'of', 'it', '.', '</s>']
+['you', '&apos;re', 'still', 'the', '.', '.']
+
+['<s>', 'so', ',', 'we', 'have', 'this', 'ability', 'as', 'well', '.', '</s>']
+['we', 'also', 'have', 'this', 'ability', '.']
+
+['<s>', 'ak', ':', '<unk>', '<unk>', '<unk>', '.', '</s>']
+['<unk>', '<unk>', '<unk>', '.']
+
+['<s>', 'ak', ':', 'we', 'were', 'terrified', '.', '</s>']
+['we', 'really', 'really', 'fear', '.']
+
+['<s>', 'we', 'worry', 'that', 'im', ',', 'texting', ',', 'facebook', 'are', '<unk>', 'human', 'intimacy', ',', 'but', '<unk>', '<unk>', '&apos;s', 'research', 'shows', 'how', 'communication', 'tech', 'is', 'capable', 'of', 'cultivating', 'deeper', 'relationships', ',', 'bringing', 'love', 'across', 'barriers', 'like', 'distance', 'and', 'workplace', 'rules', '.', '</s>']
+['we', '&apos;re', 'going', 'to', 'do', 'that', ',', ',', ',', ',', ',', ',', ',', 'the', '<unk>', ',', ',', 'but', '<unk>', ',', ',', 'the', '<unk>', 'of', 'the', ',', ',', 'and', 'to', 'to', 'to', 'and', 'to', 'to', 'and', 'to', 'to', 'and', 'to', 'to', 'and', '.']
+
+['<s>', 'one', 'of', 'the', 'things', 'that', 'we', '&apos;ve', 'developed', 'in', 'the', 'lab', '--', 'we', '&apos;ve', 'developed', 'several', 'vehicles', '--', 'is', 'what', 'we', 'believe', 'is', 'the', 'world', '&apos;s', 'first', 'autonomously', 'drifting', 'car', '.', '</s>']
+['one', 'of', 'the', 'things', 'we', 'we', 'have', 'the', 'lab', '--', 'we', '&apos;ve', '--', ',', 'is', 'how', 'we', 'believe', ',', 'the', 'first', '<unk>', 'the', 'world', '.']
+
+['<s>', 'and', 'he', 'did', 'sometimes', ',', 'believe', 'it', 'or', 'not', ',', 'at', 'a', '<unk>', 'in', 'los', 'angeles', '--', 'one', 'reason', 'to', 'love', 'l.a.', '--', 'back', 'in', 'the', '1940s', '.', '</s>']
+['and', 'he', '&apos;s', 'sometimes', ',', 'you', ',', 'you', ',', ',', 'in', 'in', 'in', 'in', 'in', '<unk>', ',', ',', 'a', ',', 'to', 'love', 'to', 'love', '.']
+
+['<s>', 'i', 'started', 'my', 'firm', 'to', 'help', 'communities', 'across', 'the', 'country', 'realize', 'their', 'own', 'potential', 'to', 'improve', 'everything', 'about', 'the', 'quality', 'of', 'life', 'for', 'their', 'people', '.', '</s>']
+['i', 'started', 'my', 'company', 'to', 'help', 'the', 'in', 'the', 'country', 'in', 'the', 'country', ',', 'your', 'to', 'to', 'to', 'to', 'to', 'to', 'to', 'the', 'entire', '.']
+
+Epoch 0 validation BLUE score: 0.1261
+Train Loss: 75.66 Perplexity: 4.08 Progress: 0%
+Train Loss: 82.92 Perplexity: 4.01 Progress: 4%
+Train Loss: 82.99 Perplexity: 4.32 Progress: 9%
+Train Loss: 83.03 Perplexity: 4.54 Progress: 14%
+Train Loss: 81.81 Perplexity: 4.17 Progress: 19%
+Train Loss: 81.86 Perplexity: 4.52 Progress: 24%
+Train Loss: 80.92 Perplexity: 3.89 Progress: 29%
+Train Loss: 80.20 Perplexity: 4.14 Progress: 34%
+Train Loss: 80.30 Perplexity: 4.13 Progress: 39%
+Train Loss: 80.18 Perplexity: 4.27 Progress: 44%
+Train Loss: 79.97 Perplexity: 4.17 Progress: 49%
+Train Loss: 79.29 Perplexity: 4.01 Progress: 54%
+Train Loss: 78.79 Perplexity: 4.16 Progress: 59%
+Train Loss: 78.75 Perplexity: 4.06 Progress: 64%
+Train Loss: 78.81 Perplexity: 3.85 Progress: 69%
+Train Loss: 78.08 Perplexity: 3.89 Progress: 74%
+Train Loss: 77.34 Perplexity: 4.10 Progress: 79%
+Train Loss: 79.41 Perplexity: 4.12 Progress: 84%
+Train Loss: 77.03 Perplexity: 4.06 Progress: 89%
+Train Loss: 78.13 Perplexity: 3.94 Progress: 94%
+Train Loss: 76.73 Perplexity: 4.02 Progress: 99%
+### Epoch 1 Loss: 79.7986 ###
+['<s>', 'i', 'keep', 'this', 'photograph', 'close', 'by', 'to', 'me', '--', 'it', '&apos;s', 'in', 'my', 'office', '--', 'because', 'i', '&apos;ve', 'always', 'felt', 'a', 'mystical', 'connection', 'to', 'these', 'two', 'men', ',', 'both', 'of', 'whom', 'i', 'never', 'knew', '.', '</s>']
+['i', '&apos;m', 'this', 'photograph', 'in', 'this', 'photograph', ',', 'it', '&apos;s', 'in', 'my', 'office', ',', 'because', 'i', 'always', 'have', 'a', 'a', 'to', 'to', 'these', 'two', '<unk>', ',', 'i', '&apos;ve', 'never', 'learned', 'a', '.']
+
+['<s>', 'and', 'i', 'remember', 'there', 'sitting', 'at', 'my', 'desk', 'thinking', ',', '&quot;', 'well', ',', 'i', 'know', 'this', '.', 'this', 'is', 'a', 'great', 'scientific', 'discovery', ',', '&quot;', 'but', 'it', 'was', 'so', 'awful', '.', '</s>']
+['and', 'i', 'remember', 'how', 'i', 'sat', 'on', 'my', ',', ',', 'and', 'i', 'thought', ',', '&quot;', 'i', 'know', 'it', '&apos;s', 'what', 'a', 'great', 'scientific', 'discovery', '.', '&quot;', 'but', 'it', 'was', 'so', '.', '.']
+
+['<s>', 'and', 'i', '&apos;m', 'hopeful', 'because', 'it', '&apos;s', 'not', 'only', 'philanthropy', 'that', '&apos;s', '<unk>', 'itself', ',', 'it', '&apos;s', 'also', 'whole', 'other', 'portions', 'of', 'the', 'social', 'sector', ',', 'and', 'of', 'business', ',', 'that', 'are', 'busy', 'challenging', '&quot;', 'business', 'as', 'usual', '.', '&quot;', '</s>']
+['and', 'i', '&apos;m', 'a', ',', 'because', 'because', 'not', 'just', 'the', 'the', ',', ',', 'other', 'big', 'parts', 'of', 'social', 'social', 'and', 'and', 'the', 'the', ',', 'the', 'the', 'business', '<unk>', 'of', 'the', '.']
+
+['<s>', 'there', 'are', 'now', ',', 'today', ',', 'so', 'many', 'new', 'funds', 'that', 'are', '<unk>', 'giving', 'and', 'investing', ',', 'bringing', 'together', 'people', 'around', 'a', 'common', 'goal', ',', 'to', 'think', 'bigger', '.', '</s>']
+['now', ',', 'there', 'are', 'so', 'many', 'new', ',', ',', 'the', '<unk>', 'and', ',', 'and', ',', 'and', ',', ',', 'people', ',', 'for', 'a', 'goal', ',', 'a', 'a', '.']
+
+['<s>', 'clay', 'shirky', ',', 'that', 'great', '<unk>', 'of', 'everything', 'networked', ',', 'has', 'captured', 'the', 'assumption', 'that', 'this', 'challenges', 'in', 'such', 'a', 'beautiful', 'way', '.', '</s>']
+['clay', '<unk>', ',', 'that', 'great', '<unk>', 'of', 'all', 'the', 'of', 'all', 'the', ',', ',', 'the', 'the', ',', 'the', 'the', ',', 'the', 'the', ',', 'is', 'to', 'the', '<unk>', '.']
+
+['<s>', 'they', '&apos;re', 'closed', 'more', 'and', 'more', 'and', 'more', 'all', 'around', 'the', 'world', 'for', 'the', 'same', 'reason', ',', 'and', 'i', 'believe', 'we', 'shouldn', '&apos;t', 'tolerate', 'that', 'either', '.', '</s>']
+['they', '&apos;ll', 'always', 'going', 'around', 'the', 'world', 'world', ',', 'and', 'and', 'and', 'and', 'and', 'and', 'i', 'find', 'that', 'we', 'should', 'be', '<unk>', '.']
+
+['<s>', 'i', 'started', 'out', 'showing', 'how', 'much', 'we', 'had', 'distressed', 'the', 'monterey', 'bay', 'ecosystem', 'with', 'pollution', 'and', 'the', 'canning', 'industry', 'and', 'all', 'of', 'the', 'attendant', 'problems', '.', '</s>']
+['i', '&apos;ve', 'been', 'shown', 'how', 'how', 'we', 'we', 'we', 'the', 'the', 'of', 'the', 'power', 'of', 'the', ',', 'and', 'and', 'and', 'and', 'and', 'and', 'and', 'and', 'all', 'the', '.']
+
+['<s>', 'and', 'just', 'around', 'that', 'time', ',', 'his', 'mother', 'had', 'said', ',', '&quot;', 'have', 'you', 'seen', 'this', 'book', 'by', 'michael', '<unk>', 'called', '&apos;', 'war', 'horse', '&apos;', '?', '&quot;', '</s>']
+['about', 'at', 'at', 'the', 'same', 'time', ',', 'his', 'mother', ',', 'she', 'asked', 'his', 'mother', ',', '&quot;', 'do', 'you', 'have', 'the', 'book', '?', '&quot;']
+
+['<s>', 'and', 'you', 'know', ',', 'our', 'modern', 'ways', 'of', 'doing', 'things', 'have', 'their', 'advantages', ',', 'but', 'i', 'believe', 'we', 'should', 'understand', 'the', 'costs', '.', '</s>']
+['it', 'has', 'our', 'modern', 'way', 'of', 'something', 'like', 'this', ',', ',', ',', ',', 'but', 'i', 'think', 'we', 'should', 'also', 'see', ',', 'we', 'should', 'recognize', 'to', 'see', '.']
+
+['<s>', 'here', '&apos;s', 'a', 'diagram', 'of', 'the', '<unk>', 'load', 'of', 'dolphins', 'in', '<unk>', 'bay', '.', '</s>']
+['here', '&apos;s', 'a', 'graph', 'of', 'the', 'of', 'of', 'the', 'in', 'the', '<unk>', '.']
+
+['<s>', 'now', 'why', 'does', 'that', 'matter', 'for', 'human', 'health', '?', '</s>']
+['now', ',', 'why', 'does', 'it', 'do', 'a', 'role', 'for', 'human', 'health', '?']
+
+['<s>', 'here', ',', 'craig', 'is', 'working', 'the', 'head', '.', '</s>']
+['craig', '<unk>', 'the', 'head', '.']
+
+['<s>', 'you', 'see', 'the', 'skeletal', 'structure', 'of', 'it', '.', '</s>']
+['you', '&apos;re', 'the', 'the', '.', '.']
+
+['<s>', 'so', ',', 'we', 'have', 'this', 'ability', 'as', 'well', '.', '</s>']
+['we', 'we', 'have', 'this', 'ability', 'to', 'this', '.']
+
+['<s>', 'ak', ':', '<unk>', '<unk>', '<unk>', '.', '</s>']
+['<unk>', '<unk>', ':', '<unk>', '<unk>', '.']
+
+['<s>', 'ak', ':', 'we', 'were', 'terrified', '.', '</s>']
+['we', 'had', 'really', 'fear', '.']
+
+['<s>', 'we', 'worry', 'that', 'im', ',', 'texting', ',', 'facebook', 'are', '<unk>', 'human', 'intimacy', ',', 'but', '<unk>', '<unk>', '&apos;s', 'research', 'shows', 'how', 'communication', 'tech', 'is', 'capable', 'of', 'cultivating', 'deeper', 'relationships', ',', 'bringing', 'love', 'across', 'barriers', 'like', 'distance', 'and', 'workplace', 'rules', '.', '</s>']
+['we', '&apos;re', 'going', 'to', 'worry', 'that', ',', ',', ',', ',', 'facebook', ',', ',', ',', ',', ',', '<unk>', ',', ',', 'but', '<unk>', '<unk>', ',', ',', 'like', 'the', '<unk>', 'to', 'to', 'to', 'and', '<unk>', 'and', '<unk>', 'and', '<unk>', 'and', '<unk>', '.']
+
+['<s>', 'one', 'of', 'the', 'things', 'that', 'we', '&apos;ve', 'developed', 'in', 'the', 'lab', '--', 'we', '&apos;ve', 'developed', 'several', 'vehicles', '--', 'is', 'what', 'we', 'believe', 'is', 'the', 'world', '&apos;s', 'first', 'autonomously', 'drifting', 'car', '.', '</s>']
+['one', 'of', 'the', 'things', 'we', '&apos;ve', 'developed', 'in', 'the', 'lab', '--', 'we', '&apos;ve', 'developed', 'several', 'vehicles', '--', 'is', 'how', 'we', 'believe', ',', 'the', 'first', '<unk>', 'of', 'the', 'world', '.']
+
+['<s>', 'and', 'he', 'did', 'sometimes', ',', 'believe', 'it', 'or', 'not', ',', 'at', 'a', '<unk>', 'in', 'los', 'angeles', '--', 'one', 'reason', 'to', 'love', 'l.a.', '--', 'back', 'in', 'the', '1940s', '.', '</s>']
+['and', 'he', 'won', '&apos;t', 'you', 'you', 'you', 'to', 'a', '<unk>', 'in', 'los', 'angeles', '--', 'a', 'reason', ',', 'a', 'reason', ',', 'a', ',', '--', 'in', 'the', 'in', 'the', 'the', '.']
+
+['<s>', 'i', 'started', 'my', 'firm', 'to', 'help', 'communities', 'across', 'the', 'country', 'realize', 'their', 'own', 'potential', 'to', 'improve', 'everything', 'about', 'the', 'quality', 'of', 'life', 'for', 'their', 'people', '.', '</s>']
+['i', 'began', 'my', 'company', 'to', 'help', 'in', 'in', 'the', 'country', ',', 'to', 'help', 'your', 'potential', 'potential', 'to', 'to', 'the', 'entire', 'quality', 'of', 'their', '.']
+
+Epoch 1 validation BLUE score: 0.1662
+Train Loss: 76.30 Perplexity: 3.91 Progress: 0%
+Train Loss: 74.99 Perplexity: 3.87 Progress: 4%
+Train Loss: 74.04 Perplexity: 3.84 Progress: 9%
+Train Loss: 74.02 Perplexity: 3.72 Progress: 14%
+Train Loss: 73.22 Perplexity: 3.72 Progress: 19%
+Train Loss: 73.51 Perplexity: 3.65 Progress: 24%
+Train Loss: 72.71 Perplexity: 4.01 Progress: 29%
+Train Loss: 73.61 Perplexity: 3.53 Progress: 34%
+Train Loss: 71.82 Perplexity: 3.72 Progress: 39%
+Train Loss: 72.49 Perplexity: 3.67 Progress: 44%
+Train Loss: 72.36 Perplexity: 3.59 Progress: 49%
+Train Loss: 73.18 Perplexity: 3.81 Progress: 54%
+Train Loss: 71.66 Perplexity: 3.60 Progress: 59%
+Train Loss: 71.61 Perplexity: 3.46 Progress: 64%
+Train Loss: 70.45 Perplexity: 3.26 Progress: 69%
+Train Loss: 71.79 Perplexity: 3.86 Progress: 74%
+Train Loss: 70.98 Perplexity: 3.65 Progress: 79%
+Train Loss: 71.40 Perplexity: 3.53 Progress: 84%
+Train Loss: 70.34 Perplexity: 3.53 Progress: 89%
+Train Loss: 70.54 Perplexity: 3.79 Progress: 94%
+Train Loss: 70.22 Perplexity: 3.59 Progress: 99%
+### Epoch 2 Loss: 72.2374 ###
+['<s>', 'i', 'keep', 'this', 'photograph', 'close', 'by', 'to', 'me', '--', 'it', '&apos;s', 'in', 'my', 'office', '--', 'because', 'i', '&apos;ve', 'always', 'felt', 'a', 'mystical', 'connection', 'to', 'these', 'two', 'men', ',', 'both', 'of', 'whom', 'i', 'never', 'knew', '.', '</s>']
+['i', '&apos;m', 'this', 'this', 'photograph', 'in', 'my', 'office', '.', 'it', '&apos;s', 'in', 'my', 'office', ',', 'i', 'always', 'have', 'a', 'a', 'connection', 'to', 'these', 'two', 'men', ',', 'i', '&apos;ve', 'never', 'had', 'of', 'you', '.']
+
+['<s>', 'and', 'i', 'remember', 'there', 'sitting', 'at', 'my', 'desk', 'thinking', ',', '&quot;', 'well', ',', 'i', 'know', 'this', '.', 'this', 'is', 'a', 'great', 'scientific', 'discovery', ',', '&quot;', 'but', 'it', 'was', 'so', 'awful', '.', '</s>']
+['and', 'i', 'remember', 'my', 'unlike', 'my', 'desk', ',', 'and', 'i', 'thought', ',', '&quot;', 'i', 'know', 'what', 'i', 'do', '.', 'what', 'a', 'great', 'scientific', 'discovery', '.', '&quot;', 'but', 'it', 'was', 'so', 'terrible', '.']
+
+['<s>', 'and', 'i', '&apos;m', 'hopeful', 'because', 'it', '&apos;s', 'not', 'only', 'philanthropy', 'that', '&apos;s', '<unk>', 'itself', ',', 'it', '&apos;s', 'also', 'whole', 'other', 'portions', 'of', 'the', 'social', 'sector', ',', 'and', 'of', 'business', ',', 'that', 'are', 'busy', 'challenging', '&quot;', 'business', 'as', 'usual', '.', '&quot;', '</s>']
+['and', 'i', '&apos;m', 'a', ',', 'because', 'not', 'just', 'the', 'the', 'other', 'parts', 'of', 'social', '<unk>', 'and', 'the', 'the', 'of', 'social', '<unk>', 'and', 'the', 'the', 'business', 'of', 'the', 'the', 'business', '.']
+
+['<s>', 'there', 'are', 'now', ',', 'today', ',', 'so', 'many', 'new', 'funds', 'that', 'are', '<unk>', 'giving', 'and', 'investing', ',', 'bringing', 'together', 'people', 'around', 'a', 'common', 'goal', ',', 'to', 'think', 'bigger', '.', '</s>']
+['today', ',', 'there', 'are', 'so', 'many', 'new', ',', ',', 'the', '<unk>', 'and', 'and', 'and', ',', 'people', 'together', ',', 'in', 'a', ',', 'for', 'a', 'a', ',', 'in', 'a', 'a', '.']
+
+['<s>', 'clay', 'shirky', ',', 'that', 'great', '<unk>', 'of', 'everything', 'networked', ',', 'has', 'captured', 'the', 'assumption', 'that', 'this', 'challenges', 'in', 'such', 'a', 'beautiful', 'way', '.', '</s>']
+['clay', 'shirky', ',', 'this', 'great', '<unk>', 'of', 'all', 'the', ',', 'the', 'the', ',', 'the', 'the', ',', 'the', 'the', ',', 'the', '<unk>', 'is', 'that', ',', 'in', 'a', 'great', 'way', '.']
+
+['<s>', 'they', '&apos;re', 'closed', 'more', 'and', 'more', 'and', 'more', 'all', 'around', 'the', 'world', 'for', 'the', 'same', 'reason', ',', 'and', 'i', 'believe', 'we', 'shouldn', '&apos;t', 'tolerate', 'that', 'either', '.', '</s>']
+['and', 'they', '&apos;re', 'always', 'in', 'around', 'the', 'world', 'and', 'and', 'and', 'and', 'and', 'and', 'i', 'find', 'that', ',', 'we', 'should', 'be', 'able', 'to', 'be', '<unk>', '.']
+
+['<s>', 'i', 'started', 'out', 'showing', 'how', 'much', 'we', 'had', 'distressed', 'the', 'monterey', 'bay', 'ecosystem', 'with', 'pollution', 'and', 'the', 'canning', 'industry', 'and', 'all', 'of', 'the', 'attendant', 'problems', '.', '</s>']
+['i', 'i', 'showed', 'you', ',', 'the', 'the', 'the', 'the', 'the', 'the', 'the', 'of', 'the', ',', 'and', 'and', 'and', 'and', 'and', 'and', 'and', 'and', 'the', 'and', 'of', 'problems', '.']
+
+['<s>', 'and', 'just', 'around', 'that', 'time', ',', 'his', 'mother', 'had', 'said', ',', '&quot;', 'have', 'you', 'seen', 'this', 'book', 'by', 'michael', '<unk>', 'called', '&apos;', 'war', 'horse', '&apos;', '?', '&quot;', '</s>']
+['about', 'at', 'the', 'same', 'time', ',', 'his', 'mother', 'asked', 'him', ',', '&quot;', 'do', 'you', 'know', 'the', 'book', 'of', 'michael', '<unk>', '?', '?', '&quot;']
+
+['<s>', 'and', 'you', 'know', ',', 'our', 'modern', 'ways', 'of', 'doing', 'things', 'have', 'their', 'advantages', ',', 'but', 'i', 'believe', 'we', 'should', 'understand', 'the', 'costs', '.', '</s>']
+['it', '&apos;s', 'our', 'modern', 'way', 'of', 'something', 'to', 'your', 'benefits', ',', 'but', 'i', 'think', 'we', 'should', 'see', ',', 'to', 'see', 'to', 'to', '.']
+
+['<s>', 'here', '&apos;s', 'a', 'diagram', 'of', 'the', '<unk>', 'load', 'of', 'dolphins', 'in', '<unk>', 'bay', '.', '</s>']
+['this', 'is', 'a', 'diagram', 'of', 'the', '<unk>', 'of', 'of', '<unk>', 'in', 'the', '<unk>']
+
+['<s>', 'now', 'why', 'does', 'that', 'matter', 'for', 'human', 'health', '?', '</s>']
+['well', ',', 'why', 'does', 'that', 'play', 'a', 'a', 'of', 'human', 'health', '?']
+
+['<s>', 'here', ',', 'craig', 'is', 'working', 'the', 'head', '.', '</s>']
+['craig', '&apos;s', 'this', 'on', 'the', 'head', '.']
+
+['<s>', 'you', 'see', 'the', 'skeletal', 'structure', 'of', 'it', '.', '</s>']
+['you', 'see', 'the', 'skeleton', '.']
+
+['<s>', 'so', ',', 'we', 'have', 'this', 'ability', 'as', 'well', '.', '</s>']
+['we', 'also', 'have', 'this', 'ability', '.']
+
+['<s>', 'ak', ':', '<unk>', '<unk>', '<unk>', '.', '</s>']
+['<unk>', '<unk>', '--', '<unk>', '<unk>']
+
+['<s>', 'ak', ':', 'we', 'were', 'terrified', '.', '</s>']
+['we', 'really', 'afraid', '.']
+
+['<s>', 'we', 'worry', 'that', 'im', ',', 'texting', ',', 'facebook', 'are', '<unk>', 'human', 'intimacy', ',', 'but', '<unk>', '<unk>', '&apos;s', 'research', 'shows', 'how', 'communication', 'tech', 'is', 'capable', 'of', 'cultivating', 'deeper', 'relationships', ',', 'bringing', 'love', 'across', 'barriers', 'like', 'distance', 'and', 'workplace', 'rules', '.', '</s>']
+['we', '&apos;re', 'worry', 'that', '<unk>', ',', ',', 'facebook', ',', 'the', '<unk>', 'the', ',', 'the', '<unk>', 'of', 'damage', ',', 'the', '<unk>', 'of', 'of', ',', ',', 'as', 'the', '<unk>', 'of', 'of', 'of', 'to', 'to', 'to', 'to', '<unk>', ',', 'to', 'to', '<unk>', '.']
+
+['<s>', 'one', 'of', 'the', 'things', 'that', 'we', '&apos;ve', 'developed', 'in', 'the', 'lab', '--', 'we', '&apos;ve', 'developed', 'several', 'vehicles', '--', 'is', 'what', 'we', 'believe', 'is', 'the', 'world', '&apos;s', 'first', 'autonomously', 'drifting', 'car', '.', '</s>']
+['one', 'of', 'the', 'things', 'we', '&apos;ve', 'evolved', 'in', 'the', 'lab', '--', 'we', '&apos;ve', 'evolved', 'several', 'vehicles', '--', 'is', 'how', 'we', 'think', 'the', 'first', 'autonomous', '<unk>', 'of', 'the', 'world', '.']
+
+['<s>', 'and', 'he', 'did', 'sometimes', ',', 'believe', 'it', 'or', 'not', ',', 'at', 'a', '<unk>', 'in', 'los', 'angeles', '--', 'one', 'reason', 'to', 'love', 'l.a.', '--', 'back', 'in', 'the', '1940s', '.', '</s>']
+['and', 'he', 'won', 'sometimes', 'you', '&apos;re', 'not', ',', ',', 'in', 'in', 'los', 'angeles', '--', 'a', 'reason', 'to', 'love', '--', 'in', 'the', 'in', 'the', '.']
+
+['<s>', 'i', 'started', 'my', 'firm', 'to', 'help', 'communities', 'across', 'the', 'country', 'realize', 'their', 'own', 'potential', 'to', 'improve', 'everything', 'about', 'the', 'quality', 'of', 'life', 'for', 'their', 'people', '.', '</s>']
+['i', 'started', 'my', 'company', 'to', 'help', 'the', 'in', 'the', 'country', 'to', 'help', 'your', 'to', 'potential', 'to', 'make', 'the', 'entire', 'quality', 'of', 'of', 'their', 'people', '.']
+
+Epoch 2 validation BLUE score: 0.1868
+Train Loss: 76.77 Perplexity: 3.68 Progress: 0%
+Train Loss: 68.33 Perplexity: 3.73 Progress: 4%
+Train Loss: 67.99 Perplexity: 3.46 Progress: 9%
+Train Loss: 67.26 Perplexity: 3.75 Progress: 14%
+Train Loss: 66.54 Perplexity: 3.13 Progress: 19%
+Train Loss: 68.49 Perplexity: 3.16 Progress: 24%
+Train Loss: 68.16 Perplexity: 4.13 Progress: 29%
+Train Loss: 68.23 Perplexity: 3.67 Progress: 34%
+Train Loss: 68.62 Perplexity: 3.57 Progress: 39%
+Train Loss: 68.52 Perplexity: 3.30 Progress: 44%
+Train Loss: 67.21 Perplexity: 3.75 Progress: 49%
+Train Loss: 66.78 Perplexity: 3.23 Progress: 54%
+Train Loss: 67.66 Perplexity: 3.56 Progress: 59%
+Train Loss: 67.58 Perplexity: 3.43 Progress: 64%
+Train Loss: 68.15 Perplexity: 3.62 Progress: 69%
+Train Loss: 67.39 Perplexity: 3.77 Progress: 74%
+Train Loss: 67.39 Perplexity: 3.54 Progress: 79%
+Train Loss: 67.19 Perplexity: 3.88 Progress: 84%
+Train Loss: 67.32 Perplexity: 3.23 Progress: 89%
+Train Loss: 67.16 Perplexity: 3.16 Progress: 94%
+Train Loss: 66.59 Perplexity: 3.10 Progress: 99%
+### Epoch 3 Loss: 67.6125 ###
+['<s>', 'i', 'keep', 'this', 'photograph', 'close', 'by', 'to', 'me', '--', 'it', '&apos;s', 'in', 'my', 'office', '--', 'because', 'i', '&apos;ve', 'always', 'felt', 'a', 'mystical', 'connection', 'to', 'these', 'two', 'men', ',', 'both', 'of', 'whom', 'i', 'never', 'knew', '.', '</s>']
+['i', 'i', 'know', 'this', 'photograph', 'in', 'me', '.', 'it', '&apos;s', 'in', 'my', 'office', ',', 'because', 'i', 'always', 'always', 'have', 'a', 'a', 'to', 'these', 'two', 'men', ',', 'i', '&apos;ve', 'never', 'learned', 'learned', 'of', 'all', '.']
+
+['<s>', 'and', 'i', 'remember', 'there', 'sitting', 'at', 'my', 'desk', 'thinking', ',', '&quot;', 'well', ',', 'i', 'know', 'this', '.', 'this', 'is', 'a', 'great', 'scientific', 'discovery', ',', '&quot;', 'but', 'it', 'was', 'so', 'awful', '.', '</s>']
+['and', 'i', 'remember', 'my', 'my', 'desk', ',', 'and', 'i', 'thought', ',', '&quot;', 'now', 'i', 'know', 'it', '.', 'what', 'a', 'great', 'scientific', 'discovery', '.', '&quot;', 'but', 'it', 'was', 'so', 'terrible', '.']
+
+['<s>', 'and', 'i', '&apos;m', 'hopeful', 'because', 'it', '&apos;s', 'not', 'only', 'philanthropy', 'that', '&apos;s', '<unk>', 'itself', ',', 'it', '&apos;s', 'also', 'whole', 'other', 'portions', 'of', 'the', 'social', 'sector', ',', 'and', 'of', 'business', ',', 'that', 'are', 'busy', 'challenging', '&quot;', 'business', 'as', 'usual', '.', '&quot;', '</s>']
+['and', 'i', '&apos;m', '<unk>', 'because', 'not', 'just', 'the', 'philanthropy', 'of', 'other', 'parts', 'of', 'social', 'social', ',', 'and', 'the', 'business', ',', 'and', 'the', 'business', ',', 'the', 'business', 'is', 'that', '&quot;', 'business', 'business', '.']
+
+['<s>', 'there', 'are', 'now', ',', 'today', ',', 'so', 'many', 'new', 'funds', 'that', 'are', '<unk>', 'giving', 'and', 'investing', ',', 'bringing', 'together', 'people', 'around', 'a', 'common', 'goal', ',', 'to', 'think', 'bigger', '.', '</s>']
+['today', ',', 'there', 'are', 'so', 'many', 'new', 'foundations', ',', 'the', '<unk>', 'and', 'and', ',', ',', 'the', 'people', ',', 'in', 'the', 'for', 'a', 'goal', 'of', 'a', 'a', 'larger', 'context', '.']
+
+['<s>', 'clay', 'shirky', ',', 'that', 'great', '<unk>', 'of', 'everything', 'networked', ',', 'has', 'captured', 'the', 'assumption', 'that', 'this', 'challenges', 'in', 'such', 'a', 'beautiful', 'way', '.', '</s>']
+['clay', 'shirky', ',', 'this', 'great', '<unk>', 'of', 'all', 'the', ',', ',', 'the', 'the', 'who', 'is', 'the', 'the', 'the', '<unk>', ',', 'that', '&apos;s', 'being', 'been', 'in', 'the', '<unk>', '.']
+
+['<s>', 'they', '&apos;re', 'closed', 'more', 'and', 'more', 'and', 'more', 'all', 'around', 'the', 'world', 'for', 'the', 'same', 'reason', ',', 'and', 'i', 'believe', 'we', 'shouldn', '&apos;t', 'tolerate', 'that', 'either', '.', '</s>']
+['they', '&apos;re', 'always', 'going', 'around', 'the', 'world', 'all', 'over', 'the', 'same', 'reason', ',', 'and', 'i', 'think', 'that', 'should', 'we', '&apos;re', 'going', 'to', 'let', '&apos;s', 'let', '&apos;s', 'let', '&apos;s', 'let', '&apos;s', '.']
+
+['<s>', 'i', 'started', 'out', 'showing', 'how', 'much', 'we', 'had', 'distressed', 'the', 'monterey', 'bay', 'ecosystem', 'with', 'pollution', 'and', 'the', 'canning', 'industry', 'and', 'all', 'of', 'the', 'attendant', 'problems', '.', '</s>']
+['i', 'i', 'showed', 'you', 'how', 'how', 'we', 'we', '&apos;ve', 'been', 'the', 'the', 'ecosystem', 'of', 'monterey', 'bay', 'bay', ',', 'and', 'the', 'and', 'and', 'the', 'and', 'and', 'all', 'the', 'problems', '.']
+
+['<s>', 'and', 'just', 'around', 'that', 'time', ',', 'his', 'mother', 'had', 'said', ',', '&quot;', 'have', 'you', 'seen', 'this', 'book', 'by', 'michael', '<unk>', 'called', '&apos;', 'war', 'horse', '&apos;', '?', '&quot;', '</s>']
+['about', 'at', 'the', 'same', 'time', ',', 'his', 'mother', 'asked', 'him', ',', '&quot;', 'do', 'you', 'know', 'the', 'book', 'from', 'michael', '<unk>', '?', '&quot;', '&quot;']
+
+['<s>', 'and', 'you', 'know', ',', 'our', 'modern', 'ways', 'of', 'doing', 'things', 'have', 'their', 'advantages', ',', 'but', 'i', 'believe', 'we', 'should', 'understand', 'the', 'costs', '.', '</s>']
+['it', '&apos;s', 'a', 'to', 'to', 'a', 'to', 'something', 'like', 'something', 'to', 'your', 'benefits', ',', 'but', 'i', 'think', 'we', 'should', 'recognize', 'to', 'recognize', 'what', 'price', '.']
+
+['<s>', 'here', '&apos;s', 'a', 'diagram', 'of', 'the', '<unk>', 'load', 'of', 'dolphins', 'in', '<unk>', 'bay', '.', '</s>']
+['here', '&apos;s', 'a', 'graph', 'of', 'the', '<unk>', 'of', 'dolphins', 'in', 'the', '<unk>', 'bay', 'bay', '.']
+
+['<s>', 'now', 'why', 'does', 'that', 'matter', 'for', 'human', 'health', '?', '</s>']
+['now', 'why', 'does', 'this', 'play', 'a', 'role', 'for', 'human', 'health', '?']
+
+['<s>', 'here', ',', 'craig', 'is', 'working', 'the', 'head', '.', '</s>']
+['craig', '&apos;s', 'the', 'head', 'of', 'head', '.']
+
+['<s>', 'you', 'see', 'the', 'skeletal', 'structure', 'of', 'it', '.', '</s>']
+['you', 'saw', 'the', 'skeleton', '.']
+
+['<s>', 'so', ',', 'we', 'have', 'this', 'ability', 'as', 'well', '.', '</s>']
+['we', 'also', 'have', 'this', 'ability', '.']
+
+['<s>', 'ak', ':', '<unk>', '<unk>', '<unk>', '.', '</s>']
+['<unk>', '--', '<unk>', '--', '<unk>', '<unk>']
+
+['<s>', 'ak', ':', 'we', 'were', 'terrified', '.', '</s>']
+['we', 'really', 'really', 'afraid', '.']
+
+['<s>', 'we', 'worry', 'that', 'im', ',', 'texting', ',', 'facebook', 'are', '<unk>', 'human', 'intimacy', ',', 'but', '<unk>', '<unk>', '&apos;s', 'research', 'shows', 'how', 'communication', 'tech', 'is', 'capable', 'of', 'cultivating', 'deeper', 'relationships', ',', 'bringing', 'love', 'across', 'barriers', 'like', 'distance', 'and', 'workplace', 'rules', '.', '</s>']
+['we', '&apos;re', 'worry', 'that', '<unk>', ',', 'text', ',', 'facebook', ',', 'facebook', ',', ',', ',', ',', ',', ',', ',', ',', 'how', 'the', '<unk>', 'of', 'of', 'that', 'can', 'make', 'to', 'make', 'a', 'of', 'of', 'of', '<unk>', 'of', '<unk>', 'and', '<unk>', 'and', '<unk>', '.']
+
+['<s>', 'one', 'of', 'the', 'things', 'that', 'we', '&apos;ve', 'developed', 'in', 'the', 'lab', '--', 'we', '&apos;ve', 'developed', 'several', 'vehicles', '--', 'is', 'what', 'we', 'believe', 'is', 'the', 'world', '&apos;s', 'first', 'autonomously', 'drifting', 'car', '.', '</s>']
+['one', 'of', 'the', 'things', 'we', '&apos;ve', 'developed', 'in', 'the', 'lab', '--', 'we', '&apos;ve', 'evolved', 'several', 'vehicles', '--', 'is', ',', 'we', 'think', 'the', 'first', 'autonomous', '<unk>', 'of', 'the', 'world', '.']
+
+['<s>', 'and', 'he', 'did', 'sometimes', ',', 'believe', 'it', 'or', 'not', ',', 'at', 'a', '<unk>', 'in', 'los', 'angeles', '--', 'one', 'reason', 'to', 'love', 'l.a.', '--', 'back', 'in', 'the', '1940s', '.', '</s>']
+['and', 'he', 'won', '&apos;t', 'stop', ',', 'you', 'think', 'of', 'a', 'in', 'los', 'angeles', '--', 'a', 'reason', 'to', 'love', '--', 'in', 'the', 'the', 'in', 'the', 'the', '.']
+
+['<s>', 'i', 'started', 'my', 'firm', 'to', 'help', 'communities', 'across', 'the', 'country', 'realize', 'their', 'own', 'potential', 'to', 'improve', 'everything', 'about', 'the', 'quality', 'of', 'life', 'for', 'their', 'people', '.', '</s>']
+['i', 'started', 'to', 'to', 'to', 'to', 'the', 'communities', 'in', 'the', 'country', ',', 'their', '<unk>', 'potential', 'to', 'use', 'the', 'of', 'of', 'of', 'their', 'people', '.']
+
+Epoch 3 validation BLUE score: 0.2101
+Train Loss: 61.63 Perplexity: 3.13 Progress: 0%
+Train Loss: 63.78 Perplexity: 3.20 Progress: 4%
+Train Loss: 63.88 Perplexity: 3.48 Progress: 9%
+Train Loss: 63.24 Perplexity: 2.80 Progress: 14%
+Train Loss: 64.23 Perplexity: 3.11 Progress: 19%
+Train Loss: 62.85 Perplexity: 3.17 Progress: 24%
+Train Loss: 62.68 Perplexity: 3.10 Progress: 29%
+Train Loss: 62.87 Perplexity: 3.23 Progress: 34%
+Train Loss: 63.40 Perplexity: 3.25 Progress: 39%
+Train Loss: 62.59 Perplexity: 3.57 Progress: 44%
+Train Loss: 62.98 Perplexity: 3.07 Progress: 49%
+Train Loss: 63.00 Perplexity: 3.53 Progress: 54%
+Train Loss: 63.53 Perplexity: 3.00 Progress: 59%
+Train Loss: 62.37 Perplexity: 3.08 Progress: 64%
+Train Loss: 63.30 Perplexity: 3.04 Progress: 69%
+Train Loss: 61.48 Perplexity: 3.31 Progress: 74%
+Train Loss: 64.47 Perplexity: 3.00 Progress: 79%
+Train Loss: 64.75 Perplexity: 3.51 Progress: 84%
+Train Loss: 63.76 Perplexity: 3.29 Progress: 89%
+Train Loss: 63.22 Perplexity: 3.17 Progress: 94%
+Train Loss: 63.20 Perplexity: 3.06 Progress: 99%
+### Epoch 4 Loss: 63.2863 ###
+['<s>', 'i', 'keep', 'this', 'photograph', 'close', 'by', 'to', 'me', '--', 'it', '&apos;s', 'in', 'my', 'office', '--', 'because', 'i', '&apos;ve', 'always', 'felt', 'a', 'mystical', 'connection', 'to', 'these', 'two', 'men', ',', 'both', 'of', 'whom', 'i', 'never', 'knew', '.', '</s>']
+['i', 'put', 'this', 'photograph', 'in', 'me', ',', 'i', '&apos;m', 'in', 'my', 'office', ',', 'i', 'i', 'always', 'have', 'a', 'courses', 'to', 'these', 'two', 'men', ',', 'i', '&apos;ve', 'never', 'learned', 'to', 'to', 'all', 'of', 'these', 'two', 'men', ',', 'i', '&apos;ve', 'never', 'learned', 'to', 'know', '.']
+
+['<s>', 'and', 'i', 'remember', 'there', 'sitting', 'at', 'my', 'desk', 'thinking', ',', '&quot;', 'well', ',', 'i', 'know', 'this', '.', 'this', 'is', 'a', 'great', 'scientific', 'discovery', ',', '&quot;', 'but', 'it', 'was', 'so', 'awful', '.', '</s>']
+['and', 'i', 'remember', ',', 'i', 'sat', 'on', 'my', 'desk', ',', 'and', 'i', 'thought', ',', '&quot;', 'i', 'i', 'know', 'what', 'a', 'great', 'scientific', 'discovery', '.', '&quot;', 'but', 'it', 'was', 'so', 'terrible', '.']
+
+['<s>', 'and', 'i', '&apos;m', 'hopeful', 'because', 'it', '&apos;s', 'not', 'only', 'philanthropy', 'that', '&apos;s', '<unk>', 'itself', ',', 'it', '&apos;s', 'also', 'whole', 'other', 'portions', 'of', 'the', 'social', 'sector', ',', 'and', 'of', 'business', ',', 'that', 'are', 'busy', 'challenging', '&quot;', 'business', 'as', 'usual', '.', '&quot;', '</s>']
+['and', 'i', '&apos;m', 'a', ',', 'because', 'because', 'not', 'just', 'the', 'philanthropy', 'means', ',', 'other', 'parts', 'of', 'social', '<unk>', 'and', 'and', 'the', 'business', ',', ',', 'the', 'business', 'business', '.']
+
+['<s>', 'there', 'are', 'now', ',', 'today', ',', 'so', 'many', 'new', 'funds', 'that', 'are', '<unk>', 'giving', 'and', 'investing', ',', 'bringing', 'together', 'people', 'around', 'a', 'common', 'goal', ',', 'to', 'think', 'bigger', '.', '</s>']
+['now', ',', 'there', 'are', 'so', 'many', 'new', 'foundations', ',', 'the', '<unk>', 'and', 'investment', ',', 'the', 'people', ',', 'together', ',', 'for', 'a', 'goal', ',', 'in', 'a', 'an', 'larger', 'context', '.']
+
+['<s>', 'clay', 'shirky', ',', 'that', 'great', '<unk>', 'of', 'everything', 'networked', ',', 'has', 'captured', 'the', 'assumption', 'that', 'this', 'challenges', 'in', 'such', 'a', 'beautiful', 'way', '.', '</s>']
+['clay', 'shirky', ',', 'this', 'great', '<unk>', 'of', 'of', 'all', 'the', ',', ',', 'the', 'the', ',', 'the', 'the', ',', 'that', '&apos;s', '<unk>', ',', 'in', 'this', ',', 'in', 'that', '.']
+
+['<s>', 'they', '&apos;re', 'closed', 'more', 'and', 'more', 'and', 'more', 'all', 'around', 'the', 'world', 'for', 'the', 'same', 'reason', ',', 'and', 'i', 'believe', 'we', 'shouldn', '&apos;t', 'tolerate', 'that', 'either', '.', '</s>']
+['they', '&apos;re', 'always', 'going', 'around', 'over', 'the', 'world', ',', 'and', 'more', 'and', 'more', 'and', 'more', 'and', 'more', 'and', 'and', 'i', 'think', 'that', 'should', 'we', 'should', 'let', 'it', '.']
+
+['<s>', 'i', 'started', 'out', 'showing', 'how', 'much', 'we', 'had', 'distressed', 'the', 'monterey', 'bay', 'ecosystem', 'with', 'pollution', 'and', 'the', 'canning', 'industry', 'and', 'all', 'of', 'the', 'attendant', 'problems', '.', '</s>']
+['i', 'i', 'showed', 'you', 'how', 'how', 'we', 'we', 'the', 'the', 'the', 'end', 'of', 'monterey', 'bay', ',', 'through', 'pollution', 'and', 'and', 'and', 'and', 'and', 'and', 'and', 'and', '.']
+
+['<s>', 'and', 'just', 'around', 'that', 'time', ',', 'his', 'mother', 'had', 'said', ',', '&quot;', 'have', 'you', 'seen', 'this', 'book', 'by', 'michael', '<unk>', 'called', '&apos;', 'war', 'horse', '&apos;', '?', '&quot;', '</s>']
+['about', 'at', 'the', 'same', 'time', ',', 'his', 'mother', 'asked', 'him', 'asked', ',', '&quot;', 'do', 'you', 'know', 'the', 'book', 'from', 'michael', '<unk>', '?', '&quot;']
+
+['<s>', 'and', 'you', 'know', ',', 'our', 'modern', 'ways', 'of', 'doing', 'things', 'have', 'their', 'advantages', ',', 'but', 'i', 'believe', 'we', 'should', 'understand', 'the', 'costs', '.', '</s>']
+['it', '&apos;s', 'our', 'modern', 'way', 'of', 'something', 'something', 'something', 'more', 'something', 'to', 'a', 'lot', 'of', ',', 'but', 'i', 'think', 'we', 'should', 'also', 'recognize', 'to', 'to', 'be', 'doing', 'to', 'to', 'to', 'to']
+
+['<s>', 'here', '&apos;s', 'a', 'diagram', 'of', 'the', '<unk>', 'load', 'of', 'dolphins', 'in', '<unk>', 'bay', '.', '</s>']
+['here', '&apos;s', 'a', 'graph', 'of', '<unk>', 'of', 'dolphins', 'in', 'the', '<unk>', 'bay', '.']
+
+['<s>', 'now', 'why', 'does', 'that', 'matter', 'for', 'human', 'health', '?', '</s>']
+['now', 'why', 'does', 'it', 'does', 'this', 'matter', 'for', 'human', 'health', '?']
+
+['<s>', 'here', ',', 'craig', 'is', 'working', 'the', 'head', '.', '</s>']
+['craig', 'showed', 'up', 'the', 'head', '.']
+
+['<s>', 'you', 'see', 'the', 'skeletal', 'structure', 'of', 'it', '.', '</s>']
+['you', 'saw', 'the', 'skeleton', '.']
+
+['<s>', 'so', ',', 'we', 'have', 'this', 'ability', 'as', 'well', '.', '</s>']
+['we', 'also', 'have', 'this', 'ability', '.']
+
+['<s>', 'ak', ':', '<unk>', '<unk>', '<unk>', '.', '</s>']
+['<unk>', '--', '<unk>', '--', '<unk>', '.']
+
+['<s>', 'ak', ':', 'we', 'were', 'terrified', '.', '</s>']
+['we', 'really', 'afraid', '.']
+
+['<s>', 'we', 'worry', 'that', 'im', ',', 'texting', ',', 'facebook', 'are', '<unk>', 'human', 'intimacy', ',', 'but', '<unk>', '<unk>', '&apos;s', 'research', 'shows', 'how', 'communication', 'tech', 'is', 'capable', 'of', 'cultivating', 'deeper', 'relationships', ',', 'bringing', 'love', 'across', 'barriers', 'like', 'distance', 'and', 'workplace', 'rules', '.', '</s>']
+['we', '&apos;re', 'worry', 'that', 'that', ',', ',', ',', 'facebook', ',', 'facebook', 'of', 'the', '<unk>', 'intimacy', ',', 'but', '<unk>', '<unk>', ',', ',', ',', 'how', 'the', '<unk>', '<unk>', 'to', 'to', '<unk>', 'relationships', ',', 'to', 'to', '<unk>', 'to', '<unk>', 'to', 'love', 'of', '<unk>', 'to', 'love', 'and', '<unk>', '.']
+
+['<s>', 'one', 'of', 'the', 'things', 'that', 'we', '&apos;ve', 'developed', 'in', 'the', 'lab', '--', 'we', '&apos;ve', 'developed', 'several', 'vehicles', '--', 'is', 'what', 'we', 'believe', 'is', 'the', 'world', '&apos;s', 'first', 'autonomously', 'drifting', 'car', '.', '</s>']
+['one', 'of', 'the', 'things', 'that', 'we', '&apos;ve', 'in', 'in', 'the', 'lab', '--', 'we', 'have', 'several', 'vehicles', '--', 'is', ',', 'how', 'we', 'think', 'the', 'first', 'autonomous', '<unk>', 'of', 'the', 'world', '.']
+
+['<s>', 'and', 'he', 'did', 'sometimes', ',', 'believe', 'it', 'or', 'not', ',', 'at', 'a', '<unk>', 'in', 'los', 'angeles', '--', 'one', 'reason', 'to', 'love', 'l.a.', '--', 'back', 'in', 'the', '1940s', '.', '</s>']
+['and', 'he', 'won', '&apos;t', 'stop', ',', 'you', 'believe', 'it', ',', 'on', 'a', '<unk>', 'of', 'los', 'angeles', '--', 'a', 'reason', 'to', 'love', '--', 'in', 'the', 'in', 'the', 'in', 'the', '.']
+
+['<s>', 'i', 'started', 'my', 'firm', 'to', 'help', 'communities', 'across', 'the', 'country', 'realize', 'their', 'own', 'potential', 'to', 'improve', 'everything', 'about', 'the', 'quality', 'of', 'life', 'for', 'their', 'people', '.', '</s>']
+['i', 'started', 'to', 'my', 'company', 'to', 'help', 'communities', 'all', 'the', 'country', 'to', 'use', 'their', 'to', 'potential', 'to', 'make', 'the', 'entire', 'quality', 'of', 'their', 'people', '.']
+
+Epoch 4 validation BLUE score: 0.2233
+Train Loss: 58.03 Perplexity: 3.33 Progress: 0%
+Train Loss: 59.45 Perplexity: 3.19 Progress: 4%
+Train Loss: 60.89 Perplexity: 3.20 Progress: 9%
+Train Loss: 61.32 Perplexity: 3.03 Progress: 14%
+Train Loss: 60.47 Perplexity: 3.00 Progress: 19%
+Train Loss: 60.04 Perplexity: 3.33 Progress: 24%
+Train Loss: 59.80 Perplexity: 3.05 Progress: 29%
+Train Loss: 60.47 Perplexity: 3.11 Progress: 34%
+Train Loss: 60.90 Perplexity: 3.02 Progress: 39%
+Train Loss: 60.60 Perplexity: 3.27 Progress: 44%
+Train Loss: 60.38 Perplexity: 3.38 Progress: 49%
+Train Loss: 60.32 Perplexity: 2.61 Progress: 54%
+Train Loss: 60.25 Perplexity: 2.89 Progress: 59%
+Train Loss: 60.57 Perplexity: 2.89 Progress: 64%
+Train Loss: 61.40 Perplexity: 3.36 Progress: 69%
+Train Loss: 61.23 Perplexity: 3.32 Progress: 74%
+Train Loss: 60.33 Perplexity: 3.01 Progress: 79%
+Train Loss: 61.49 Perplexity: 3.11 Progress: 84%
+Train Loss: 60.73 Perplexity: 3.22 Progress: 89%
+Train Loss: 60.43 Perplexity: 3.50 Progress: 94%
+Train Loss: 60.31 Perplexity: 2.76 Progress: 99%
+### Epoch 5 Loss: 60.5741 ###
+['<s>', 'i', 'keep', 'this', 'photograph', 'close', 'by', 'to', 'me', '--', 'it', '&apos;s', 'in', 'my', 'office', '--', 'because', 'i', '&apos;ve', 'always', 'felt', 'a', 'mystical', 'connection', 'to', 'these', 'two', 'men', ',', 'both', 'of', 'whom', 'i', 'never', 'knew', '.', '</s>']
+['i', 'put', 'this', 'photograph', 'in', 'me', '.', 'it', '&apos;s', 'in', 'my', 'office', ',', 'i', 'i', 'always', 'have', 'a', 'historical', 'connection', 'to', 'these', 'two', 'men', ',', 'i', '&apos;ve', 'never', 'learned', 'to', 'know', '.']
+
+['<s>', 'and', 'i', 'remember', 'there', 'sitting', 'at', 'my', 'desk', 'thinking', ',', '&quot;', 'well', ',', 'i', 'know', 'this', '.', 'this', 'is', 'a', 'great', 'scientific', 'discovery', ',', '&quot;', 'but', 'it', 'was', 'so', 'awful', '.', '</s>']
+['and', 'i', 'remember', 'sitting', 'sitting', 'my', 'my', 'desk', ',', 'i', 'i', ',', '&quot;', 'i', 'know', ',', 'what', '&apos;s', 'a', 'great', 'scientific', 'discovery', '.', '&quot;', 'but', 'it', 'was', 'so', 'terrible', '.']
+
+['<s>', 'and', 'i', '&apos;m', 'hopeful', 'because', 'it', '&apos;s', 'not', 'only', 'philanthropy', 'that', '&apos;s', '<unk>', 'itself', ',', 'it', '&apos;s', 'also', 'whole', 'other', 'portions', 'of', 'the', 'social', 'sector', ',', 'and', 'of', 'business', ',', 'that', 'are', 'busy', 'challenging', '&quot;', 'business', 'as', 'usual', '.', '&quot;', '</s>']
+['and', 'i', '&apos;m', 'hopeful', ',', 'because', 'not', 'just', 'the', 'philanthropy', 'means', ',', 'big', 'big', 'parts', 'of', 'social', 'social', 'and', 'and', 'business', ',', 'and', 'the', 'business', 'business', 'is', 'the', '&quot;', 'business', '.']
+
+['<s>', 'there', 'are', 'now', ',', 'today', ',', 'so', 'many', 'new', 'funds', 'that', 'are', '<unk>', 'giving', 'and', 'investing', ',', 'bringing', 'together', 'people', 'around', 'a', 'common', 'goal', ',', 'to', 'think', 'bigger', '.', '</s>']
+['today', ',', 'there', 'are', 'so', 'many', 'new', 'foundations', ',', 'the', '<unk>', 'and', 'investments', ',', 'people', 'together', ',', 'for', 'a', 'goal', ',', 'in', 'a', 'an', 'larger', 'context', '.']
+
+['<s>', 'clay', 'shirky', ',', 'that', 'great', '<unk>', 'of', 'everything', 'networked', ',', 'has', 'captured', 'the', 'assumption', 'that', 'this', 'challenges', 'in', 'such', 'a', 'beautiful', 'way', '.', '</s>']
+['clay', 'shirky', ',', 'that', 'great', '<unk>', 'of', 'all', 'the', ',', ',', 'the', 'the', 'who', '&apos;s', 'put', 'on', 'the', '<unk>', ',', ',', 'on', 'this', 'wonderful', 'way', '.']
+
+['<s>', 'they', '&apos;re', 'closed', 'more', 'and', 'more', 'and', 'more', 'all', 'around', 'the', 'world', 'for', 'the', 'same', 'reason', ',', 'and', 'i', 'believe', 'we', 'shouldn', '&apos;t', 'tolerate', 'that', 'either', '.', '</s>']
+['they', '&apos;re', 'always', 'going', 'around', 'over', 'the', 'world', 'and', 'and', 'more', 'and', 'more', 'and', 'more', 'and', 'and', 'i', 'think', 'that', 'we', 'should', 'let', 'it', 'let', '&apos;s', '<unk>', '.']
+
+['<s>', 'i', 'started', 'out', 'showing', 'how', 'much', 'we', 'had', 'distressed', 'the', 'monterey', 'bay', 'ecosystem', 'with', 'pollution', 'and', 'the', 'canning', 'industry', 'and', 'all', 'of', 'the', 'attendant', 'problems', '.', '</s>']
+['i', 'i', '&apos;ve', 'showed', 'you', 'how', 'how', 'we', 'we', '&apos;ve', 'been', 'the', 'the', 'the', 'the', 'of', 'monterey', 'bay', ',', ',', 'and', 'the', 'and', 'and', 'the', 'and', 'the', 'and', 'the', 'and', 'the', '.']
+
+['<s>', 'and', 'just', 'around', 'that', 'time', ',', 'his', 'mother', 'had', 'said', ',', '&quot;', 'have', 'you', 'seen', 'this', 'book', 'by', 'michael', '<unk>', 'called', '&apos;', 'war', 'horse', '&apos;', '?', '&quot;', '</s>']
+['about', 'at', 'the', 'same', 'time', ',', 'his', 'mother', 'asked', 'him', 'asked', 'him', ',', '&quot;', 'do', 'you', 'know', 'the', 'book', 'from', 'michael', '<unk>', '?', '?', '&quot;']
+
+['<s>', 'and', 'you', 'know', ',', 'our', 'modern', 'ways', 'of', 'doing', 'things', 'have', 'their', 'advantages', ',', 'but', 'i', 'believe', 'we', 'should', 'understand', 'the', 'costs', '.', '</s>']
+['it', '&apos;s', 'our', 'modern', 'way', 'of', 'something', 'something', 'something', 'like', 'this', ',', 'but', 'i', 'think', 'we', 'should', 'also', 'recognize', 'what', 'price', '.']
+
+['<s>', 'here', '&apos;s', 'a', 'diagram', 'of', 'the', '<unk>', 'load', 'of', 'dolphins', 'in', '<unk>', 'bay', '.', '</s>']
+['here', '&apos;s', 'a', 'diagram', 'of', '<unk>', 'dolphins', 'in', 'the', '<unk>', 'bay', '.']
+
+['<s>', 'now', 'why', 'does', 'that', 'matter', 'for', 'human', 'health', '?', '</s>']
+['now', 'why', 'does', 'it', 'play', 'a', 'role', 'for', 'human', 'health', '?']
+
+['<s>', 'here', ',', 'craig', 'is', 'working', 'the', 'head', '.', '</s>']
+['craig', '&apos;s', 'the', 'head', '.']
+
+['<s>', 'you', 'see', 'the', 'skeletal', 'structure', 'of', 'it', '.', '</s>']
+['you', 'saw', 'the', 'skeleton', '.']
+
+['<s>', 'so', ',', 'we', 'have', 'this', 'ability', 'as', 'well', '.', '</s>']
+['we', 'have', 'this', 'ability', '.']
+
+['<s>', 'ak', ':', '<unk>', '<unk>', '<unk>', '.', '</s>']
+['<unk>', '<unk>', '--', '<unk>', '<unk>', '.']
+
+['<s>', 'ak', ':', 'we', 'were', 'terrified', '.', '</s>']
+['we', 'really', 'really', 'afraid', '.']
+
+['<s>', 'we', 'worry', 'that', 'im', ',', 'texting', ',', 'facebook', 'are', '<unk>', 'human', 'intimacy', ',', 'but', '<unk>', '<unk>', '&apos;s', 'research', 'shows', 'how', 'communication', 'tech', 'is', 'capable', 'of', 'cultivating', 'deeper', 'relationships', ',', 'bringing', 'love', 'across', 'barriers', 'like', 'distance', 'and', 'workplace', 'rules', '.', '</s>']
+['we', '&apos;re', 'worried', 'that', 'that', ',', ',', ',', 'facebook', ',', 'the', '<unk>', 'of', 'the', ',', ',', 'but', '<unk>', '<unk>', ',', ',', '<unk>', ',', ',', 'to', 'make', '<unk>', '<unk>', 'to', '<unk>', 'to', '<unk>', ',', 'to', '<unk>', '.']
+
+['<s>', 'one', 'of', 'the', 'things', 'that', 'we', '&apos;ve', 'developed', 'in', 'the', 'lab', '--', 'we', '&apos;ve', 'developed', 'several', 'vehicles', '--', 'is', 'what', 'we', 'believe', 'is', 'the', 'world', '&apos;s', 'first', 'autonomously', 'drifting', 'car', '.', '</s>']
+['one', 'of', 'the', 'things', 'we', '&apos;ve', 'developed', 'in', 'lab', '--', 'we', '&apos;ve', 'developed', 'several', 'vehicles', '--', 'is', ',', 'we', 'think', 'the', 'first', 'autonomous', '<unk>', 'of', 'the', 'world', '.']
+
+['<s>', 'and', 'he', 'did', 'sometimes', ',', 'believe', 'it', 'or', 'not', ',', 'at', 'a', '<unk>', 'in', 'los', 'angeles', '--', 'one', 'reason', 'to', 'love', 'l.a.', '--', 'back', 'in', 'the', '1940s', '.', '</s>']
+['and', 'he', 'won', 'sometimes', ',', 'you', 'think', 'they', 'don', '&apos;t', 'think', 'of', 'a', '<unk>', 'in', 'los', 'angeles', '--', '--', 'a', 'reason', 'to', 'love', '--', 'in', 'the', 'the', 'in', 'the', '.']
+
+['<s>', 'i', 'started', 'my', 'firm', 'to', 'help', 'communities', 'across', 'the', 'country', 'realize', 'their', 'own', 'potential', 'to', 'improve', 'everything', 'about', 'the', 'quality', 'of', 'life', 'for', 'their', 'people', '.', '</s>']
+['i', 'started', 'to', 'to', 'to', 'to', 'the', 'communities', 'all', 'the', 'land', ',', 'their', 'to', 'use', 'their', 'potential', 'potential', 'to', 'improve', 'the', 'entire', 'quality', 'of', 'their', 'people', '.']
+
+Epoch 5 validation BLUE score: 0.2236
+Train Loss: 54.37 Perplexity: 2.68 Progress: 0%
+Train Loss: 57.74 Perplexity: 3.15 Progress: 4%
+Train Loss: 57.18 Perplexity: 2.95 Progress: 9%
+Train Loss: 57.42 Perplexity: 2.88 Progress: 14%
+Train Loss: 57.01 Perplexity: 2.79 Progress: 19%
+Train Loss: 57.93 Perplexity: 3.07 Progress: 24%
+Train Loss: 57.64 Perplexity: 2.85 Progress: 29%
+Train Loss: 57.06 Perplexity: 2.81 Progress: 34%
+Train Loss: 57.16 Perplexity: 3.19 Progress: 39%
+Train Loss: 57.69 Perplexity: 3.19 Progress: 44%
+Train Loss: 57.69 Perplexity: 3.21 Progress: 49%
+Train Loss: 57.22 Perplexity: 2.61 Progress: 54%
+Train Loss: 56.92 Perplexity: 2.78 Progress: 59%
+Train Loss: 57.63 Perplexity: 3.33 Progress: 64%
+Train Loss: 57.43 Perplexity: 3.25 Progress: 69%
+Train Loss: 57.09 Perplexity: 2.83 Progress: 74%
+Train Loss: 57.05 Perplexity: 2.92 Progress: 79%
+Train Loss: 57.50 Perplexity: 2.95 Progress: 84%
+Train Loss: 58.50 Perplexity: 2.96 Progress: 89%
+Train Loss: 58.26 Perplexity: 2.73 Progress: 94%
+Train Loss: 57.36 Perplexity: 3.13 Progress: 99%
+### Epoch 6 Loss: 57.4751 ###
+['<s>', 'i', 'keep', 'this', 'photograph', 'close', 'by', 'to', 'me', '--', 'it', '&apos;s', 'in', 'my', 'office', '--', 'because', 'i', '&apos;ve', 'always', 'felt', 'a', 'mystical', 'connection', 'to', 'these', 'two', 'men', ',', 'both', 'of', 'whom', 'i', 'never', 'knew', '.', '</s>']
+['i', 'put', 'this', 'photograph', 'in', 'i', '&apos;m', 'on', '.', 'it', '&apos;s', 'in', 'my', 'office', ',', 'because', 'i', '&apos;ve', 'always', 'felt', 'a', 'mystic', 'connection', 'to', 'those', 'two', 'men', ',', 'i', '&apos;ve', 'never', 'never', 'learned', 'never', '.', '.']
+
+['<s>', 'and', 'i', 'remember', 'there', 'sitting', 'at', 'my', 'desk', 'thinking', ',', '&quot;', 'well', ',', 'i', 'know', 'this', '.', 'this', 'is', 'a', 'great', 'scientific', 'discovery', ',', '&quot;', 'but', 'it', 'was', 'so', 'awful', '.', '</s>']
+['and', 'i', 'remember', 'sitting', 'on', 'my', 'desk', ',', 'and', 'i', 'thought', ',', '&quot;', 'i', 'know', 'what', 'i', 'do', '.', 'what', 'a', 'great', 'scientific', 'discovery', '.', '&quot;', 'but', 'it', 'was', 'so', 'terrible', '.']
+
+['<s>', 'and', 'i', '&apos;m', 'hopeful', 'because', 'it', '&apos;s', 'not', 'only', 'philanthropy', 'that', '&apos;s', '<unk>', 'itself', ',', 'it', '&apos;s', 'also', 'whole', 'other', 'portions', 'of', 'the', 'social', 'sector', ',', 'and', 'of', 'business', ',', 'that', 'are', 'busy', 'challenging', '&quot;', 'business', 'as', 'usual', '.', '&quot;', '</s>']
+['and', 'i', '&apos;m', 'hopeful', ',', 'because', 'not', 'only', 'the', 'philanthropy', 'means', ',', 'other', 'big', 'social', 'social', ',', 'and', 'the', 'business', ',', 'and', 'the', 'business', ',', ',', '&quot;', 'business', 'is', 'incredibly', 'incredibly', 'about', '.', '.']
+
+['<s>', 'there', 'are', 'now', ',', 'today', ',', 'so', 'many', 'new', 'funds', 'that', 'are', '<unk>', 'giving', 'and', 'investing', ',', 'bringing', 'together', 'people', 'around', 'a', 'common', 'goal', ',', 'to', 'think', 'bigger', '.', '</s>']
+['today', ',', 'there', 'are', 'so', 'many', 'new', 'foundations', 'that', 'are', '<unk>', 'and', 'investments', ',', 'people', 'together', ',', 'in', 'in', 'for', 'a', 'goal', ',', 'in', 'a', 'larger', 'context', '.']
+
+['<s>', 'clay', 'shirky', ',', 'that', 'great', '<unk>', 'of', 'everything', 'networked', ',', 'has', 'captured', 'the', 'assumption', 'that', 'this', 'challenges', 'in', 'such', 'a', 'beautiful', 'way', '.', '</s>']
+['clay', 'shirky', ',', 'this', 'great', '<unk>', 'of', 'of', 'all', 'the', ',', ',', 'the', 'the', 'who', '&apos;s', 'asked', 'to', 'the', '<unk>', ',', 'that', '&apos;s', 'being', 'recognized', 'in', 'the', '<unk>', '.']
+
+['<s>', 'they', '&apos;re', 'closed', 'more', 'and', 'more', 'and', 'more', 'all', 'around', 'the', 'world', 'for', 'the', 'same', 'reason', ',', 'and', 'i', 'believe', 'we', 'shouldn', '&apos;t', 'tolerate', 'that', 'either', '.', '</s>']
+['they', '&apos;ll', 'always', 'around', 'the', 'world', 'over', 'and', 'more', 'and', 'more', 'and', 'more', 'and', 'the', 'same', 'reason', ',', 'and', 'i', 'think', 'that', 'should', 'we', 'allow', 'to', '.']
+
+['<s>', 'i', 'started', 'out', 'showing', 'how', 'much', 'we', 'had', 'distressed', 'the', 'monterey', 'bay', 'ecosystem', 'with', 'pollution', 'and', 'the', 'canning', 'industry', 'and', 'all', 'of', 'the', 'attendant', 'problems', '.', '</s>']
+['in', 'first', ',', 'i', 'showed', 'you', 'how', 'how', 'we', 'we', 'the', 'the', 'the', 'the', 'monterey', 'bay', ',', ',', 'and', 'the', 'and', 'and', 'the', 'and', 'and', 'the', '.']
+
+['<s>', 'and', 'just', 'around', 'that', 'time', ',', 'his', 'mother', 'had', 'said', ',', '&quot;', 'have', 'you', 'seen', 'this', 'book', 'by', 'michael', '<unk>', 'called', '&apos;', 'war', 'horse', '&apos;', '?', '&quot;', '</s>']
+['about', 'at', 'the', 'same', 'time', ',', 'his', 'mother', 'asked', 'him', ',', '&quot;', 'do', 'you', 'know', 'the', 'book', 'from', 'michael', '<unk>', '?', '&quot;']
+
+['<s>', 'and', 'you', 'know', ',', 'our', 'modern', 'ways', 'of', 'doing', 'things', 'have', 'their', 'advantages', ',', 'but', 'i', 'believe', 'we', 'should', 'understand', 'the', 'costs', '.', '</s>']
+['it', '&apos;s', 'a', 'our', 'modern', 'way', 'of', 'something', 'like', 'something', 'something', 'something', 'something', 'like', ',', 'but', 'i', 'think', 'we', 'should', 'also', 'recognize', 'what', 'price', '.']
+
+['<s>', 'here', '&apos;s', 'a', 'diagram', 'of', 'the', '<unk>', 'load', 'of', 'dolphins', 'in', '<unk>', 'bay', '.', '</s>']
+['here', '&apos;s', 'a', 'diagram', 'of', 'the', '<unk>', 'of', 'dolphins', 'in', 'the', '<unk>', 'bay', '.']
+
+['<s>', 'now', 'why', 'does', 'that', 'matter', 'for', 'human', 'health', '?', '</s>']
+['now', ',', 'why', 'does', 'this', 'matter', 'for', 'human', 'health', '?']
+
+['<s>', 'here', ',', 'craig', 'is', 'working', 'the', 'head', '.', '</s>']
+['craig', 'shown', 'here', 'the', 'head', '.']
+
+['<s>', 'you', 'see', 'the', 'skeletal', 'structure', 'of', 'it', '.', '</s>']
+['you', 'saw', 'the', 'skeleton', '.']
+
+['<s>', 'so', ',', 'we', 'have', 'this', 'ability', 'as', 'well', '.', '</s>']
+['we', 'have', 'this', 'capacity', '.']
+
+['<s>', 'ak', ':', '<unk>', '<unk>', '<unk>', '.', '</s>']
+['<unk>', '--', '<unk>', '<unk>', '<unk>', '.']
+
+['<s>', 'ak', ':', 'we', 'were', 'terrified', '.', '</s>']
+['we', 'really', 'really', 'scared', '.']
+
+['<s>', 'we', 'worry', 'that', 'im', ',', 'texting', ',', 'facebook', 'are', '<unk>', 'human', 'intimacy', ',', 'but', '<unk>', '<unk>', '&apos;s', 'research', 'shows', 'how', 'communication', 'tech', 'is', 'capable', 'of', 'cultivating', 'deeper', 'relationships', ',', 'bringing', 'love', 'across', 'barriers', 'like', 'distance', 'and', 'workplace', 'rules', '.', '</s>']
+['we', 'worry', 'about', 'that', ',', ',', 'text', 'facebook', 'the', 'the', 'of', 'the', 'damage', ',', 'but', '<unk>', '<unk>', 'of', 'research', ',', 'how', 'how', 'the', '<unk>', 'can', 'make', 'a', '<unk>', 'of', 'how', 'to', 'get', '<unk>', 'to', '<unk>', ',', 'and', 'to', '<unk>', '.']
+
+['<s>', 'one', 'of', 'the', 'things', 'that', 'we', '&apos;ve', 'developed', 'in', 'the', 'lab', '--', 'we', '&apos;ve', 'developed', 'several', 'vehicles', '--', 'is', 'what', 'we', 'believe', 'is', 'the', 'world', '&apos;s', 'first', 'autonomously', 'drifting', 'car', '.', '</s>']
+['one', 'of', 'the', 'things', 'we', '&apos;ve', 'developed', 'in', 'the', 'lab', '--', 'we', 'have', 'designed', 'several', 'vehicles', '--', 'is', 'how', 'we', 'think', 'the', 'first', 'autonomous', '<unk>', 'of', 'the', 'world', '.']
+
+['<s>', 'and', 'he', 'did', 'sometimes', ',', 'believe', 'it', 'or', 'not', ',', 'at', 'a', '<unk>', 'in', 'los', 'angeles', '--', 'one', 'reason', 'to', 'love', 'l.a.', '--', 'back', 'in', 'the', '1940s', '.', '</s>']
+['and', 'he', 'won', '&apos;t', 'stop', ',', 'you', 'think', 'they', '&apos;d', 'hardly', 'believe', 'in', 'a', '<unk>', 'of', 'los', 'angeles', '--', 'a', 'reason', 'to', 'love', '--', 'in', 'the', 'in', 'the', '.']
+
+['<s>', 'i', 'started', 'my', 'firm', 'to', 'help', 'communities', 'across', 'the', 'country', 'realize', 'their', 'own', 'potential', 'to', 'improve', 'everything', 'about', 'the', 'quality', 'of', 'life', 'for', 'their', 'people', '.', '</s>']
+['i', 'started', 'to', 'to', 'the', 'the', 'country', 'to', 'help', 'communities', 'in', 'the', 'country', ',', 'their', 'in', 'the', 'to', 'make', 'the', 'entire', 'quality', 'of', 'their', 'people', '.']
+
+Epoch 6 validation BLUE score: 0.2334
+Train Loss: 55.01 Perplexity: 2.83 Progress: 0%
+Train Loss: 54.27 Perplexity: 2.90 Progress: 4%
+Train Loss: 54.57 Perplexity: 3.01 Progress: 9%
+Train Loss: 55.27 Perplexity: 2.32 Progress: 14%
+Train Loss: 55.66 Perplexity: 3.01 Progress: 19%
+Train Loss: 55.85 Perplexity: 2.91 Progress: 24%
+Train Loss: 55.10 Perplexity: 2.47 Progress: 29%
+Train Loss: 56.70 Perplexity: 2.63 Progress: 34%
+Train Loss: 54.89 Perplexity: 2.84 Progress: 39%
+Train Loss: 55.68 Perplexity: 2.57 Progress: 44%
+Train Loss: 55.87 Perplexity: 3.04 Progress: 49%
+Train Loss: 55.04 Perplexity: 2.97 Progress: 54%
+Train Loss: 56.02 Perplexity: 2.90 Progress: 59%
+Train Loss: 55.63 Perplexity: 2.62 Progress: 64%
+Train Loss: 56.01 Perplexity: 2.73 Progress: 69%
+Train Loss: 56.34 Perplexity: 2.89 Progress: 74%
+Train Loss: 55.08 Perplexity: 2.84 Progress: 79%
+Train Loss: 56.73 Perplexity: 2.50 Progress: 84%
+Train Loss: 54.84 Perplexity: 2.93 Progress: 89%
+Train Loss: 56.42 Perplexity: 3.12 Progress: 94%
+Train Loss: 56.90 Perplexity: 2.90 Progress: 99%
+### Epoch 7 Loss: 55.6350 ###
+['<s>', 'i', 'keep', 'this', 'photograph', 'close', 'by', 'to', 'me', '--', 'it', '&apos;s', 'in', 'my', 'office', '--', 'because', 'i', '&apos;ve', 'always', 'felt', 'a', 'mystical', 'connection', 'to', 'these', 'two', 'men', ',', 'both', 'of', 'whom', 'i', 'never', 'knew', '.', '</s>']
+['i', 'know', 'this', 'photograph', 'in', 'i', '&apos;m', 'in', '.', 'it', '&apos;s', 'in', 'my', 'office', ',', 'because', 'i', 'always', 'have', 'a', 'fan', 'of', 'to', 'those', 'two', 'men', ',', 'i', '&apos;ve', 'never', 'had', 'never', 'learned', 'of', '.']
+
+['<s>', 'and', 'i', 'remember', 'there', 'sitting', 'at', 'my', 'desk', 'thinking', ',', '&quot;', 'well', ',', 'i', 'know', 'this', '.', 'this', 'is', 'a', 'great', 'scientific', 'discovery', ',', '&quot;', 'but', 'it', 'was', 'so', 'awful', '.', '</s>']
+['and', 'i', 'remember', 'sitting', 'sitting', 'my', 'desk', 'at', 'my', 'desk', ',', 'and', 'i', 'thought', ',', '&quot;', 'i', 'know', 'it', '.', 'what', 'a', 'great', 'scientific', 'discovery', ',', 'but', 'it', 'was', 'so', 'terrible', '.']
+
+['<s>', 'and', 'i', '&apos;m', 'hopeful', 'because', 'it', '&apos;s', 'not', 'only', 'philanthropy', 'that', '&apos;s', '<unk>', 'itself', ',', 'it', '&apos;s', 'also', 'whole', 'other', 'portions', 'of', 'the', 'social', 'sector', ',', 'and', 'of', 'business', ',', 'that', 'are', 'busy', 'challenging', '&quot;', 'business', 'as', 'usual', '.', '&quot;', '</s>']
+['and', 'i', '&apos;m', 'hopeful', ',', 'because', 'not', 'only', 'not', 'just', 'the', 'philanthropy', ',', 'also', 'other', 'big', 'parts', 'of', 'social', 'social', 'and', 'and', 'the', 'business', ',', ',', 'the', 'business', 'of', 'doing', 'the', '&quot;', 'business', '.']
+
+['<s>', 'there', 'are', 'now', ',', 'today', ',', 'so', 'many', 'new', 'funds', 'that', 'are', '<unk>', 'giving', 'and', 'investing', ',', 'bringing', 'together', 'people', 'around', 'a', 'common', 'goal', ',', 'to', 'think', 'bigger', '.', '</s>']
+['now', ',', 'there', 'are', 'so', 'many', 'new', 'foundations', ',', 'the', '<unk>', 'and', 'investment', ',', ',', 'people', ',', ',', 'for', 'for', 'a', 'goal', ',', 'in', 'a', 'a', 'larger', 'context', '.']
+
+['<s>', 'clay', 'shirky', ',', 'that', 'great', '<unk>', 'of', 'everything', 'networked', ',', 'has', 'captured', 'the', 'assumption', 'that', 'this', 'challenges', 'in', 'such', 'a', 'beautiful', 'way', '.', '</s>']
+['clay', 'shirky', ',', 'this', 'great', '<unk>', 'of', 'all', 'of', 'all', 'the', ',', ',', 'the', 'who', 'who', 'is', 'going', 'to', 'put', 'on', 'the', '<unk>', ',', ',', 'in', 'such', 'a', 'wonderful', 'way', '.']
+
+['<s>', 'they', '&apos;re', 'closed', 'more', 'and', 'more', 'and', 'more', 'all', 'around', 'the', 'world', 'for', 'the', 'same', 'reason', ',', 'and', 'i', 'believe', 'we', 'shouldn', '&apos;t', 'tolerate', 'that', 'either', '.', '</s>']
+['they', '&apos;re', 'always', 'going', 'around', 'the', 'world', 'over', 'and', 'more', 'and', 'more', 'and', 'more', 'and', 'more', 'and', 'more', 'and', 'and', 'i', 'think', 'that', 'should', 'we', 'allow', 'to', 'to', '.']
+
+['<s>', 'i', 'started', 'out', 'showing', 'how', 'much', 'we', 'had', 'distressed', 'the', 'monterey', 'bay', 'ecosystem', 'with', 'pollution', 'and', 'the', 'canning', 'industry', 'and', 'all', 'of', 'the', 'attendant', 'problems', '.', '</s>']
+['i', '&apos;ve', 'showed', 'you', 'how', 'how', 'we', '&apos;ve', 'seen', 'the', 'the', 'ecosystem', 'of', 'monterey', 'bay', ',', ',', 'and', 'the', '<unk>', 'and', 'and', 'and', 'and', 'and', 'all', 'the', '.']
+
+['<s>', 'and', 'just', 'around', 'that', 'time', ',', 'his', 'mother', 'had', 'said', ',', '&quot;', 'have', 'you', 'seen', 'this', 'book', 'by', 'michael', '<unk>', 'called', '&apos;', 'war', 'horse', '&apos;', '?', '&quot;', '</s>']
+['about', 'at', 'the', 'same', 'time', ',', 'his', 'mother', 'asked', 'him', ',', '&quot;', 'do', 'you', 'know', 'the', 'book', 'of', 'michael', '<unk>', '?', '&quot;', '?', '&quot;']
+
+['<s>', 'and', 'you', 'know', ',', 'our', 'modern', 'ways', 'of', 'doing', 'things', 'have', 'their', 'advantages', ',', 'but', 'i', 'believe', 'we', 'should', 'understand', 'the', 'costs', '.', '</s>']
+['it', '&apos;s', 'a', 'our', 'modern', 'way', 'of', 'something', 'like', 'something', 'like', 'something', 'like', 'something', 'like', 'something', ',', 'but', 'i', 'think', 'we', 'should', 'also', 'recognize', 'recognize', 'what', 'price', '.']
+
+['<s>', 'here', '&apos;s', 'a', 'diagram', 'of', 'the', '<unk>', 'load', 'of', 'dolphins', 'in', '<unk>', 'bay', '.', '</s>']
+['here', '&apos;s', 'a', 'graph', 'of', 'the', '<unk>', 'of', 'dolphins', 'in', 'the', '<unk>', 'bay', '.']
+
+['<s>', 'now', 'why', 'does', 'that', 'matter', 'for', 'human', 'health', '?', '</s>']
+['now', ',', 'why', 'does', 'this', 'matter', 'for', 'human', 'health', '?']
+
+['<s>', 'here', ',', 'craig', 'is', 'working', 'the', 'head', '.', '</s>']
+['craig', 'showed', 'up', 'here', 'the', 'head', '.']
+
+['<s>', 'you', 'see', 'the', 'skeletal', 'structure', 'of', 'it', '.', '</s>']
+['you', 'saw', 'the', 'skeleton', '.']
+
+['<s>', 'so', ',', 'we', 'have', 'this', 'ability', 'as', 'well', '.', '</s>']
+['we', 'have', 'have', 'this', 'ability', '.']
+
+['<s>', 'ak', ':', '<unk>', '<unk>', '<unk>', '.', '</s>']
+['<unk>', '<unk>', '--', '<unk>', '.']
+
+['<s>', 'ak', ':', 'we', 'were', 'terrified', '.', '</s>']
+['we', 'really', 'really', 'afraid', '.']
+
+['<s>', 'we', 'worry', 'that', 'im', ',', 'texting', ',', 'facebook', 'are', '<unk>', 'human', 'intimacy', ',', 'but', '<unk>', '<unk>', '&apos;s', 'research', 'shows', 'how', 'communication', 'tech', 'is', 'capable', 'of', 'cultivating', 'deeper', 'relationships', ',', 'bringing', 'love', 'across', 'barriers', 'like', 'distance', 'and', 'workplace', 'rules', '.', '</s>']
+['we', 'worry', 'that', ',', ',', 'text', ',', 'facebook', ',', 'facebook', 'of', 'the', '<unk>', 'intimacy', ',', 'but', '<unk>', '<unk>', 'of', 'research', ',', 'how', 'the', '<unk>', 'of', 'of', 'relationships', 'to', 'make', 'a', '<unk>', 'to', 'make', 'love', 'of', '<unk>', ',', 'to', 'to', 'and', '<unk>', 'and', '<unk>', '.']
+
+['<s>', 'one', 'of', 'the', 'things', 'that', 'we', '&apos;ve', 'developed', 'in', 'the', 'lab', '--', 'we', '&apos;ve', 'developed', 'several', 'vehicles', '--', 'is', 'what', 'we', 'believe', 'is', 'the', 'world', '&apos;s', 'first', 'autonomously', 'drifting', 'car', '.', '</s>']
+['one', 'of', 'the', 'things', 'we', '&apos;ve', 'developed', 'in', 'the', 'lab', '--', 'we', 'have', 'created', 'several', 'vehicles', '--', 'is', ',', 'we', 'think', 'the', 'first', 'autonomous', '<unk>', 'of', 'the', 'world', '&apos;s', 'first', '<unk>', '<unk>', 'of', 'the', 'world', '.']
+
+['<s>', 'and', 'he', 'did', 'sometimes', ',', 'believe', 'it', 'or', 'not', ',', 'at', 'a', '<unk>', 'in', 'los', 'angeles', '--', 'one', 'reason', 'to', 'love', 'l.a.', '--', 'back', 'in', 'the', '1940s', '.', '</s>']
+['and', 'he', 'won', '&apos;t', 'stop', ',', 'they', '&apos;d', 'like', 'to', 'have', 'a', '<unk>', 'in', 'in', 'los', 'angeles', '--', 'a', 'reason', 'to', 'love', 'l.a.', '--', 'in', 'the', 'the', '.']
+
+['<s>', 'i', 'started', 'my', 'firm', 'to', 'help', 'communities', 'across', 'the', 'country', 'realize', 'their', 'own', 'potential', 'to', 'improve', 'everything', 'about', 'the', 'quality', 'of', 'life', 'for', 'their', 'people', '.', '</s>']
+['i', 'started', 'to', 'to', 'to', 'the', 'country', 'all', 'the', 'country', 'country', ',', 'their', 'use', 'in', 'the', 'to', 'make', 'the', 'entire', 'quality', 'of', 'their', 'people', '.']
+
+Epoch 7 validation BLUE score: 0.2393
+Train Loss: 57.63 Perplexity: 3.11 Progress: 0%
+Train Loss: 52.33 Perplexity: 2.85 Progress: 4%
+Train Loss: 53.53 Perplexity: 2.79 Progress: 9%
+Train Loss: 52.88 Perplexity: 2.63 Progress: 14%
+Train Loss: 52.75 Perplexity: 2.94 Progress: 19%
+Train Loss: 53.71 Perplexity: 2.63 Progress: 24%
+Train Loss: 52.52 Perplexity: 2.77 Progress: 29%
+Train Loss: 51.89 Perplexity: 2.78 Progress: 34%
+Train Loss: 53.49 Perplexity: 3.12 Progress: 39%
+Train Loss: 53.45 Perplexity: 2.94 Progress: 44%
+Train Loss: 53.03 Perplexity: 2.77 Progress: 49%
+Train Loss: 52.92 Perplexity: 2.70 Progress: 54%
+Train Loss: 53.08 Perplexity: 2.92 Progress: 59%
+Train Loss: 52.97 Perplexity: 2.56 Progress: 64%
+Train Loss: 53.37 Perplexity: 2.90 Progress: 69%
+Train Loss: 53.84 Perplexity: 2.62 Progress: 74%
+Train Loss: 53.24 Perplexity: 2.47 Progress: 79%
+Train Loss: 53.56 Perplexity: 3.18 Progress: 84%
+Train Loss: 53.78 Perplexity: 2.87 Progress: 89%
+Train Loss: 53.43 Perplexity: 2.57 Progress: 94%
+Train Loss: 54.43 Perplexity: 2.63 Progress: 99%
+### Epoch 8 Loss: 53.2161 ###
+['<s>', 'i', 'keep', 'this', 'photograph', 'close', 'by', 'to', 'me', '--', 'it', '&apos;s', 'in', 'my', 'office', '--', 'because', 'i', '&apos;ve', 'always', 'felt', 'a', 'mystical', 'connection', 'to', 'these', 'two', 'men', ',', 'both', 'of', 'whom', 'i', 'never', 'knew', '.', '</s>']
+['i', 'put', 'this', 'photograph', 'in', 'me', '.', 'it', '&apos;s', 'in', 'my', 'office', ',', 'because', 'i', 'always', 'have', 'a', 'mystic', 'connection', 'to', 'these', 'two', 'men', ',', 'i', '&apos;ve', 'never', 'seen', 'all', 'of', '.']
+
+['<s>', 'and', 'i', 'remember', 'there', 'sitting', 'at', 'my', 'desk', 'thinking', ',', '&quot;', 'well', ',', 'i', 'know', 'this', '.', 'this', 'is', 'a', 'great', 'scientific', 'discovery', ',', '&quot;', 'but', 'it', 'was', 'so', 'awful', '.', '</s>']
+['and', 'i', 'remember', 'sitting', 'sitting', 'my', 'desk', ',', 'and', 'i', 'thought', ',', '&quot;', 'i', 'know', ',', '&quot;', 'i', 'think', '.', 'what', 'was', 'a', 'great', 'scientific', 'science', ',', 'but', 'it', 'was', 'so', 'terrible', '.']
+
+['<s>', 'and', 'i', '&apos;m', 'hopeful', 'because', 'it', '&apos;s', 'not', 'only', 'philanthropy', 'that', '&apos;s', '<unk>', 'itself', ',', 'it', '&apos;s', 'also', 'whole', 'other', 'portions', 'of', 'the', 'social', 'sector', ',', 'and', 'of', 'business', ',', 'that', 'are', 'busy', 'challenging', '&quot;', 'business', 'as', 'usual', '.', '&quot;', '</s>']
+['and', 'i', '&apos;m', 'hopeful', ',', 'because', 'not', 'just', 'philanthropy', 'means', ',', 'other', 'big', 'parts', 'of', 'social', 'social', 'system', 'and', 'and', 'business', 'are', 'so', 'that', 'the', 'business', 'is', 'doing', 'the', 'business', 'as', '.', '.']
+
+['<s>', 'there', 'are', 'now', ',', 'today', ',', 'so', 'many', 'new', 'funds', 'that', 'are', '<unk>', 'giving', 'and', 'investing', ',', 'bringing', 'together', 'people', 'around', 'a', 'common', 'goal', ',', 'to', 'think', 'bigger', '.', '</s>']
+['now', ',', 'there', 'are', 'many', 'new', 'foundations', 'that', 'are', '<unk>', 'and', 'investments', ',', 'the', 'people', ',', 'together', ',', 'for', 'a', 'goal', ',', 'in', 'a', 'an', 'context', '.']
+
+['<s>', 'clay', 'shirky', ',', 'that', 'great', '<unk>', 'of', 'everything', 'networked', ',', 'has', 'captured', 'the', 'assumption', 'that', 'this', 'challenges', 'in', 'such', 'a', 'beautiful', 'way', '.', '</s>']
+['clay', 'shirky', ',', 'this', 'great', '<unk>', 'of', 'of', 'all', 'the', ',', ',', 'the', 'the', 'who', '&apos;s', 'going', 'on', 'the', '<unk>', ',', ',', 'in', 'this', ',', 'in', 'a', 'great', 'way', '.']
+
+['<s>', 'they', '&apos;re', 'closed', 'more', 'and', 'more', 'and', 'more', 'all', 'around', 'the', 'world', 'for', 'the', 'same', 'reason', ',', 'and', 'i', 'believe', 'we', 'shouldn', '&apos;t', 'tolerate', 'that', 'either', '.', '</s>']
+['they', '&apos;re', 'always', 'in', 'around', 'over', 'the', 'world', 'and', 'more', 'and', 'more', 'and', 'more', 'and', 'and', 'i', 'think', 'that', 'should', 'be', 'we', 'should', 'be', '.']
+
+['<s>', 'i', 'started', 'out', 'showing', 'how', 'much', 'we', 'had', 'distressed', 'the', 'monterey', 'bay', 'ecosystem', 'with', 'pollution', 'and', 'the', 'canning', 'industry', 'and', 'all', 'of', 'the', 'attendant', 'problems', '.', '</s>']
+['in', 'first', ',', 'i', 'showed', 'you', 'how', 'how', 'we', 'we', '&apos;ve', 'done', 'the', 'ecosystem', 'of', 'monterey', 'bay', ',', 'through', 'pollution', 'and', 'the', '<unk>', 'and', 'and', 'and', 'all', 'the', 'problems', '.']
+
+['<s>', 'and', 'just', 'around', 'that', 'time', ',', 'his', 'mother', 'had', 'said', ',', '&quot;', 'have', 'you', 'seen', 'this', 'book', 'by', 'michael', '<unk>', 'called', '&apos;', 'war', 'horse', '&apos;', '?', '&quot;', '</s>']
+['about', 'the', 'same', 'time', ',', 'his', 'mother', 'asked', 'him', ',', '&quot;', 'you', 'you', 'know', 'the', 'book', 'of', 'michael', '<unk>', '?', '&quot;', '?', '&quot;']
+
+['<s>', 'and', 'you', 'know', ',', 'our', 'modern', 'ways', 'of', 'doing', 'things', 'have', 'their', 'advantages', ',', 'but', 'i', 'believe', 'we', 'should', 'understand', 'the', 'costs', '.', '</s>']
+['it', '&apos;s', 'our', 'modern', 'way', 'of', 'something', 'like', 'something', 'like', 'something', 'something', 'like', 'a', ',', 'but', 'i', 'think', 'we', 'should', 'also', 'recognize', 'recognize', 'what', 'price', '.']
+
+['<s>', 'here', '&apos;s', 'a', 'diagram', 'of', 'the', '<unk>', 'load', 'of', 'dolphins', 'in', '<unk>', 'bay', '.', '</s>']
+['here', '&apos;s', 'a', 'graph', 'of', 'the', '<unk>', 'of', 'dolphins', 'in', 'the', '<unk>', 'bay', '.']
+
+['<s>', 'now', 'why', 'does', 'that', 'matter', 'for', 'human', 'health', '?', '</s>']
+['now', ',', 'why', 'does', 'it', 'play', 'a', 'a', 'for', 'human', 'health', '?']
+
+['<s>', 'here', ',', 'craig', 'is', 'working', 'the', 'head', '.', '</s>']
+['craig', 'here', '&apos;s', 'the', 'head', '.']
+
+['<s>', 'you', 'see', 'the', 'skeletal', 'structure', 'of', 'it', '.', '</s>']
+['you', 'saw', 'the', 'skeleton', '.']
+
+['<s>', 'so', ',', 'we', 'have', 'this', 'ability', 'as', 'well', '.', '</s>']
+['we', 'have', 'have', 'this', 'ability', 'to']
+
+['<s>', 'ak', ':', '<unk>', '<unk>', '<unk>', '.', '</s>']
+['<unk>', '<unk>', '--', '<unk>', '<unk>']
+
+['<s>', 'ak', ':', 'we', 'were', 'terrified', '.', '</s>']
+['we', 'really', 'really', 'scared', '.']
+
+['<s>', 'we', 'worry', 'that', 'im', ',', 'texting', ',', 'facebook', 'are', '<unk>', 'human', 'intimacy', ',', 'but', '<unk>', '<unk>', '&apos;s', 'research', 'shows', 'how', 'communication', 'tech', 'is', 'capable', 'of', 'cultivating', 'deeper', 'relationships', ',', 'bringing', 'love', 'across', 'barriers', 'like', 'distance', 'and', 'workplace', 'rules', '.', '</s>']
+['we', '&apos;re', 'worried', 'that', ',', ',', 'text', ',', 'facebook', 'the', 'the', 'benefits', 'of', 'harm', ',', 'but', '<unk>', '<unk>', 'research', ',', 'how', 'how', 'the', '<unk>', 'relationships', 'can', 'make', '<unk>', 'relationships', 'to', 'build', 'love', 'and', '<unk>', 'and', '<unk>', 'and', '<unk>', '.']
+
+['<s>', 'one', 'of', 'the', 'things', 'that', 'we', '&apos;ve', 'developed', 'in', 'the', 'lab', '--', 'we', '&apos;ve', 'developed', 'several', 'vehicles', '--', 'is', 'what', 'we', 'believe', 'is', 'the', 'world', '&apos;s', 'first', 'autonomously', 'drifting', 'car', '.', '</s>']
+['one', 'of', 'the', 'things', 'that', 'we', '&apos;ve', 'developed', 'in', 'the', 'lab', '--', 'we', '&apos;ve', 'evolved', 'several', 'vehicles', '--', 'is', ',', 'we', 'think', 'the', 'first', 'autonomous', '<unk>', 'of', 'the', 'world', '.']
+
+['<s>', 'and', 'he', 'did', 'sometimes', ',', 'believe', 'it', 'or', 'not', ',', 'at', 'a', '<unk>', 'in', 'los', 'angeles', '--', 'one', 'reason', 'to', 'love', 'l.a.', '--', 'back', 'in', 'the', '1940s', '.', '</s>']
+['and', 'he', 'won', '&apos;t', 'stop', ',', 'you', 'think', 'they', 'don', '&apos;t', 'think', 'of', 'a', '<unk>', 'in', 'in', 'los', 'angeles', '--', 'a', 'reason', 'to', 'love', '--', 'in', 'the', 'in', 'the', '2001', '.']
+
+['<s>', 'i', 'started', 'my', 'firm', 'to', 'help', 'communities', 'across', 'the', 'country', 'realize', 'their', 'own', 'potential', 'to', 'improve', 'everything', 'about', 'the', 'quality', 'of', 'life', 'for', 'their', 'people', '.', '</s>']
+['i', 'started', 'to', 'my', 'company', 'to', 'help', 'communities', 'all', 'the', 'country', 'to', 'use', 'their', 'existing', 'potential', 'to', 'improve', 'the', 'entire', 'quality', 'of', 'their', 'people', '.']
+
+Epoch 8 validation BLUE score: 0.2428
+Train Loss: 69.07 Perplexity: 3.12 Progress: 0%
+Train Loss: 51.77 Perplexity: 2.62 Progress: 4%
+Train Loss: 51.90 Perplexity: 2.44 Progress: 9%
+Train Loss: 50.40 Perplexity: 2.62 Progress: 14%
+Train Loss: 50.70 Perplexity: 2.61 Progress: 19%
+Train Loss: 52.60 Perplexity: 2.60 Progress: 24%
+Train Loss: 52.61 Perplexity: 3.17 Progress: 29%
+Train Loss: 51.84 Perplexity: 2.78 Progress: 34%
+Train Loss: 51.61 Perplexity: 2.62 Progress: 39%
+Train Loss: 51.93 Perplexity: 2.65 Progress: 44%
+Train Loss: 52.09 Perplexity: 3.39 Progress: 49%
+Train Loss: 51.56 Perplexity: 3.44 Progress: 54%
+Train Loss: 52.57 Perplexity: 2.80 Progress: 59%
+Train Loss: 51.54 Perplexity: 2.69 Progress: 64%
+Train Loss: 51.67 Perplexity: 2.39 Progress: 69%
+Train Loss: 51.88 Perplexity: 2.66 Progress: 74%
+Train Loss: 51.56 Perplexity: 2.50 Progress: 79%
+Train Loss: 51.47 Perplexity: 2.84 Progress: 84%
+Train Loss: 52.25 Perplexity: 2.58 Progress: 89%
+Train Loss: 51.99 Perplexity: 2.70 Progress: 94%
+Train Loss: 52.60 Perplexity: 2.84 Progress: 99%
+### Epoch 9 Loss: 51.8452 ###
+['<s>', 'i', 'keep', 'this', 'photograph', 'close', 'by', 'to', 'me', '--', 'it', '&apos;s', 'in', 'my', 'office', '--', 'because', 'i', '&apos;ve', 'always', 'felt', 'a', 'mystical', 'connection', 'to', 'these', 'two', 'men', ',', 'both', 'of', 'whom', 'i', 'never', 'knew', '.', '</s>']
+['i', 'put', 'this', 'photograph', 'in', 'me', '.', 'it', '&apos;s', 'in', 'my', 'office', ',', 'because', 'i', 'always', 'got', 'a', 'mystic', 'link', 'to', 'these', 'two', 'men', ',', 'i', '&apos;ve', 'never', 'have', 'never', 'know', '.']
+
+['<s>', 'and', 'i', 'remember', 'there', 'sitting', 'at', 'my', 'desk', 'thinking', ',', '&quot;', 'well', ',', 'i', 'know', 'this', '.', 'this', 'is', 'a', 'great', 'scientific', 'discovery', ',', '&quot;', 'but', 'it', 'was', 'so', 'awful', '.', '</s>']
+['and', 'i', 'remember', 'sitting', 'sitting', 'my', 'desk', ',', 'and', 'i', 'thought', ',', '&quot;', 'i', 'know', ',', '&quot;', 'i', 'know', '.', 'what', 'was', 'a', 'great', 'science', ',', 'but', 'it', 'was', 'so', 'awful', '.']
+
+['<s>', 'and', 'i', '&apos;m', 'hopeful', 'because', 'it', '&apos;s', 'not', 'only', 'philanthropy', 'that', '&apos;s', '<unk>', 'itself', ',', 'it', '&apos;s', 'also', 'whole', 'other', 'portions', 'of', 'the', 'social', 'sector', ',', 'and', 'of', 'business', ',', 'that', 'are', 'busy', 'challenging', '&quot;', 'business', 'as', 'usual', '.', '&quot;', '</s>']
+['and', 'i', 'hopeful', 'hopeful', ',', 'because', 'not', 'just', 'the', 'philanthropy', 'means', ',', 'other', 'big', 'parts', 'of', 'social', 'social', 'and', 'and', 'business', ',', ',', 'what', 'what', 'business', 'is', 'doing', 'the', 'business', 'as', 'the', 'business', 'as', '.']
+
+['<s>', 'there', 'are', 'now', ',', 'today', ',', 'so', 'many', 'new', 'funds', 'that', 'are', '<unk>', 'giving', 'and', 'investing', ',', 'bringing', 'together', 'people', 'around', 'a', 'common', 'goal', ',', 'to', 'think', 'bigger', '.', '</s>']
+['now', ',', 'there', 'are', 'so', 'many', 'new', 'foundations', ',', 'the', '<unk>', 'and', 'investment', ',', 'have', ',', ',', 'people', 'together', ',', 'for', 'a', 'goal', ',', 'in', 'a', 'larger', 'context', '.']
+
+['<s>', 'clay', 'shirky', ',', 'that', 'great', '<unk>', 'of', 'everything', 'networked', ',', 'has', 'captured', 'the', 'assumption', 'that', 'this', 'challenges', 'in', 'such', 'a', 'beautiful', 'way', '.', '</s>']
+['clay', 'shirky', ',', 'this', 'great', '<unk>', 'of', 'all', 'the', ',', ',', 'the', 'the', ',', 'the', 'the', ',', ',', 'on', 'the', '<unk>', ',', ',', 'in', 'this', '.']
+
+['<s>', 'they', '&apos;re', 'closed', 'more', 'and', 'more', 'and', 'more', 'all', 'around', 'the', 'world', 'for', 'the', 'same', 'reason', ',', 'and', 'i', 'believe', 'we', 'shouldn', '&apos;t', 'tolerate', 'that', 'either', '.', '</s>']
+['they', '&apos;re', 'always', 'in', 'around', 'the', 'over', 'the', 'world', 'and', 'and', 'more', 'and', 'more', 'and', 'and', 'i', 'think', 'that', 'should', 'let', '&apos;s', 'let', '&apos;s', '.']
+
+['<s>', 'i', 'started', 'out', 'showing', 'how', 'much', 'we', 'had', 'distressed', 'the', 'monterey', 'bay', 'ecosystem', 'with', 'pollution', 'and', 'the', 'canning', 'industry', 'and', 'all', 'of', 'the', 'attendant', 'problems', '.', '</s>']
+['i', 'first', 'i', 'showed', 'you', 'how', 'how', 'we', '&apos;ve', 'been', 'the', 'the', 'ecosystem', 'of', 'monterey', 'bay', ',', 'through', 'pollution', 'and', 'the', '<unk>', 'and', 'and', 'and', 'all', 'the', '.']
+
+['<s>', 'and', 'just', 'around', 'that', 'time', ',', 'his', 'mother', 'had', 'said', ',', '&quot;', 'have', 'you', 'seen', 'this', 'book', 'by', 'michael', '<unk>', 'called', '&apos;', 'war', 'horse', '&apos;', '?', '&quot;', '</s>']
+['about', 'at', 'the', 'same', 'time', ',', 'asked', 'him', 'asked', 'him', ',', '&quot;', 'do', 'you', 'know', 'the', 'book', 'of', 'michael', '<unk>', '?', '&quot;', '?', '&quot;']
+
+['<s>', 'and', 'you', 'know', ',', 'our', 'modern', 'ways', 'of', 'doing', 'things', 'have', 'their', 'advantages', ',', 'but', 'i', 'believe', 'we', 'should', 'understand', 'the', 'costs', '.', '</s>']
+['it', '&apos;s', 'a', 'our', 'modern', 'way', 'of', 'something', 'like', 'something', 'like', 'something', 'like', ',', 'but', 'i', 'think', 'we', 'should', 'recognize', 'recognize', 'what', 'price', '.']
+
+['<s>', 'here', '&apos;s', 'a', 'diagram', 'of', 'the', '<unk>', 'load', 'of', 'dolphins', 'in', '<unk>', 'bay', '.', '</s>']
+['here', '&apos;s', 'a', 'graph', 'of', 'the', '<unk>', 'of', 'dolphins', 'in', 'the', '<unk>', 'bay', '.']
+
+['<s>', 'now', 'why', 'does', 'that', 'matter', 'for', 'human', 'health', '?', '</s>']
+['now', ',', 'why', 'does', 'it', 'play', 'a', 'a', 'for', 'human', 'health', '?']
+
+['<s>', 'here', ',', 'craig', 'is', 'working', 'the', 'head', '.', '</s>']
+['craig', 'showed', 'up', 'the', 'head', '.']
+
+['<s>', 'you', 'see', 'the', 'skeletal', 'structure', 'of', 'it', '.', '</s>']
+['you', 'saw', 'the', 'skeleton', '.']
+
+['<s>', 'so', ',', 'we', 'have', 'this', 'ability', 'as', 'well', '.', '</s>']
+['we', 'have', 'have', 'this', 'ability', '.']
+
+['<s>', 'ak', ':', '<unk>', '<unk>', '<unk>', '.', '</s>']
+['<unk>', '<unk>', '--', '<unk>', '<unk>']
+
+['<s>', 'ak', ':', 'we', 'were', 'terrified', '.', '</s>']
+['we', 'really', 'were', 'scared', '.']
+
+['<s>', 'we', 'worry', 'that', 'im', ',', 'texting', ',', 'facebook', 'are', '<unk>', 'human', 'intimacy', ',', 'but', '<unk>', '<unk>', '&apos;s', 'research', 'shows', 'how', 'communication', 'tech', 'is', 'capable', 'of', 'cultivating', 'deeper', 'relationships', ',', 'bringing', 'love', 'across', 'barriers', 'like', 'distance', 'and', 'workplace', 'rules', '.', '</s>']
+['we', 'worry', 'about', 'the', ',', 'texting', ',', 'text', 'the', 'the', 'benefits', 'of', 'the', ',', ',', 'but', '<unk>', '<unk>', ',', ',', 'like', 'the', '<unk>', 'of', 'relationships', 'to', 'make', 'love', 'of', '<unk>', 'to', 'to', 'and', '<unk>', 'and', '<unk>', '.']
+
+['<s>', 'one', 'of', 'the', 'things', 'that', 'we', '&apos;ve', 'developed', 'in', 'the', 'lab', '--', 'we', '&apos;ve', 'developed', 'several', 'vehicles', '--', 'is', 'what', 'we', 'believe', 'is', 'the', 'world', '&apos;s', 'first', 'autonomously', 'drifting', 'car', '.', '</s>']
+['one', 'of', 'the', 'things', 'we', '&apos;ve', 'developed', 'in', 'the', 'lab', '--', 'we', 'have', 'designed', 'several', 'vehicles', '--', 'is', ',', 'we', 'think', 'the', 'first', 'autonomous', '<unk>', 'of', 'the', 'world', '.']
+
+['<s>', 'and', 'he', 'did', 'sometimes', ',', 'believe', 'it', 'or', 'not', ',', 'at', 'a', '<unk>', 'in', 'los', 'angeles', '--', 'one', 'reason', 'to', 'love', 'l.a.', '--', 'back', 'in', 'the', '1940s', '.', '</s>']
+['and', 'he', 'won', 'stop', ',', 'you', 'don', '&apos;t', 'think', 'of', 'a', '<unk>', 'in', 'in', 'los', 'angeles', '--', 'a', 'reason', 'to', 'love', 'l.a.', 'in', 'the', '1940s', '.']
+
+['<s>', 'i', 'started', 'my', 'firm', 'to', 'help', 'communities', 'across', 'the', 'country', 'realize', 'their', 'own', 'potential', 'to', 'improve', 'everything', 'about', 'the', 'quality', 'of', 'life', 'for', 'their', 'people', '.', '</s>']
+['i', 'started', 'to', 'to', 'the', 'to', 'to', 'help', 'communities', 'all', 'the', 'country', 'to', 'use', 'their', 'sophisticated', 'potential', 'to', 'improve', 'the', 'entire', 'quality', 'of', 'your', 'people', '.']
+
+Epoch 9 validation BLUE score: 0.2343
+Train Loss: 52.54 Perplexity: 2.80 Progress: 0%
+Train Loss: 49.97 Perplexity: 2.77 Progress: 4%
+Train Loss: 49.92 Perplexity: 2.25 Progress: 9%
+Train Loss: 50.03 Perplexity: 2.33 Progress: 14%
+Train Loss: 50.00 Perplexity: 3.01 Progress: 19%
+Train Loss: 50.26 Perplexity: 2.38 Progress: 24%
+Train Loss: 49.72 Perplexity: 2.24 Progress: 29%
+Train Loss: 49.52 Perplexity: 2.30 Progress: 34%
+Train Loss: 49.15 Perplexity: 3.00 Progress: 39%
+Train Loss: 49.93 Perplexity: 3.10 Progress: 44%
+Train Loss: 48.91 Perplexity: 2.36 Progress: 49%
+Train Loss: 49.95 Perplexity: 2.65 Progress: 54%
+Train Loss: 50.08 Perplexity: 2.25 Progress: 59%
+Train Loss: 50.11 Perplexity: 2.86 Progress: 64%
+Train Loss: 49.87 Perplexity: 2.52 Progress: 69%
+Train Loss: 50.46 Perplexity: 3.00 Progress: 74%
+Train Loss: 49.44 Perplexity: 2.37 Progress: 79%
+Train Loss: 50.21 Perplexity: 2.93 Progress: 84%
+Train Loss: 50.14 Perplexity: 2.77 Progress: 89%
+Train Loss: 51.10 Perplexity: 2.99 Progress: 94%
+Train Loss: 50.92 Perplexity: 2.49 Progress: 99%
+### Epoch 10 Loss: 49.9818 ###
+['<s>', 'i', 'keep', 'this', 'photograph', 'close', 'by', 'to', 'me', '--', 'it', '&apos;s', 'in', 'my', 'office', '--', 'because', 'i', '&apos;ve', 'always', 'felt', 'a', 'mystical', 'connection', 'to', 'these', 'two', 'men', ',', 'both', 'of', 'whom', 'i', 'never', 'knew', '.', '</s>']
+['i', 'put', 'this', 'photograph', 'in', 'me', '.', 'it', '&apos;s', 'in', 'my', 'office', '.', 'because', 'i', 'always', 'always', 'have', 'a', 'mystic', 'connection', 'to', 'these', 'both', 'men', ',', 'i', '&apos;ve', 'never', 'had', 'never', 'know', '.']
+
+['<s>', 'and', 'i', 'remember', 'there', 'sitting', 'at', 'my', 'desk', 'thinking', ',', '&quot;', 'well', ',', 'i', 'know', 'this', '.', 'this', 'is', 'a', 'great', 'scientific', 'discovery', ',', '&quot;', 'but', 'it', 'was', 'so', 'awful', '.', '</s>']
+['and', 'i', 'remember', 'sitting', 'sitting', 'my', 'desk', ',', 'and', 'i', 'thought', ',', '&quot;', 'now', 'i', 'know', 'it', '.', 'what', 'a', 'great', 'scientific', 'discovery', ',', 'but', 'it', 'was', 'so', 'awful', '.']
+
+['<s>', 'and', 'i', '&apos;m', 'hopeful', 'because', 'it', '&apos;s', 'not', 'only', 'philanthropy', 'that', '&apos;s', '<unk>', 'itself', ',', 'it', '&apos;s', 'also', 'whole', 'other', 'portions', 'of', 'the', 'social', 'sector', ',', 'and', 'of', 'business', ',', 'that', 'are', 'busy', 'challenging', '&quot;', 'business', 'as', 'usual', '.', '&quot;', '</s>']
+['and', 'i', '&apos;m', 'just', 'hopeful', ',', 'because', 'not', 'just', 'the', 'philanthropy', 'means', ',', 'other', 'big', 'parts', 'of', 'social', 'social', 'and', 'and', 'business', ',', 'and', 'the', 'business', 'of', 'the', 'business', 'as', 'doing', '.']
+
+['<s>', 'there', 'are', 'now', ',', 'today', ',', 'so', 'many', 'new', 'funds', 'that', 'are', '<unk>', 'giving', 'and', 'investing', ',', 'bringing', 'together', 'people', 'around', 'a', 'common', 'goal', ',', 'to', 'think', 'bigger', '.', '</s>']
+['now', ',', 'there', 'are', 'so', 'many', 'new', 'foundations', ',', 'the', '<unk>', 'and', 'investment', ',', 'people', ',', ',', 'together', ',', 'for', 'a', 'goal', ',', 'in', 'a', 'larger', 'context', '.']
+
+['<s>', 'clay', 'shirky', ',', 'that', 'great', '<unk>', 'of', 'everything', 'networked', ',', 'has', 'captured', 'the', 'assumption', 'that', 'this', 'challenges', 'in', 'such', 'a', 'beautiful', 'way', '.', '</s>']
+['clay', 'shirky', ',', 'this', 'great', '<unk>', 'of', 'all', 'all', 'the', ',', ',', 'the', 'the', 'assumption', ',', 'the', 'the', ',', ',', 'in', 'this', ',', 'in', 'this', 'great', 'way', '.']
+
+['<s>', 'they', '&apos;re', 'closed', 'more', 'and', 'more', 'and', 'more', 'all', 'around', 'the', 'world', 'for', 'the', 'same', 'reason', ',', 'and', 'i', 'believe', 'we', 'shouldn', '&apos;t', 'tolerate', 'that', 'either', '.', '</s>']
+['they', 'will', 'always', 'around', 'over', 'the', 'over', 'the', 'over', 'the', 'same', 'reason', ',', 'and', 'i', 'think', 'that', 'should', 'we', 'should', 'let', 'it', '.']
+
+['<s>', 'i', 'started', 'out', 'showing', 'how', 'much', 'we', 'had', 'distressed', 'the', 'monterey', 'bay', 'ecosystem', 'with', 'pollution', 'and', 'the', 'canning', 'industry', 'and', 'all', 'of', 'the', 'attendant', 'problems', '.', '</s>']
+['in', 'first', ',', 'i', '&apos;ve', 'shown', 'you', 'how', 'how', 'we', '&apos;ve', 'done', 'the', 'ecosystem', 'of', 'monterey', 'bay', ',', 'through', 'pollution', 'and', 'the', '<unk>', 'and', 'and', 'all', 'the']
+
+['<s>', 'and', 'just', 'around', 'that', 'time', ',', 'his', 'mother', 'had', 'said', ',', '&quot;', 'have', 'you', 'seen', 'this', 'book', 'by', 'michael', '<unk>', 'called', '&apos;', 'war', 'horse', '&apos;', '?', '&quot;', '</s>']
+['about', 'at', 'the', 'same', 'time', ',', 'she', 'asked', 'him', 'asked', ',', '&quot;', 'you', 'you', 'know', 'the', 'book', 'of', 'michael', '<unk>', '?', '&quot;']
+
+['<s>', 'and', 'you', 'know', ',', 'our', 'modern', 'ways', 'of', 'doing', 'things', 'have', 'their', 'advantages', ',', 'but', 'i', 'believe', 'we', 'should', 'understand', 'the', 'costs', '.', '</s>']
+['it', '&apos;s', 'a', 'our', 'modern', 'way', 'of', 'something', 'something', 'like', 'something', 'like', 'something', 'like', 'something', ',', 'but', 'i', 'think', 'we', 'should', 'also', 'recognize', 'what', 'price', ',', 'we', 'should', 'recognize', '.']
+
+['<s>', 'here', '&apos;s', 'a', 'diagram', 'of', 'the', '<unk>', 'load', 'of', 'dolphins', 'in', '<unk>', 'bay', '.', '</s>']
+['here', 'is', 'a', 'graph', 'of', '<unk>', 'of', 'dolphins', 'in', 'the', '<unk>', 'bay', '.']
+
+['<s>', 'now', 'why', 'does', 'that', 'matter', 'for', 'human', 'health', '?', '</s>']
+['now', ',', 'why', 'does', 'it', 'matter', 'to', 'the', 'human', 'health', '?']
+
+['<s>', 'here', ',', 'craig', 'is', 'working', 'the', 'head', '.', '</s>']
+['craig', '&apos;s', 'the', 'head', 'here', '.']
+
+['<s>', 'you', 'see', 'the', 'skeletal', 'structure', 'of', 'it', '.', '</s>']
+['you', 'still', 'saw', 'the', 'skeleton', '.']
+
+['<s>', 'so', ',', 'we', 'have', 'this', 'ability', 'as', 'well', '.', '</s>']
+['we', 'have', 'have', 'this', 'ability', '.']
+
+['<s>', 'ak', ':', '<unk>', '<unk>', '<unk>', '.', '</s>']
+['<unk>', '<unk>', '--', '<unk>', '<unk>']
+
+['<s>', 'ak', ':', 'we', 'were', 'terrified', '.', '</s>']
+['we', 'were', 'really', 'scared', '.']
+
+['<s>', 'we', 'worry', 'that', 'im', ',', 'texting', ',', 'facebook', 'are', '<unk>', 'human', 'intimacy', ',', 'but', '<unk>', '<unk>', '&apos;s', 'research', 'shows', 'how', 'communication', 'tech', 'is', 'capable', 'of', 'cultivating', 'deeper', 'relationships', ',', 'bringing', 'love', 'across', 'barriers', 'like', 'distance', 'and', 'workplace', 'rules', '.', '</s>']
+['we', 'worry', 'worried', 'that', 'instant', 'texting', ',', 'facebook', 'the', 'benefits', 'of', 'the', 'benefits', ',', 'but', '<unk>', '<unk>', 'research', ',', 'how', 'the', '<unk>', 'of', 'of', 'relationships', 'to', 'build', 'as', 'much', 'as', '<unk>', 'and', '<unk>', 'to', '<unk>', 'and', '<unk>', '.']
+
+['<s>', 'one', 'of', 'the', 'things', 'that', 'we', '&apos;ve', 'developed', 'in', 'the', 'lab', '--', 'we', '&apos;ve', 'developed', 'several', 'vehicles', '--', 'is', 'what', 'we', 'believe', 'is', 'the', 'world', '&apos;s', 'first', 'autonomously', 'drifting', 'car', '.', '</s>']
+['one', 'of', 'the', 'things', 'we', '&apos;ve', 'developed', 'in', 'the', 'lab', '--', 'we', '&apos;ve', 'evolved', 'several', 'vehicles', '--', 'is', ',', 'we', 'think', 'the', 'first', 'autonomous', '<unk>', 'of', 'the', 'world', 'is', 'the', 'world', '.']
+
+['<s>', 'and', 'he', 'did', 'sometimes', ',', 'believe', 'it', 'or', 'not', ',', 'at', 'a', '<unk>', 'in', 'los', 'angeles', '--', 'one', 'reason', 'to', 'love', 'l.a.', '--', 'back', 'in', 'the', '1940s', '.', '</s>']
+['and', 'he', 'won', '&apos;t', 'stop', ',', 'you', '&apos;re', 'barely', ',', 'on', 'a', '<unk>', 'of', 'los', 'angeles', '--', 'a', 'reason', 'to', 'love', 'l.a.', '--', 'in', 'the', '1940s', '.']
+
+['<s>', 'i', 'started', 'my', 'firm', 'to', 'help', 'communities', 'across', 'the', 'country', 'realize', 'their', 'own', 'potential', 'to', 'improve', 'everything', 'about', 'the', 'quality', 'of', 'life', 'for', 'their', 'people', '.', '</s>']
+['i', 'started', 'to', 'my', 'company', 'to', 'help', 'communities', 'all', 'the', 'land', ',', 'their', 'effective', 'potential', 'to', 'make', 'the', 'of', 'of', 'their', 'people', '.']
+
+Epoch 10 validation BLUE score: 0.2436
+Train Loss: 52.94 Perplexity: 2.81 Progress: 0%
+Train Loss: 47.92 Perplexity: 3.10 Progress: 4%
+Train Loss: 48.00 Perplexity: 2.84 Progress: 9%
+Train Loss: 47.28 Perplexity: 2.58 Progress: 14%
