@@ -190,12 +190,10 @@ class Attention(nn.Module):
         attention = attention * attention_mask
         attention = attention / torch.sum(attention, dim=-1).unsqueeze(2)  # (N,1,L) / (N, 1, 1) = (N,1,L)
 
-        attention = self.dropout(attention)
-
-        # TODO: add dropout after context instead
         context = torch.bmm(attention, value)  # (N, 1, B) Eq. 5 in paper
-
         context = context.squeeze(dim=1)  # (N, B)
+        context = self.dropout(context)
+
         return attention, context
 
 
