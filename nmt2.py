@@ -242,7 +242,7 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
     #         index += 1
 
 
-def decode(encoder_state, decoder_state, mode):
+def decode(encoder_state, decoder_state, mode, output_path):
 
     vocab = pickle.load(open(data_path + 'vocab.bin', 'rb'))
     tgt_vocab_size = len(vocab.tgt)
@@ -284,16 +284,23 @@ def decode(encoder_state, decoder_state, mode):
                 word_seq.append(vocab.tgt.id2word[pred_idx])
             hyp_corpus.append(word_seq)
 
-    count = 0
-    for r, h in zip(ref_corpus, hyp_corpus):
-        print(r)
-        print(h)
-        print()
-        count += 1
-        if count == 20:
-            break
+    # count = 0
+    # for r, h in zip(ref_corpus, hyp_corpus):
+    #     print(r)
+    #     print(h)
+    #     print()
+    #     count += 1
+    #     if count == 20:
+    #         break
+
     bleu_score = compute_corpus_level_bleu_score(ref_corpus, hyp_corpus)
     print(mode, 'BLEU Score: ', bleu_score)
+
+    print("Writing to file...")
+    with open(output_path, 'w') as f:
+        for hyp in hyp_corpus:
+            hyp_sent = ' '.join(hyp)
+            f.write(hyp_sent + '\n')
 
 
 if __name__ == '__main__':
@@ -307,8 +314,8 @@ if __name__ == '__main__':
     # train_model(batch_size=64, epochs=10, learn_rate=1e-4, name='try1', tf_rate=0.5,
     #             encoder_state=encoder_state, decoder_state=decoder_state)
 
-    decode(encoder_state, decoder_state, 'dev')
-    decode(encoder_state, decoder_state, 'test')
+    decode(encoder_state, decoder_state, 'dev', 'decode-dev.txt')
+    decode(encoder_state, decoder_state, 'test', 'decode-test.text')
     """
     # try1. lr 1e-4, lr_decay 0.8 every two epochs
     # try2: attention_dim to 256 2
