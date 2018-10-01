@@ -179,7 +179,7 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
         # # validation
         hyp_corpus = []
         ref_corpus = []
-        for (src_sents, src_lens, Yinput, Ytarget, tgt_lens, tgt_sents_str) in dev_dataloader:
+        for (src_sents, src_lens, Yinput, Ytarget, tgt_lens, tgt_sents_str, _) in dev_dataloader:
 
             actual_batch_size = len(src_lens)
 
@@ -265,7 +265,8 @@ def decode(encoder_state, decoder_state, mode, output_path):
 
     hyp_corpus = []
     ref_corpus = []
-    for (src_sents, src_lens, Yinput, Ytarget, tgt_lens, tgt_sents_str) in decode_dataloader:
+    hyp_corpus_ordered = []
+    for (src_sents, src_lens, Yinput, Ytarget, tgt_lens, tgt_sents_str, orig_indices) in decode_dataloader:
 
         # forward
         key, value = encoder(to_variable(src_sents), src_lens)
@@ -274,6 +275,7 @@ def decode(encoder_state, decoder_state, mode, output_path):
         # record word sequence
         ref_corpus.extend(tgt_sents_str)
         hyp_np = pred_seq.data.cpu().numpy()
+        batch_hyp_orderd = [None] * hyp_np.shape[0]
 
         for b in range(hyp_np.shape[0]):
             word_seq = []
@@ -283,6 +285,8 @@ def decode(encoder_state, decoder_state, mode, output_path):
                     break
                 word_seq.append(vocab.tgt.id2word[pred_idx])
             hyp_corpus.append(word_seq)
+            batch_hyp_orderd[orig_indices[b]] = word_seq
+        hyp_corpus_ordered.extend(batch_hyp_orderd)
 
     # count = 0
     # for r, h in zip(ref_corpus, hyp_corpus):
@@ -298,7 +302,7 @@ def decode(encoder_state, decoder_state, mode, output_path):
 
     print("Writing to file...")
     with open(output_path, 'w') as f:
-        for hyp in hyp_corpus:
+        for hyp in hyp_corpus_ordered:
             hyp_sent = ' '.join(hyp)
             f.write(hyp_sent + '\n')
 

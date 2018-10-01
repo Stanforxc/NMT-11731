@@ -8,7 +8,7 @@ from utils import read_corpus
 def my_collate(batch):
     batch_size = len(batch)
 
-    # sort by src sentence length
+    # sort by src sentence length for pack_padded_sentence
     tuples = [(tup[0].shape[0], tup[0], tup[1], tup[2]) for tup in batch]
     tuples.sort(key=lambda x: x[0], reverse=True)  # sort in descending order
 
@@ -22,8 +22,9 @@ def my_collate(batch):
     src_lens = []
     tgt_lens = []
 
+
     for i in range(batch_size):
-        src_sent, Yinput, Ytarget = tuples[i][1:]
+        src_sent, Yinput, Ytarget, orig_index = tuples[i][1:]
 
         src_len = src_sent.shape[0]
         tgt_len = Yinput.shape[0]
@@ -42,8 +43,11 @@ def my_collate(batch):
 def dev_collate(batch):
     batch_size = len(batch)
 
-    tuples = [(tup[0].shape[0], tup[0], tup[1], tup[2], tup[3]) for tup in batch]
-    max_src_len = max([len(tup[0]) for tup in batch])
+    # sort by src sentence length
+    tuples = [(tup[0].shape[0], tup[0], tup[1], tup[2], tup[3], i) for i, tup in enumerate(batch)]
+    tuples.sort(key=lambda x: x[0], reverse=True)  # sort in descending order
+
+    max_src_len = tuples[0][0]
     max_tgt_len = max([len(tup[1]) for tup in batch])
 
     padded_src_sents = np.zeros((batch_size, max_src_len))
@@ -53,9 +57,10 @@ def dev_collate(batch):
     src_lens = []
     tgt_lens = []
     tgt_sents = []
+    orig_indices = []
 
     for i in range(batch_size):
-        src_sent, Yinput, Ytarget, tgt_sent = tuples[i][1:]
+        src_sent, Yinput, Ytarget, tgt_sent, orig_index = tuples[i][1:]
 
         src_len = src_sent.shape[0]
         tgt_len = Yinput.shape[0]
@@ -67,9 +72,11 @@ def dev_collate(batch):
         src_lens.append(src_len)
         tgt_lens.append(tgt_len)
         tgt_sents.append(tgt_sent)
+        orig_indices.append(orig_index)
 
     return to_longtensor(padded_src_sents), src_lens, \
-           to_longtensor(np.array(padded_Yinput)), to_longtensor(np.array(padded_Ytarget)), tgt_lens, tgt_sents
+           to_longtensor(np.array(padded_Yinput)), to_longtensor(np.array(padded_Ytarget)), \
+           tgt_lens, tgt_sents, orig_indices
 
 
 class TrainDataset(torch.utils.data.Dataset):
