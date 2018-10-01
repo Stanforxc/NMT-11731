@@ -18,8 +18,9 @@ class Encoder(nn.Module):
     def __init__(self, vocab_size, hidden_dim, attention_dim, value_dim):
         super(Encoder, self).__init__()
         self.embedding = nn.Embedding(num_embeddings=vocab_size, embedding_dim=hidden_dim)
+        self.dropout = nn.Dropout(p=0.2)
         self.BLSTM = nn.LSTM(input_size=hidden_dim, hidden_size=hidden_dim, bidirectional=True, batch_first=True,
-                             num_layers=1)
+                             num_layers=1, dropout=0.2)
 
         self.key_linear = nn.Linear(hidden_dim * 2, attention_dim)  # output from bLSTM
         self.value_linear = nn.Linear(hidden_dim * 2, value_dim)  # output from bLSTM
@@ -28,7 +29,7 @@ class Encoder(nn.Module):
         # print(input.size())
         # print(src_lens)
         embeddings = self.embedding(input)
-        # print(embeddings.size())
+        # embeddings = self.dropout(embeddings)
         packed = pack_padded_sequence(embeddings, src_lens, batch_first=True)
         output, h = self.BLSTM(packed)
         output, _ = pad_packed_sequence(output, batch_first=True)
@@ -54,6 +55,7 @@ class Decoder(nn.Module):
         concat_dim = hidden_dim + value_dim
 
         self.embedding = nn.Embedding(num_embeddings=vocab_size, embedding_dim=hidden_dim)
+        self.dropout = nn.Dropout(p=0.2)
         self.cell1 = nn.LSTMCell(input_size=concat_dim, hidden_size=hidden_dim)
         # self.cell2 = nn.LSTMCell(input_size=hidden_dim, hidden_size=hidden_dim)
         # self.cell3 = nn.LSTMCell(input_size=hidden_dim, hidden_size=hidden_dim)
@@ -113,7 +115,7 @@ class Decoder(nn.Module):
                 label_embedding = self.embedding(Yinput[:, step])
             else:  # no teacher force for dev and test
                 label_embedding = self.embedding(pred_idx)  # make sure size [N]
-            # print(label_embedding.size(), context.size())
+            # label_embedding = self.dropout(label_embedding)
 
             rnn_input = torch.cat([label_embedding, context], dim=-1)
             pred, context, attention, prev_h, prev_c = \
@@ -175,6 +177,7 @@ class Attention(nn.Module):
     def __init__(self, A=128, hidden_dim=256):
         super(Attention, self).__init__()
         # self.relu = nn.ReLU()
+        self.dropout = nn.Dropout(p=0.2)
         self.softmax = nn.Softmax(dim=-1)  # along the time dimension, which is the last one
         self.query_linear = nn.Linear(hidden_dim, A)
 
@@ -187,7 +190,9 @@ class Attention(nn.Module):
         attention = attention * attention_mask
         attention = attention / torch.sum(attention, dim=-1).unsqueeze(2)  # (N,1,L) / (N, 1, 1) = (N,1,L)
 
-        context = torch.bmm(attention, value)  # (N, 1, B)
+        attention = self.dropout(attention)
+
+        context = torch.bmm(attention, value)  # (N, 1, B) Eq. 5 in paper
         context = context.squeeze(dim=1)  # (N, B)
         return attention, context
 

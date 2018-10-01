@@ -315,11 +315,11 @@ if __name__ == '__main__':
         encoder_state = sys.argv[1]
         decoder_state = sys.argv[2]
 
-    # train_model(batch_size=64, epochs=10, learn_rate=1e-4, name='try1', tf_rate=0.5,
-    #             encoder_state=encoder_state, decoder_state=decoder_state)
+    train_model(batch_size=64, epochs=20, learn_rate=1e-3, name='try3', tf_rate=0.5,
+                encoder_state=encoder_state, decoder_state=decoder_state)
 
-    decode(encoder_state, decoder_state, 'dev', 'decode-dev.txt')
-    decode(encoder_state, decoder_state, 'test', 'decode-test.text')
+    # decode(encoder_state, decoder_state, 'dev', 'decode-dev.txt')
+    # decode(encoder_state, decoder_state, 'test', 'decode-test.text')
     """
     # try1. lr 1e-4, lr_decay 0.8 every two epochs
     # try2: attention_dim to 256 2
