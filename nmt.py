@@ -81,10 +81,9 @@ class NMT(object):
         self.optimizer = optim.Adam(LAS_params, lr=0.001)
         self.scheduler = torch.optim.lr_scheduler.StepLR(self.optimizer, step_size=1, gamma=0.5)
         weight = torch.ones(nvocab_tgt)
-        self.loss = NLLLoss(weight=weight, mask=0,size_average=False)
-        # TODO: Perplexity or NLLLoss
+        self.loss = NLLLoss(weight=weight, mask=0, size_average=False)
+         # TODO: Perplexity or NLLLoss
         # TODO: pass in mask to loss funciton
-        self.loss = NLLLoss(weight, 0)
         #self.loss = Perplexity(weight, 0)
 
         if torch.cuda.is_available():
@@ -148,21 +147,18 @@ class NMT(object):
                 log-likelihood of generating the gold-standard target sentence for 
                 each example in the input batch
         """
-        self.optimizer.zero_grad()
-
         tgt_input,tgt_target = tgt_sents
         loss = self.loss
-        decoder_outputs, decoder_hidden, symbols = self.decoder(tgt_input, decoder_init_state, src_encodings)
+        decoder_outputs, decoder_hidden,symbols = self.decoder(tgt_input, decoder_init_state, src_encodings)
         loss.reset()
         for step, step_output in enumerate(decoder_outputs):
             batch_size = tgt_input.size(0)
             loss.eval_batch(step_output.contiguous().view(batch_size, -1), tgt_target[:, step])
-
+        self.optimizer.zero_grad()
         loss.backward()
         torch.nn.utils.clip_grad_norm_(self.encoder.parameters(), 5.0)
         torch.nn.utils.clip_grad_norm_(self.decoder.parameters(), 5.0)
         self.optimizer.step()
-
         scores = loss.get_loss()
 
         return scores, symbols
@@ -195,6 +191,7 @@ class NMT(object):
 
         return scores, symbols
 
+
     # TODO: sent_padding for only src
     # def beam_search(self, src_sent: List[str], beam_size: int=5, max_decoding_time_step: int=70) -> List[Hypothesis]:
     def beam_search(self, src_sent, beam_size, max_decoding_time_step):
@@ -226,6 +223,8 @@ class NMT(object):
         
         Returns:
             ppl: the perplexity on dev sentences
+        """
+
         """
         cum_loss = 0.
         count = 0
@@ -274,48 +273,48 @@ class NMT(object):
         print('bleu score: ', bleu)
 
         return cum_loss / count
+        """
 
-
-        # ref_corpus = []
-        # hyp_corpus = []
-        # cum_loss = 0
-        # count = 0
-        # with torch.no_grad():
-        #     for src_sents, tgt_sents in batch_iter(dev_data, batch_size):
-        #         ref_corpus.extend(tgt_sents)
-        #         actual_size = len(src_sents)
-        #         src_sents = self.vocab.src.words2indices(src_sents)
-        #         tgt_sents = self.vocab.tgt.words2indices(tgt_sents)
-        #         src_sents, src_len, y_input, y_tgt, tgt_len = sent_padding(src_sents, tgt_sents)
-        #         src_encodings, decoder_init_state = self.encode(src_sents,src_len)
-        #         scores, symbols = self.decode_without_bp(src_encodings, decoder_init_state, [y_input, y_tgt])
-        #         sents = np.zeros((len(symbols),actual_size))
-        #         for i,symbol in enumerate(symbols):
-        #             sents[i,:] = symbol
-        #         # print(sents.T)
-        #         for sent in sents.T:
-        #             word_seq = []
-        #             for idx in sent:
-        #                 if idx == 2:
-        #                     break
-        #                 word_seq.append(self.vocab.tgt.id2word[idx])
-        #             hyp_corpus.append(word_seq)
-        #
-        #         cum_loss += scores
-        #         count += 1
-        # out_num = 0
-        # for r, h in zip(ref_corpus, hyp_corpus):
-        #     print(" ".join(r))
-        #     print(" ".join(h))
-        #     print()
-        #     out_num += 1
-        #     if out_num >= 10:
-        #         break
-        #
-        # bleu = compute_corpus_level_bleu_score(ref_corpus, hyp_corpus)
-        # print('bleu score: ', bleu)
-        #
-        # return cum_loss / count
+        ref_corpus = []
+        hyp_corpus = []
+        cum_loss = 0
+        count = 0
+        with torch.no_grad():
+            for src_sents, tgt_sents in batch_iter(dev_data, batch_size):
+                ref_corpus.extend(tgt_sents)
+                actual_size = len(src_sents)
+                print("actual size: %s" % actual_size)
+                src_sents = self.vocab.src.words2indices(src_sents)
+                tgt_sents = self.vocab.tgt.words2indices(tgt_sents)
+                src_sents, src_len, y_input, y_tgt, tgt_len = sent_padding(src_sents, tgt_sents)
+                src_encodings, decoder_init_state = self.encode(src_sents,src_len)
+                scores, symbols = self.decode_without_bp(src_encodings, decoder_init_state, [y_input, y_tgt])
+                #sents = np.zeros((len(symbols),actual_size))
+                #for i,symbol in enumerate(symbols):
+                #    sents[i,:] = symbol.data.cpu().numpy()
+                    # print(sents.T)
+                return
+                for sent in symbols:
+                    word_seq = []
+                    for idx in sent:
+                        if idx == 2:
+                            break
+                        word_seq.append(self.vocab.tgt.id2word[np.asscalar(idx)])
+                    hyp_corpus.append(word_seq)
+                cum_loss += scores
+                count += 1
+        out_num = 0
+        for r, h in zip(ref_corpus, hyp_corpus):
+            print(" ".join(r))
+            print(" ".join(h))
+            print()
+            out_num += 1
+            if out_num >= 10:
+                break
+        bleu = compute_corpus_level_bleu_score(ref_corpus, hyp_corpus)
+        print('bleu score: ', bleu)
+        
+        return cum_loss / count
 
     # @staticmethod
     def load(self, model_path):

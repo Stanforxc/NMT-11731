@@ -8,12 +8,13 @@ class Attention(nn.Module):
         super(Attention, self).__init__()
         self.linear_out = nn.Linear(dim*2, dim)
         self.mask = None
+        self.dropout = nn.Dropout(p=0.2)
 
     def set_mask(self, mask):
         self.mask = mask
 
     def forward(self, output, context):
-        context = nn.Dropout(p=0.2)
+        context = self.dropout(context)
         batch_size = output.size(0)
         hidden_size = output.size(2)
         input_size = context.size(1)
