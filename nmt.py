@@ -283,7 +283,6 @@ class NMT(object):
             for src_sents, tgt_sents in batch_iter(dev_data, batch_size):
                 ref_corpus.extend(tgt_sents)
                 actual_size = len(src_sents)
-                print("actual size: %s" % actual_size)
                 src_sents = self.vocab.src.words2indices(src_sents)
                 tgt_sents = self.vocab.tgt.words2indices(tgt_sents)
                 src_sents, src_len, y_input, y_tgt, tgt_len = sent_padding(src_sents, tgt_sents)
@@ -293,7 +292,7 @@ class NMT(object):
                 #for i,symbol in enumerate(symbols):
                 #    sents[i,:] = symbol.data.cpu().numpy()
                     # print(sents.T)
-                return
+                
                 for sent in symbols:
                     word_seq = []
                     for idx in sent:
@@ -301,6 +300,7 @@ class NMT(object):
                             break
                         word_seq.append(self.vocab.tgt.id2word[np.asscalar(idx)])
                     hyp_corpus.append(word_seq)
+                #print(tgt_sents[0])
                 cum_loss += scores
                 count += 1
         out_num = 0
