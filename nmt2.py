@@ -139,8 +139,8 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
             optim.zero_grad()  # Reset the gradients
 
             # forward
-            key, value = encoder(to_variable(src_sents), src_lens)
-            pred_seq = decoder(key, value, to_variable(Yinput), Yinput.size(-1), 'train', src_lens)
+            key, value, encoder_final = encoder(to_variable(src_sents), src_lens)
+            pred_seq = decoder(key, value, to_variable(Yinput), Yinput.size(-1), 'train', src_lens, encoder_final)
             pred_seq = pred_seq.resize(pred_seq.size(0) * pred_seq.size(1), tgt_vocab_size)
 
             # create the tgt mask
@@ -187,8 +187,8 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
         for (src_sents, src_lens, Yinput, Ytarget, tgt_lens, tgt_sents_str, _) in dev_dataloader:
 
             # forward
-            key, value = encoder(to_variable(src_sents), src_lens)
-            pred_seq = decoder(key, value, None, Yinput.size(-1), 'dev', src_lens)  # batch, sent_len, emb
+            key, value, encoder_final = encoder(to_variable(src_sents), src_lens)
+            pred_seq = decoder(key, value, None, Yinput.size(-1), 'dev', src_lens, encoder_final)  # batch, sent_len, emb
             # print(pred_seq.size())
 
             # record word sequence
@@ -249,8 +249,8 @@ def decode(encoder_state, decoder_state, mode, output_path):
     hyp_corpus_ordered = []
     for (src_sents, src_lens, Yinput, Ytarget, tgt_lens, tgt_sents_str, orig_indices) in decode_dataloader:
         # forward
-        key, value = encoder(to_variable(src_sents), src_lens)
-        pred_seq = decoder(key, value, None, Ytarget.size(-1), mode=mode, src_lens=src_lens)  # batch, sent_len, emb
+        key, value, encoder_final = encoder(to_variable(src_sents), src_lens)
+        pred_seq = decoder(key, value, None, Ytarget.size(-1), mode=mode, src_lens=src_lens, encoder_final=encoder_final)  # batch, sent_len, emb
 
         # record word sequence
         ref_corpus.extend(tgt_sents_str)
