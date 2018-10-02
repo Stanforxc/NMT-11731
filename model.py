@@ -5,6 +5,7 @@ from torch import nn
 import os
 from torch.autograd import Variable
 from torch.nn.utils.rnn import pad_packed_sequence, pack_padded_sequence
+import torch.nn.functional as F
 import sys
 import pickle
 from utils import read_corpus
@@ -31,14 +32,15 @@ class Encoder(nn.Module):
         embeddings = self.embedding(input)
         # embeddings = self.dropout(embeddings)
         packed = pack_padded_sequence(embeddings, src_lens, batch_first=True)
-        output, h = self.BLSTM(packed)
+        output, encoder_final = self.BLSTM(packed)
         output, _ = pad_packed_sequence(output, batch_first=True)
 
         # print(output.size())
 
         key = ApplyPerTime(self.key_linear, output).transpose(1, 2)
         value = ApplyPerTime(self.value_linear, output)  # (N, L, 128)
-        return key, value
+        encoder_final = tuple([torch.cat([h[0:h.size(0):2], h[1:h.size(0):2]], 2) for h in encoder_final])
+        return key, value, encoder_final
 
 
 # **Decoder**
@@ -68,19 +70,21 @@ class Decoder(nn.Module):
 
         # tie embedding and project weights
         self.character_projection.weight = self.embedding.weight
-
         self.softmax = nn.LogSoftmax(dim=-1)  # todo: remove??
-
         self.hidden_dim = hidden_dim
 
         # initial states
-        self.h00 = nn.Parameter(nn.init.xavier_uniform(torch.Tensor(1, self.hidden_dim).type(torch.FloatTensor)), requires_grad=True)
-        self.c00 = nn.Parameter(nn.init.xavier_uniform(torch.Tensor(1, self.hidden_dim).type(torch.FloatTensor)), requires_grad=True)
+        # self.h00 = nn.Parameter(nn.init.xavier_uniform(torch.Tensor(1, self.hidden_dim).type(torch.FloatTensor)), requires_grad=True)
+        # self.c00 = nn.Parameter(nn.init.xavier_uniform(torch.Tensor(1, self.hidden_dim).type(torch.FloatTensor)), requires_grad=True)
         self.tf_rate = tf_rate
+
+        # encoder_final to decoder bridge
+        self.init_linear = nn.Linear(hidden_dim*2, hidden_dim)
+
 
     # listener_feature (N, T, 256)
     # Yinput (N, L )
-    def forward(self, key, value, Yinput, max_len, mode, src_lens):
+    def forward(self, key, value, Yinput, max_len, mode, src_lens, encoder_final):
 
         # Create a binary mask for attention (N, L)
         src_lens = np.array(src_lens)
@@ -92,10 +96,12 @@ class Decoder(nn.Module):
         # INITIALIZATION
         batch_size = key.size()[0]  # train: N; test: 1
 
-        _, context = self.attention(key, value, self.h00.expand(batch_size, self.hidden_dim).contiguous(), attention_mask)
         # common initial hidden and cell states for LSTM cells
-        prev_h = self.h00.expand(batch_size, self.hidden_dim).contiguous()
-        prev_c = self.c00.expand(batch_size, self.hidden_dim).contiguous()
+        # prev_h = self.h00.expand(batch_size, self.hidden_dim).contiguous()
+        # prev_c = self.c00.expand(batch_size, self.hidden_dim).contiguous()
+        prev_c = self.init_linear(encoder_final[1].squeeze(dim=0))
+        prev_h = F.tanh(prev_c)
+        _, context = self.attention(key, value, prev_h, attention_mask)
 
         pred_seq = None
         pred_idx = to_variable(torch.zeros(batch_size).long())  # size [N] batch size = 1 for test

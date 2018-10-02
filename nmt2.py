@@ -139,8 +139,9 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
             optim.zero_grad()  # Reset the gradients
 
             # forward
-            key, value = encoder(to_variable(src_sents), src_lens)
-            pred_seq = decoder(key, value, to_variable(Yinput), Yinput.size(-1), 'train', src_lens)
+            key, value, encoder_final = encoder(to_variable(src_sents), src_lens)
+
+            pred_seq = decoder(key, value, to_variable(Yinput), Yinput.size(-1), 'train', src_lens, encoder_final)
             pred_seq = pred_seq.resize(pred_seq.size(0) * pred_seq.size(1), tgt_vocab_size)
 
             # create the tgt mask
@@ -187,8 +188,8 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
         for (src_sents, src_lens, Yinput, Ytarget, tgt_lens, tgt_sents_str, _) in dev_dataloader:
 
             # forward
-            key, value = encoder(to_variable(src_sents), src_lens)
-            pred_seq = decoder(key, value, None, Yinput.size(-1), 'dev', src_lens)  # batch, sent_len, emb
+            key, value, encoder_final = encoder(to_variable(src_sents), src_lens)
+            pred_seq = decoder(key, value, None, Yinput.size(-1), 'dev', src_lens, encoder_final)  # batch, sent_len, emb
             # print(pred_seq.size())
 
             # record word sequence
@@ -249,8 +250,8 @@ def decode(encoder_state, decoder_state, mode, output_path):
     hyp_corpus_ordered = []
     for (src_sents, src_lens, Yinput, Ytarget, tgt_lens, tgt_sents_str, orig_indices) in decode_dataloader:
         # forward
-        key, value = encoder(to_variable(src_sents), src_lens)
-        pred_seq = decoder(key, value, None, Ytarget.size(-1), mode=mode, src_lens=src_lens)  # batch, sent_len, emb
+        key, value, encoder_final = encoder(to_variable(src_sents), src_lens)
+        pred_seq = decoder(key, value, None, Ytarget.size(-1), mode=mode, src_lens=src_lens, encoder_final=encoder_final)  # batch, sent_len, emb
 
         # record word sequence
         ref_corpus.extend(tgt_sents_str)
@@ -295,7 +296,7 @@ if __name__ == '__main__':
         encoder_state = sys.argv[1]
         decoder_state = sys.argv[2]
 
-    train_model(batch_size=16, epochs=20, learn_rate=1e-3, name='try5', tf_rate=0.5,
+    train_model(batch_size=64, epochs=20, learn_rate=1e-3, name='try5', tf_rate=0.5,
                 encoder_state=encoder_state, decoder_state=decoder_state)
 
     # decode(encoder_state, decoder_state, 'dev', 'decode-dev.txt')
@@ -306,4 +307,5 @@ if __name__ == '__main__':
       try3: apply dropout to attention, bleu increasing too slow
       try4: change dropout to context
       try5: increase hidden_dim to 512
+    # try5: use encoder_final to init decoder
     """
