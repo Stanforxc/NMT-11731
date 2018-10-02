@@ -26,7 +26,6 @@ class Decoder(BaseCoder):
 
         # batch_size = input_seq.size(0)
         max_length = input_seq.size(1)
-
         # using cuda or not
         inputs = input_seq
         
@@ -35,10 +34,10 @@ class Decoder(BaseCoder):
         decoder_hidden = tuple([torch.cat([h[0:h.size(0):2], h[1:h.size(0):2]], 2) for h in encoder_hidden])
 
         outputs = []
-        symbols = None        
-
+        symbols = None      
+        
         prev = inputs[:, 0].unsqueeze(1)
-        print(prev.size())
+
         for i in range(max_length):
             softmax, decoder_hidden, attention = self.forward_helper(prev, decoder_hidden,encoder_outputs ,func)
             output_seq = softmax.squeeze(1) # batch * seq_length
@@ -51,14 +50,11 @@ class Decoder(BaseCoder):
                 prev = outputs[-1].topk(1)[1] # max probability index
             if stage != "train":
                 prev = outputs[-1].topk(1)[1]
-        
-        if symbols == None: symbols = prev
-        else:
-            symbols = torch.cat([symbols,prev],dim=1)
-        #print(prev.size())
-        #print(symbols.size())
-        #symbols.append(prev.view(-1))
-        print("..") 
+            
+            if symbols is None: 
+                symbols = prev
+            else:
+                symbols = torch.cat([symbols,prev],dim=1)
         return outputs,decoder_hidden,symbols
 
 

@@ -21,7 +21,7 @@ class Encoder(nn.Module):
         self.embedding = nn.Embedding(num_embeddings=vocab_size, embedding_dim=hidden_dim)
         self.dropout = nn.Dropout(p=0.2)
         self.BLSTM = nn.LSTM(input_size=hidden_dim, hidden_size=hidden_dim, bidirectional=True, batch_first=True,
-                             num_layers=1, dropout=0.2)
+                             num_layers=1)
 
         self.key_linear = nn.Linear(hidden_dim * 2, attention_dim)  # output from bLSTM
         self.value_linear = nn.Linear(hidden_dim * 2, value_dim)  # output from bLSTM
@@ -198,7 +198,7 @@ class Attention(nn.Module):
 
         context = torch.bmm(attention, value)  # (N, 1, B) Eq. 5 in paper
         context = context.squeeze(dim=1)  # (N, B)
-        context = self.dropout(context)
+        # context = self.dropout(context)
 
         return attention, context
 

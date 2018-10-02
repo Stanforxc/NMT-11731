@@ -93,8 +93,8 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
     dev_dataloader = torch.utils.data.DataLoader(dev_dataset, batch_size=16, shuffle=False, collate_fn=dev_collate)
 
     # Create the seq2seq network
-    encoder = Encoder(vocab_size=len(vocab.src), hidden_dim=256, attention_dim=128, value_dim=256)
-    decoder = Decoder(vocab_size=tgt_vocab_size, hidden_dim=256, attention_dim=128, value_dim=256, tf_rate=tf_rate)
+    encoder = Encoder(vocab_size=len(vocab.src), hidden_dim=512, attention_dim=128, value_dim=256)
+    decoder = Decoder(vocab_size=tgt_vocab_size, hidden_dim=512, attention_dim=128, value_dim=256, tf_rate=tf_rate)
 
     # Initialize weights
     encoder.apply(weights_init)
@@ -110,7 +110,7 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
     model_params = list(encoder.parameters()) + list(decoder.parameters())
     optim = torch.optim.Adam(model_params, lr=learn_rate, weight_decay=1e-5) # todo: change back to 1e-5
     # optim = torch.optim.SGD(LAS_params, lr=learn_rate)
-    scheduler = torch.optim.lr_scheduler.StepLR(optim, step_size=2, gamma=0.8)
+    scheduler = torch.optim.lr_scheduler.StepLR(optim, step_size=2, gamma=0.9)
 
     if torch.cuda.is_available():
         # Move the network and the optimizer to the GPU
@@ -300,9 +300,12 @@ if __name__ == '__main__':
                 encoder_state=encoder_state, decoder_state=decoder_state)
 
     # decode(encoder_state, decoder_state, 'dev', 'decode-dev.txt')
-    # decode(encoder_state, decoder_state, 'test', 'decode-test.text')
+    # decode(encoder_state, decoder_state, 'test', 'decode-test.txt')
     """
     # try1. lr 1e-4, lr_decay 0.8 every two epochs
-    # try2: attention_dim to 256 2
+    # try2: attention_dim to 256 
+      try3: apply dropout to attention, bleu increasing too slow
+      try4: change dropout to context
+      try5: increase hidden_dim to 512
     # try5: use encoder_final to init decoder
     """
