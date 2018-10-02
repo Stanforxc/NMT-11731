@@ -39,6 +39,7 @@ class Encoder(nn.Module):
 
         key = ApplyPerTime(self.key_linear, output).transpose(1, 2)
         value = ApplyPerTime(self.value_linear, output)  # (N, L, 128)
+        encoder_final = tuple([torch.cat([h[0:h.size(0):2], h[1:h.size(0):2]], 2) for h in encoder_final])
         return key, value, encoder_final
 
 
@@ -98,7 +99,7 @@ class Decoder(nn.Module):
         # common initial hidden and cell states for LSTM cells
         # prev_h = self.h00.expand(batch_size, self.hidden_dim).contiguous()
         # prev_c = self.c00.expand(batch_size, self.hidden_dim).contiguous()
-        prev_c = self.init_linear(encoder_final[1])
+        prev_c = self.init_linear(encoder_final[1].squeeze(dim=0))
         prev_h = F.tanh(prev_c)
         _, context = self.attention(key, value, prev_h, attention_mask)
 

@@ -140,6 +140,7 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
 
             # forward
             key, value, encoder_final = encoder(to_variable(src_sents), src_lens)
+
             pred_seq = decoder(key, value, to_variable(Yinput), Yinput.size(-1), 'train', src_lens, encoder_final)
             pred_seq = pred_seq.resize(pred_seq.size(0) * pred_seq.size(1), tgt_vocab_size)
 
