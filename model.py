@@ -95,12 +95,12 @@ class Decoder(nn.Module):
         # INITIALIZATION
         batch_size = key.size()[0]  # train: N; test: 1
 
-        _, context = self.attention(key, value, self.h00.expand(batch_size, self.hidden_dim).contiguous(), attention_mask)
         # common initial hidden and cell states for LSTM cells
         # prev_h = self.h00.expand(batch_size, self.hidden_dim).contiguous()
         # prev_c = self.c00.expand(batch_size, self.hidden_dim).contiguous()
         prev_c = self.init_linear(encoder_final[1])
         prev_h = F.tanh(prev_c)
+        _, context = self.attention(key, value, prev_h, attention_mask)
 
         pred_seq = None
         pred_idx = to_variable(torch.zeros(batch_size).long())  # size [N] batch size = 1 for test
