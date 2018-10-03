@@ -294,7 +294,7 @@ class NMT(object):
                 #    sents[i,:] = symbol.data.cpu().numpy()
                     # print(sents.T)
 
-                idx = 0
+                index = 0
                 print(symbols.size(0))
                 batch_hyp_orderd = [None] * symbols.size(0)
                 for sent in symbols:
@@ -305,8 +305,8 @@ class NMT(object):
                             break
                         word_seq.append(self.vocab.tgt.id2word[np.asscalar(idx)])
                     hyp_corpus.append(word_seq)
-                    batch_hyp_orderd[orig_indices[idx]] = word_seq
-                    idx += 1
+                    batch_hyp_orderd[orig_indices[index]] = word_seq
+                    index += 1
                 hyp_corpus_ordered.extend(batch_hyp_orderd)
                 cum_loss += scores
                 count += 1
