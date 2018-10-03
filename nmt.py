@@ -295,7 +295,6 @@ class NMT(object):
                     # print(sents.T)
 
                 index = 0
-                print(symbols.size(0))
                 batch_hyp_orderd = [None] * symbols.size(0)
                 for sent in symbols:
 
@@ -323,6 +322,8 @@ class NMT(object):
 
         self.encoder.load_state_dict(torch.load(model_path + '-encoder'))
         self.decoder.load_state_dict(torch.load(model_path + '-decoder'))
+        self.encoder.eval()
+        self.decoder.eval()
 
     def save(self, model_save_path):
         """
