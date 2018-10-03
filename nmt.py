@@ -295,6 +295,7 @@ class NMT(object):
                     # print(sents.T)
 
                 idx = 0
+                print(symbols.size(0))
                 batch_hyp_orderd = [None] * symbols.size(0)
                 for sent in symbols:
 
@@ -432,7 +433,7 @@ def train(args):
     while True:
         epoch += 1
 
-        for src_sents, tgt_sents in batch_iter(train_data, batch_size=train_batch_size, shuffle=True):
+        for src_sents, tgt_sents, _ in batch_iter(train_data, batch_size=train_batch_size, shuffle=True):
             train_iter += 1
 
             batch_size = len(src_sents)

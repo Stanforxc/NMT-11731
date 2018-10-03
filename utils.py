@@ -52,4 +52,6 @@ def batch_iter(data, batch_size, shuffle=False):
         src_sents = [e[0] for e in examples]
         tgt_sents = [e[1] for e in examples]
 
+        print(orig_indices)
+
         yield src_sents, tgt_sents, orig_indices
