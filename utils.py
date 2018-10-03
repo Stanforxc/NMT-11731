@@ -44,10 +44,12 @@ def batch_iter(data, batch_size, shuffle=False):
 
     for i in range(batch_num):
         indices = index_array[i * batch_size: (i + 1) * batch_size]
-        examples = [data[idx] for idx in indices]
+        examples = [(data[idx], idx - i * batch_size) for idx in indices]
 
-        examples = sorted(examples, key=lambda e: len(e[0]), reverse=True)
+        examples = sorted(examples, key=lambda e: len(e[0][0]), reverse=True)
+        orig_indices = [e[1] for e in examples]
+        examples = [e[0] for e in examples]
         src_sents = [e[0] for e in examples]
         tgt_sents = [e[1] for e in examples]
 
-        yield src_sents, tgt_sents
+        yield src_sents, tgt_sents, orig_indices

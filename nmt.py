@@ -279,8 +279,9 @@ class NMT(object):
         hyp_corpus = []
         cum_loss = 0
         count = 0
+        hyp_corpus_ordered = []
         with torch.no_grad():
-            for src_sents, tgt_sents in batch_iter(dev_data, batch_size):
+            for src_sents, tgt_sents, orig_indices in batch_iter(dev_data, batch_size):
                 ref_corpus.extend(tgt_sents)
                 actual_size = len(src_sents)
                 src_sents = self.vocab.src.words2indices(src_sents)
@@ -292,19 +293,24 @@ class NMT(object):
                 #for i,symbol in enumerate(symbols):
                 #    sents[i,:] = symbol.data.cpu().numpy()
                     # print(sents.T)
-                
+
+                idx = 0
+                batch_hyp_orderd = [None] * symbols.size(0)
                 for sent in symbols:
+
                     word_seq = []
                     for idx in sent:
                         if idx == 2:
                             break
                         word_seq.append(self.vocab.tgt.id2word[np.asscalar(idx)])
                     hyp_corpus.append(word_seq)
-                #print(tgt_sents[0])
+                    batch_hyp_orderd[orig_indices[idx]] = word_seq
+                    idx += 1
+                hyp_corpus_ordered.extend(batch_hyp_orderd)
                 cum_loss += scores
                 count += 1
         with open('decode.txt', 'a') as f:
-            for r, h in zip(ref_corpus, hyp_corpus):
+            for r, h in zip(ref_corpus, hyp_corpus_ordered):
                 f.write(" ".join(h) + '\n')
         bleu = compute_corpus_level_bleu_score(ref_corpus, hyp_corpus)
         print('bleu score: ', bleu)
