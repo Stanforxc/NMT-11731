@@ -11,6 +11,8 @@ class Encoder(BaseCoder):
 
         self.rnn = self.baseModel(input_size=embedding_size, hidden_size=hidden_size, num_layers=n_layers,
                     batch_first=True, bidirectional=bidirectional, dropout=input_dropout)
+        for weight in self.rnn.parameters():
+            nn.init.uniform_(weight,-0.1, 0.1)
 
     def forward(self, input_seq, input_lengths=None):
         embedded = self.embedding(input_seq)

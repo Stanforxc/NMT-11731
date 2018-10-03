@@ -44,7 +44,8 @@ class NLLLoss(Loss):
             if weight is None:
                 raise ValueError("Must provide weight with a mask.")
             weight[mask] = 0
-
+            self.eps = 0.9
+            self.class_size = weight.size(0)
         super(NLLLoss, self).__init__(
             self._NAME,
             nn.NLLLoss(weight=weight, size_average=size_average))
@@ -60,11 +61,14 @@ class NLLLoss(Loss):
         return loss
 
     def eval_batch(self, outputs, target):
-        self.acc_loss += self.criterion(outputs, target)
+        cross_target = self.criterion(outputs, target)
+        cross_uniform = (-outputs.sum(1)/self.class_size).sum()
+        self.acc_loss += cross_target*self.eps + cross_uniform*(1 - self.eps)
         if self.mask is None:
             self.norm_term += np.prod(target.size())
         else:
             self.norm_term += target.data.ne(self.mask).sum()
+
 
 class Perplexity(NLLLoss):
 
@@ -75,6 +79,7 @@ class Perplexity(NLLLoss):
         super(Perplexity, self).__init__(weight=weight, mask=mask, size_average=False)
 
     def eval_batch(self, outputs, target):
+
         self.acc_loss += self.criterion(outputs, target)
         if self.mask is None:
             self.norm_term += np.prod(target.size())

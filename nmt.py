@@ -70,17 +70,17 @@ class NMT(object):
     def __init__(self, embed_size, hidden_size, vocab, dropout_rate=0.2,keep_train=False):
         super(NMT, self).__init__()
 
-        nvocab_src = len(vocab.src)
-        nvocab_tgt = len(vocab.tgt)
+        self.nvocab_src = len(vocab.src)
+        self.nvocab_tgt = len(vocab.tgt)
         self.vocab = vocab
-        self.encoder = Encoder(nvocab_src, hidden_size, embed_size, input_dropout=dropout_rate, n_layers=1)
-        self.decoder = Decoder(nvocab_tgt, 2*hidden_size, embed_size,output_dropout=dropout_rate, n_layers=1,tf_rate=0.6)
+        self.encoder = Encoder(self.nvocab_src, hidden_size, embed_size, input_dropout=dropout_rate, n_layers=2)
+        self.decoder = Decoder(self.nvocab_tgt, 2*hidden_size, embed_size,output_dropout=dropout_rate, n_layers=2,tf_rate=1.0)
         if keep_train:
             self.load('model')
         LAS_params = list(self.encoder.parameters()) + list(self.decoder.parameters())
-        self.optimizer = optim.Adam(LAS_params, lr=0.001)
+        self.optimizer = optim.Adam(LAS_params, lr=0.0001)
         self.scheduler = torch.optim.lr_scheduler.StepLR(self.optimizer, step_size=1, gamma=0.5)
-        weight = torch.ones(nvocab_tgt)
+        weight = torch.ones(self.nvocab_tgt)
         self.loss = NLLLoss(weight=weight, mask=0, size_average=False)
          # TODO: Perplexity or NLLLoss
         # TODO: pass in mask to loss funciton
@@ -149,7 +149,7 @@ class NMT(object):
         """
         tgt_input,tgt_target = tgt_sents
         loss = self.loss
-        decoder_outputs, decoder_hidden,symbols = self.decoder(tgt_input, decoder_init_state, src_encodings)
+        decoder_outputs, decoder_hidden,symbols = self.decoder(tgt_input, decoder_init_state, src_encodings) 
         loss.reset()
         for step, step_output in enumerate(decoder_outputs):
             batch_size = tgt_input.size(0)
@@ -303,14 +303,9 @@ class NMT(object):
                 #print(tgt_sents[0])
                 cum_loss += scores
                 count += 1
-        out_num = 0
-        for r, h in zip(ref_corpus, hyp_corpus):
-            print(" ".join(r))
-            print(" ".join(h))
-            print()
-            out_num += 1
-            if out_num >= 10:
-                break
+        with open('decode.txt', 'a') as f:
+            for r, h in zip(ref_corpus, hyp_corpus):
+                f.write(" ".join(h) + '\n')
         bleu = compute_corpus_level_bleu_score(ref_corpus, hyp_corpus)
         print('bleu score: ', bleu)
         
@@ -417,7 +412,7 @@ def train(args):
     model = NMT(embed_size=int(args['--embed-size']),
                 hidden_size=int(args['--hidden-size']),
                 dropout_rate=float(args['--dropout']),
-                vocab=vocab,keep_train=False)
+                vocab=vocab,keep_train=True)
 
     num_trial = 0
     train_iter = patience = cum_loss = report_loss = cumulative_tgt_words = report_tgt_words = 0

@@ -19,6 +19,7 @@ class Decoder(BaseCoder):
         # temporary set attention embedding size to hidden size
         self.attention = Attention(self.hidden_size)
         self.wsm = nn.Linear(self.hidden_size, self.output_size)
+        self.attention_mlp = nn.Linear(2*embedding_size, embedding_size)
         self.tf_rate = tf_rate
 
 
@@ -37,9 +38,10 @@ class Decoder(BaseCoder):
         symbols = None      
         
         prev = inputs[:, 0].unsqueeze(1)
+        attention_hidden = None
 
         for i in range(max_length):
-            softmax, decoder_hidden, attention = self.forward_helper(prev, decoder_hidden,encoder_outputs ,func)
+            softmax, decoder_hidden, attention,attention_hidden = self.forward_helper(prev, decoder_hidden,encoder_outputs,attention_hidden, func)
             output_seq = softmax.squeeze(1) # batch * seq_length
             outputs.append(output_seq)
 
@@ -60,12 +62,14 @@ class Decoder(BaseCoder):
 
 
     # could insert one parameter like: src_matrix
-    def forward_helper(self, decoder_input, decoder_hidden, encoder_outputs, func):
+    def forward_helper(self, decoder_input, decoder_hidden, encoder_outputs,attention_prev, func):
         batch_size = decoder_input.size(0)
         output_size = decoder_input.size(1)
         embedded = self.embedding(decoder_input)
-        #embedded = self.input_dropout(embedded)
+        if attention_prev is not None:
+            att = self.attention_mlp(attention_prev.view(-1, 2*embedded.size(2))).view(batch_size, -1, embedded.size(2))
+            embeded = torch.mul(embedded, att)
         output,hidden = self.rnn(embedded, decoder_hidden)
-        output, attention = self.attention(output, encoder_outputs) # attention
+        output, attention = self.attention(output, encoder_outputs) # Attention        
         softmax = func(self.wsm(output.view(-1, self.hidden_size)), dim=1).view(batch_size,output_size,-1)
-        return softmax, hidden, attention
+        return softmax, hidden, attention, output
