@@ -128,7 +128,8 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
         cum_num_words = 0
 
         total = len(train_dataset) / batch_size
-        interval = total // 20
+        interval = 100
+        valid_interval = 500
 
         scheduler.step()
 
@@ -174,55 +175,61 @@ def train_model(batch_size, epochs, learn_rate, name, tf_rate, encoder_state, de
             if count % interval == 0:
                 ppl = math.exp(np.asscalar(np.sum(tmp_losses)) * actual_batch_size / tgt_num_words)
                 tgt_num_words = 0
-                print('Train Loss: %.2f Avg PPL: %.2f Progress: %d%%'
-                      % (np.asscalar(np.mean(tmp_losses)), ppl, count * 100 / total))
+                print('Iter %d Train Loss: %.2f Avg PPL: %.2f Progress: %d%%'
+                      % (count, np.asscalar(np.mean(tmp_losses)), ppl, count * 100 / total))
                 tmp_losses = []
+
+            if count % valid_interval == 0:
+                # # validation
+                hyp_corpus = []
+                ref_corpus = []
+                for (src_sents, src_lens, Yinput, Ytarget, tgt_lens, tgt_sents_str, _) in dev_dataloader:
+
+                    # forward
+                    key, value, encoder_final = encoder(to_variable(src_sents), src_lens)
+                    pred_seq = decoder(key, value, None, Yinput.size(-1), 'dev', src_lens,
+                                       encoder_final)  # batch, sent_len, emb
+                    # print(pred_seq.size())
+
+                    # record word sequence
+                    ref_corpus.extend(tgt_sents_str)
+                    hyp_np = pred_seq.data.cpu().numpy()
+                    # print(hyp_np.shape)
+
+                    for b in range(hyp_np.shape[0]):
+                        word_seq = []
+                        for step in range(hyp_np.shape[1]):
+                            pred_idx = np.argmax(hyp_np[b, step, :])
+                            if pred_idx == vocab.tgt.word2id['</s>']:
+                                break
+                            word_seq.append(vocab.tgt.id2word[pred_idx])
+                        hyp_corpus.append(word_seq)
+
+                count = 0
+                for r, h in zip(ref_corpus, hyp_corpus):
+                    print(r)
+                    print(h)
+                    print()
+                    count += 1
+                    if count == 10:
+                        break
+
+                bleu_score = compute_corpus_level_bleu_score(ref_corpus, hyp_corpus)
+
+                if not best_bleu or bleu_score > best_bleu:
+                    best_bleu = bleu_score
+                    torch.save(encoder.state_dict(), '%s-encoder-e%d' % (name, epoch))
+                    torch.save(decoder.state_dict(), '%s-decoder-e%d' % (name, epoch))
+
+                print("Epoch {} validation BLUE score: {:.4f}".format(epoch, bleu_score))
+
+
 
         epoch_loss = np.asscalar(np.mean(losses))
         print("### Epoch {} Loss: {:.4f} Cum PPL: {:.4f}###"
               .format(epoch, epoch_loss, math.exp(np.asscalar(np.sum(losses)) * batch_size / cum_num_words)))
 
-        # # validation
-        hyp_corpus = []
-        ref_corpus = []
-        for (src_sents, src_lens, Yinput, Ytarget, tgt_lens, tgt_sents_str, _) in dev_dataloader:
 
-            # forward
-            key, value, encoder_final = encoder(to_variable(src_sents), src_lens)
-            pred_seq = decoder(key, value, None, Yinput.size(-1), 'dev', src_lens, encoder_final)  # batch, sent_len, emb
-            # print(pred_seq.size())
-
-            # record word sequence
-            ref_corpus.extend(tgt_sents_str)
-            hyp_np = pred_seq.data.cpu().numpy()
-            # print(hyp_np.shape)
-
-            for b in range(hyp_np.shape[0]):
-                word_seq = []
-                for step in range(hyp_np.shape[1]):
-                    pred_idx = np.argmax(hyp_np[b, step, :])
-                    if pred_idx == vocab.tgt.word2id['</s>']:
-                        break
-                    word_seq.append(vocab.tgt.id2word[pred_idx])
-                hyp_corpus.append(word_seq)
-
-        count = 0
-        for r, h in zip(ref_corpus, hyp_corpus):
-            print(r)
-            print(h)
-            print()
-            count += 1
-            if count == 10:
-                break
-
-        bleu_score = compute_corpus_level_bleu_score(ref_corpus, hyp_corpus)
-
-        if not best_bleu or bleu_score > best_bleu:
-            best_bleu = bleu_score
-            torch.save(encoder.state_dict(), '%s-encoder-e%d' % (name, epoch))
-            torch.save(decoder.state_dict(), '%s-decoder-e%d' % (name, epoch))
-
-        print("Epoch {} validation BLUE score: {:.4f}".format(epoch, bleu_score))
 
 
 def decode(encoder_state, decoder_state, mode, output_path):
