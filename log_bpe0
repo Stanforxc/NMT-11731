@@ -1,0 +1,5 @@
+LSTM
+LSTMCell
+Train Loss: 283.65 Avg PPL: 22624643.06 Progress: 0%
+Train Loss: 158.34 Avg PPL: 1110.81 Progress: 4%
+Train Loss: 166.84 Avg PPL: 1690.11 Progress: 9%

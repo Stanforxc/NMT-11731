@@ -82,8 +82,8 @@ def dev_collate(batch):
 class TrainDataset(torch.utils.data.Dataset):
 
     def __init__(self, dataset, vocab):
-        train_src = "data/train.de-en.de.wmixerprep"
-        train_tgt = "data/train.de-en.en.wmixerprep"
+        train_src = "bpe_data/train.az-and-tr.bpe.txt"
+        train_tgt = "bpe_data/train.en.txt"
 
         src_sents = read_corpus(train_src, 'src')
         tgt_sents = read_corpus(train_tgt, 'tgt')
@@ -114,11 +114,11 @@ class DevDataset(torch.utils.data.Dataset):
     def __init__(self, dataset, vocab):
         dev_src = dev_tgt = None
         if dataset == 'dev':
-            dev_src = "data/valid.de-en.de.wmixerprep"
-            dev_tgt = "data/valid.de-en.en.wmixerprep"
+            dev_src = "bpe_data/dev.az.bpe.txt"
+            dev_tgt = "bpe_data/dev.en-az.en.txt"
         elif dataset == 'test':
-            dev_src = "data/test.de-en.de"
-            dev_tgt = "data/test.de-en.en"
+            dev_src = "bpe_data/test.az.bpe.txt"
+            dev_tgt = "bpe_data/test.en-az.en.txt"
 
         src_sents = read_corpus(dev_src, 'src')
         tgt_sents = read_corpus(dev_tgt, 'tgt')
